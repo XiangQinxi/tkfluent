@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "tkfluent"
+version = "0.0.1"
+description = "Fluent Design for Tkinter"
+authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
+readme = "README.md"
+documentation = "https://tkfluent.netlify.app"
+packages = [
+    { include = "tkflu" }
+]
+
+[tool.poetry.dependencies]
+tkdeft = "^0.0.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

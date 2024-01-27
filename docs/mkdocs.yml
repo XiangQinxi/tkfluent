@@ -1,0 +1,80 @@
+site_name: tkfluent
+copyright: Copyright &copy; 2024 XiangQinxi
+site_url: https://tkfluent.netlify.app/
+
+plugins:
+  - search:
+      lang: zh
+  - offline
+  - blog:
+      post_dir: "blog/posts"
+  - rss:
+      match_path: blog/posts/.*
+      date_from_meta:
+        as_creation: date
+      categories:
+        - categories
+        - tags
+
+theme:
+  name: material  # 主题
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+  features:
+    - navigation.footer  # Footer
+    - content.tooltips  # ToolTip
+    - blog  # Blog
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.indexes
+  language: zh
+
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.snippets
+  - def_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - 主页: "index.md"
+  - 博客:
+      - blog/index.md
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/gitlab
+      link: https://gitlab.com/XiangQinxi
+    - icon: fontawesome/brands/github
+      link: https://github.com/XiangQinxi
+    - icon: fontawesome/brands/qq
+      link: tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1379773753
+    - icon: fontawesome/brands/bilibili
+      link: https://space.bilibili.com/471425191
