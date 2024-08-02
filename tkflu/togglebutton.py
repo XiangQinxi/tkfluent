@@ -70,9 +70,9 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget):
             command=command
         )
 
+        self.bind("<<Clicked>>", lambda event=None: self.toggle(), add="+")
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
         self.bind("<<Clicked>>", lambda event=None: self.attributes.command(), add="+")
-        self.bind("<<Clicked>>", lambda event=None: self.toggle(), add="+")
 
         self.bind("<Return>", lambda event=None: self.attributes.command(), add="+")  # 可以使用回车键模拟点击
         self.bind("<Return>", lambda event=None: self.toggle(), add="+")  # 可以使用回车键模拟点击
@@ -212,6 +212,7 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget):
         )
 
     def theme(self, mode="light"):
+        self.mode = mode
         if mode.lower() == "dark":
             self._dark()
         else:

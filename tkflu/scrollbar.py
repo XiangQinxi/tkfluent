@@ -3,7 +3,7 @@ from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.drawwidget import DDrawWidget
 
 
-class FluButtonDraw(DSvgDraw):
+class FluScrollBarDraw(DSvgDraw):
     def create_roundrect(self,
                          x1, y1, x2, y2, radius, radiusy=None, temppath=None,
                          fill="transparent", outline="black", outline2="black", width=1
@@ -29,8 +29,8 @@ class FluButtonDraw(DSvgDraw):
         return drawing[0]
 
 
-class FluButtonCanvas(DCanvas):
-    draw = FluButtonDraw
+class FluScrollBarCanvas(DCanvas):
+    draw = FluScrollBarDraw
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, r1, r2=None, temppath=None,
@@ -46,7 +46,7 @@ class FluButtonCanvas(DCanvas):
     create_roundrect = create_round_rectangle
 
 
-class FluButton(FluButtonCanvas, DDrawWidget):
+class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
     def __init__(self, *args,
                  text="",
                  width=120,
@@ -155,20 +155,21 @@ class FluButton(FluButtonCanvas, DDrawWidget):
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
-    def theme(self, mode, style=None):
+    def theme(self, mode="light", style="standard"):
         self.mode = mode
         if style:
             self.style = style
-        if mode.lower() == "dark":
-            if self.style.lower() == "accent":
+        self._light()
+        """if mode.lower() == "dark":
+            if style.lower() == "accent":
                 self._dark_accent()
             else:
                 self._dark()
         else:
-            if self.style.lower() == "accent":
+            if style.lower() == "accent":
                 self._light_accent()
             else:
-                self._light()
+                self._light()"""
 
     def _light(self):
         self.dconfigure(
@@ -197,90 +198,3 @@ class FluButton(FluButtonCanvas, DDrawWidget):
                 "text_color": "#636363",
             }
         )
-
-    def _light_accent(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#005fb8",
-                "border_color": "#146cbe",
-                "border_color2": "#00396e",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            hover={
-                "back_color": "#0359a9",
-                "border_color": "#1766b0",
-                "border_color2": "#0f4373",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            pressed={
-                "back_color": "#005fb8",
-                "border_color": "#4389ca",
-                "border_color2": "#4389ca",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#b4cbe0",
-            }
-        )
-
-    def _dark(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#272727",
-                "border_color": "#303030",
-                "border_color2": "#262626",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            hover={
-                "back_color": "#2d2d2d",
-                "border_color": "#303030",
-                "border_color2": "#262626",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            pressed={
-                "back_color": "#212121",
-                "border_color": "#2a2a2a",
-                "border_color2": "#262626",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#cfcfcf",
-            }
-        )
-
-    def _dark_accent(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#60cdff",
-                "border_color": "#6cd1ff",
-                "border_color2": "#56b4df",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#000000",
-            },
-            hover={
-                "back_color": "#5abce9",
-                "border_color": "#67c1eb",
-                "border_color2": "#50a5cc",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#000000",
-            },
-            pressed={
-                "back_color": "#52a9d1",
-                "border_color": "#60b0d5",
-                "border_color2": "#60b0d5",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#295468",
-            }
-        )
-
-    def invoke(self):
-        self.attributes.command()

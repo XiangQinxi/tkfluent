@@ -47,6 +47,21 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
                  mode="light",
                  style="standard",
                  **kwargs):
+
+        """
+
+        初始化类
+
+        :param args: 参照tkinter.Canvas.__init__
+        :param text:
+        :param width:
+        :param height:
+        :param font:
+        :param mode: Fluent主题模式 分为 “light” “dark”
+        :param style:
+        :param kwargs: 参照tkinter.Canvas.__init__
+        """
+
         self._init(mode, style)
 
         super().__init__(*args, width=width, height=height, **kwargs)
@@ -80,6 +95,13 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
         self.theme(mode, style)
 
     def _draw(self, event=None):
+
+        """
+        重新绘制组件
+
+        :param event:
+        """
+
         super()._draw(event)
 
         self.delete("all")
@@ -99,21 +121,24 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
-    def theme(self, mode, style):
+    def theme(self, mode, style=None):
+        self.mode = mode
+        if style:
+            self.style = style
         if mode.lower() == "dark":
-            if style.lower() == "accent":
+            if self.style.lower() == "accent":
                 self._dark_accent()
             else:
                 self._dark()
         else:
-            if style.lower() == "accent":
+            if self.style.lower() == "accent":
                 self._light_accent()
             else:
                 self._light()
 
     def _light(self):
         self.dconfigure(
-            back_color="#f0f0f0",
+            back_color="#f9f9f9",
             border_color="#f0f0f0",
             border_width=1,
             text_color="#191919",

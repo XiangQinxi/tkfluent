@@ -30,6 +30,24 @@ class FluFrameDraw(DSvgDraw):
 
 class FluFrameCanvas(DCanvas):
     draw = FluFrameDraw
+    frame = None
+
+    def theme(self, mode="light"):
+        self.theme_myself(mode=mode)
+
+        for widget in self.frame.winfo_children():
+            if hasattr(widget, "theme"):
+                widget.theme(mode=mode)
+                if hasattr(widget, "_draw"):
+                    widget._draw()
+                widget.update()
+
+    def theme_myself(self, mode="light"):
+        self.frame.theme(mode)
+        if hasattr(self.frame, "_draw"):
+            self.frame._draw()
+        self.frame.update()
+        self.update()
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, r1, r2=None, temppath=None,
@@ -62,6 +80,7 @@ class FluFrame(Frame, DObject):
         _, self.temppath = mkstemp(suffix=".svg", prefix="tkdeft.temp.")
 
         self.canvas = FluFrameCanvas(master, *args, width=width, height=height, **kwargs)
+        self.canvas.frame = self
 
         super().__init__(master=self.canvas)
 
@@ -90,6 +109,7 @@ class FluFrame(Frame, DObject):
         self.theme(mode)
 
     def theme(self, mode="light"):
+        self.mode = mode
         if mode.lower() == "dark":
             self._dark()
         else:
@@ -97,10 +117,10 @@ class FluFrame(Frame, DObject):
 
     def _light(self):
         self.dconfigure(
-            back_color="#ffffff",
+            back_color="#f9f9f9",
             border_color="#ebebeb",
             border_color2="#e4e4e4",
-            border_width=1,
+            border_width=1.5,
             radius=6,
         )
 
@@ -109,7 +129,7 @@ class FluFrame(Frame, DObject):
             back_color="#242424",
             border_color="#303030",
             border_color2="#282828",
-            border_width=1,
+            border_width=1.5,
             radius=6,
         )
 
@@ -207,3 +227,4 @@ class FluFrame(Frame, DObject):
 
     def _event_configure(self, event=None):
         self._draw(event)
+

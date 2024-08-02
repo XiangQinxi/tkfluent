@@ -3,7 +3,7 @@ from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.drawwidget import DDrawWidget
 
 
-class FluButtonDraw(DSvgDraw):
+class FluListBoxDraw(DSvgDraw):
     def create_roundrect(self,
                          x1, y1, x2, y2, radius, radiusy=None, temppath=None,
                          fill="transparent", outline="black", outline2="black", width=1
@@ -14,7 +14,7 @@ class FluButtonDraw(DSvgDraw):
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border")
+        border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DListBox.Border")
         border.add_stop_color("0%", outline)
         border.add_stop_color("100%", outline2)
         drawing[1].defs.add(border)
@@ -29,8 +29,8 @@ class FluButtonDraw(DSvgDraw):
         return drawing[0]
 
 
-class FluButtonCanvas(DCanvas):
-    draw = FluButtonDraw
+class FluListBoxCanvas(DCanvas):
+    draw = FluListBoxDraw
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, r1, r2=None, temppath=None,
@@ -46,7 +46,7 @@ class FluButtonCanvas(DCanvas):
     create_roundrect = create_round_rectangle
 
 
-class FluButton(FluButtonCanvas, DDrawWidget):
+class FluListBox(FluListBoxCanvas, DDrawWidget):
     def __init__(self, *args,
                  text="",
                  width=120,
@@ -155,17 +155,17 @@ class FluButton(FluButtonCanvas, DDrawWidget):
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
-    def theme(self, mode, style=None):
+    def theme(self, mode="light", style=None):
         self.mode = mode
         if style:
             self.style = style
         if mode.lower() == "dark":
-            if self.style.lower() == "accent":
+            if style.lower() == "accent":
                 self._dark_accent()
             else:
                 self._dark()
         else:
-            if self.style.lower() == "accent":
+            if style.lower() == "accent":
                 self._light_accent()
             else:
                 self._light()

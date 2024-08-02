@@ -48,6 +48,7 @@ class FluLabel(DDrawWidget):
         )
 
     def theme(self, mode="light"):
+        self.mode = mode
         if mode.lower() == "dark":
             self._dark()
         else:

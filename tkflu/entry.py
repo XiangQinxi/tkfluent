@@ -138,6 +138,7 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
         self._draw(event)
 
     def theme(self, mode="light"):
+        self.mode = mode
         if mode.lower() == "dark":
             self._dark()
         else:

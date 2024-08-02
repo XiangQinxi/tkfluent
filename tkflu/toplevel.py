@@ -1,13 +1,13 @@
-from tkinter import Tk, Toplevel
+from tkinter import Toplevel
 from tkdeft.object import DObject
 from .bwm import BWm
 
 
-class FluWindow(Tk, BWm, DObject):
+class FluToplevel(Toplevel, BWm, DObject):
 
-    """Fluent设计的主窗口"""
+    """Fluent设计的子窗口"""
 
-    def __init__(self, *args, className="tkdeft", mode="light", **kwargs):
+    def __init__(self, *args, mode="light", **kwargs):
 
         """
         初始化类
@@ -22,10 +22,9 @@ class FluWindow(Tk, BWm, DObject):
 
         self.custom = False
 
-        super().__init__(*args, className=className, **kwargs)
+        Toplevel.__init__(self, *args, **kwargs)
 
         self.bind("<Configure>", self._event_configure)
 
-
-
-
+    def _exit(self):
+        self.destroy()
