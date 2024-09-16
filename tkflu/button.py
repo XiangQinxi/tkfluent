@@ -2,11 +2,14 @@ from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.drawwidget import DDrawWidget
 
+from .designs.button import button
+
 
 class FluButtonDraw(DSvgDraw):
     def create_roundrect(self,
                          x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                         fill="transparent", outline="black", outline2="black", width=1
+                         fill="transparent", fill_opacity=1,
+                         outline="black", outline2=None, outline_opacity=1, outline2_opacity=1, width=1,
                          ):
         if radiusy:
             _rx = radius
@@ -14,15 +17,23 @@ class FluButtonDraw(DSvgDraw):
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border")
-        border.add_stop_color("0%", outline)
-        border.add_stop_color("100%", outline2)
-        drawing[1].defs.add(border)
+        if outline2:
+            border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border",
+                                               gradientUnits="userSpaceOnUse")
+            border.add_stop_color("0.9", outline, outline_opacity)
+            border.add_stop_color("1", outline2, outline2_opacity)
+            drawing[1].defs.add(border)
+            stroke = f"url(#{border.get_id()})"
+            stroke_opacity = 1
+        else:
+            stroke = outline
+            stroke_opacity = outline_opacity
         drawing[1].add(
             drawing[1].rect(
                 (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
-                fill=fill, stroke_width=width,
-                stroke=f"url(#{border.get_id()})",
+                fill=fill, fill_opacity=fill_opacity,
+                stroke=stroke, stroke_width=width, stroke_opacity=stroke_opacity,
+                transform="translate(0.500000 0.500000)"
             )
         )
         drawing[1].save()
@@ -34,11 +45,15 @@ class FluButtonCanvas(DCanvas):
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, r1, r2=None, temppath=None,
-                               fill="transparent", outline="black", outline2="black", width=1
+                               fill="transparent", fill_opacity=1,
+                               outline="black", outline2="black", outline_opacity=1, outline2_opacity=1,
+                               width=1,
                                ):
         self._img = self.svgdraw.create_roundrect(
             x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill, outline=outline, outline2=outline2, width=width
+            fill=fill, fill_opacity=fill_opacity,
+            outline=outline, outline2=outline2, outline_opacity=outline_opacity, outline2_opacity=outline2_opacity,
+            width=width,
         )
         self._tkimg = self.svgdraw.create_tksvg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
@@ -55,6 +70,7 @@ class FluButton(FluButtonCanvas, DDrawWidget):
                  font=None,
                  mode="light",
                  style="standard",
+                 state="normal",
                  **kwargs):
         self._init(mode, style)
 
@@ -67,7 +83,8 @@ class FluButton(FluButtonCanvas, DDrawWidget):
 
         self.dconfigure(
             text=text,
-            command=command
+            command=command,
+            state=state,
         )
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
@@ -75,9 +92,8 @@ class FluButton(FluButtonCanvas, DDrawWidget):
 
         self.bind("<Return>", lambda event=None: self.attributes.command(), add="+")  # 可以使用回车键模拟点击
 
-        if font is None:
-            from tkdeft.utility.fonts import SegoeFont
-            self.attributes.font = SegoeFont()
+        from .defs import set_default_font
+        set_default_font(font, self.attributes)
 
     def _init(self, mode, style):
 
@@ -88,31 +104,12 @@ class FluButton(FluButtonCanvas, DDrawWidget):
                 "text": "",
                 "command": None,
                 "font": None,
+                "state": "normal",
 
-                "rest": {
-                    "back_color": "#ffffff",
-                    "border_color": "#f0f0f0",
-                    "border_color2": "#d6d6d6",
-                    "border_width": 1,
-                    "radius": 6,
-                    "text_color": "#1b1b1b",
-                },
-                "hover": {
-                    "back_color": "#fcfcfc",
-                    "border_color": "#f0f0f0",
-                    "border_color2": "#d6d6d6",
-                    "border_width": 1,
-                    "radius": 6,
-                    "text_color": "#1b1b1b",
-                },
-                "pressed": {
-                    "back_color": "#fdfdfd",
-                    "border_color": "#f0f0f0",
-                    "border_color2": "#f0f0f0",
-                    "border_width": 1,
-                    "radius": 6,
-                    "text_color": "#636363",
-                }
+                "rest": {},
+                "hover": {},
+                "pressed": {},
+                "disabled": {}
             }
         )
 
@@ -121,166 +118,148 @@ class FluButton(FluButtonCanvas, DDrawWidget):
     def _draw(self, event=None):
         super()._draw(event)
 
+        width = self.winfo_width()
+        height = self.winfo_height()
+
         self.delete("all")
 
-        if self.enter:
-            if self.button1:
-                _back_color = self.attributes.pressed.back_color
-                _border_color = self.attributes.pressed.border_color
-                _border_color2 = self.attributes.pressed.border_color2
-                _border_width = self.attributes.pressed.border_width
-                _radius = self.attributes.pressed.radius
-                _text_color = self.attributes.pressed.text_color
+        state = self.dcget("state")
+
+        _dict = None
+
+        if state == "normal":
+            if self.enter:
+                if self.button1:
+                    _dict = self.attributes.pressed
+                else:
+                    _dict = self.attributes.hover
             else:
-                _back_color = self.attributes.hover.back_color
-                _border_color = self.attributes.hover.border_color
-                _border_color2 = self.attributes.hover.border_color2
-                _border_width = self.attributes.hover.border_width
-                _radius = self.attributes.hover.radius
-                _text_color = self.attributes.hover.text_color
+                _dict = self.attributes.rest
         else:
-            _back_color = self.attributes.rest.back_color
-            _border_color = self.attributes.rest.border_color
-            _border_color2 = self.attributes.rest.border_color2
-            _border_width = self.attributes.rest.border_width
-            _radius = self.attributes.rest.radius
-            _text_color = self.attributes.rest.text_color
+            _dict = self.attributes.disabled
+
+        _back_color = _dict.back_color
+        _back_opacity = _dict.back_opacity
+        _border_color = _dict.border_color
+        _border_color_opacity = _dict.border_color_opacity
+        _border_color2 = _dict.border_color2
+        _border_color2_opacity = _dict.border_color2_opacity
+        _border_width = _dict.border_width
+        _radius = _dict.radius
+        _text_color = _dict.text_color
 
         self.element_border = self.create_round_rectangle(
-            0, 0, self.winfo_width(), self.winfo_height(), _radius, temppath=self.temppath,
-            fill=_back_color, outline=_border_color, outline2=_border_color2, width=_border_width
+            0, 0, width, height, _radius, temppath=self.temppath,
+            fill=_back_color, fill_opacity=_back_opacity,
+            outline=_border_color, outline_opacity=_border_color_opacity, outline2=_border_color2,
+            outline2_opacity=_border_color2_opacity,
+            width=_border_width,
         )
+
         self.element_text = self.create_text(
             self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
-    def theme(self, mode, style=None):
-        self.mode = mode
+    def theme(self, mode=None, style=None):
+        if mode:
+            self.mode = mode
         if style:
             self.style = style
-        if mode.lower() == "dark":
+        if self.mode.lower() == "dark":
             if self.style.lower() == "accent":
                 self._dark_accent()
+            elif self.style.lower() == "menu":
+                self._dark_menu()
             else:
                 self._dark()
         else:
             if self.style.lower() == "accent":
                 self._light_accent()
+            elif self.style.lower() == "menu":
+                self._light_menu()
             else:
                 self._light()
 
-    def _light(self):
+    def _theme(self, mode, style):
+        r = button(mode, style, "rest")
+        h = button(mode, style, "hover")
+        p = button(mode, style, "pressed")
+        d = button(mode, style, "disabled")
         self.dconfigure(
             rest={
-                "back_color": "#ffffff",
-                "border_color": "#f0f0f0",
-                "border_color2": "#d6d6d6",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#1b1b1b",
+                "back_color": r["back_color"],
+                "back_opacity": r["back_opacity"],
+                "border_color": r["border_color"],
+                "border_color_opacity": r["border_color_opacity"],
+                "border_color2": r["border_color2"],
+                "border_color2_opacity": r["border_color2_opacity"],
+                "border_width": r["border_width"],
+                "radius": r["radius"],
+                "text_color": r["text_color"],
             },
             hover={
-                "back_color": "#fcfcfc",
-                "border_color": "#f0f0f0",
-                "border_color2": "#d6d6d6",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#1b1b1b",
+                "back_color": h["back_color"],
+                "back_opacity": h["back_opacity"],
+                "border_color": h["border_color"],
+                "border_color_opacity": h["border_color_opacity"],
+                "border_color2": h["border_color2"],
+                "border_color2_opacity": h["border_color2_opacity"],
+                "border_width": h["border_width"],
+                "radius": h["radius"],
+                "text_color": h["text_color"],
             },
             pressed={
-                "back_color": "#fdfdfd",
-                "border_color": "#f0f0f0",
-                "border_color2": "#f0f0f0",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#636363",
+                "back_color": p["back_color"],
+                "back_opacity": p["back_opacity"],
+                "border_color": p["border_color"],
+                "border_color_opacity": p["border_color_opacity"],
+                "border_color2": p["border_color2"],
+                "border_color2_opacity": p["border_color2_opacity"],
+                "border_width": p["border_width"],
+                "radius": p["radius"],
+                "text_color": p["text_color"],
+            },
+            disabled={
+                "back_color": d["back_color"],
+                "back_opacity": d["back_opacity"],
+                "border_color": d["border_color"],
+                "border_color_opacity": d["border_color_opacity"],
+                "border_color2": d["border_color2"],
+                "border_color2_opacity": d["border_color2_opacity"],
+                "border_width": d["border_width"],
+                "radius": d["radius"],
+                "text_color": d["text_color"],
             }
         )
+
+    def _light(self):
+        self._theme("light", "standard")
+
+    def _light_menu(self):
+        self._theme("light", "menu")
 
     def _light_accent(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#005fb8",
-                "border_color": "#146cbe",
-                "border_color2": "#00396e",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            hover={
-                "back_color": "#0359a9",
-                "border_color": "#1766b0",
-                "border_color2": "#0f4373",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            pressed={
-                "back_color": "#005fb8",
-                "border_color": "#4389ca",
-                "border_color2": "#4389ca",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#b4cbe0",
-            }
-        )
+        self._theme("light", "accent")
 
     def _dark(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#272727",
-                "border_color": "#303030",
-                "border_color2": "#262626",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            hover={
-                "back_color": "#2d2d2d",
-                "border_color": "#303030",
-                "border_color2": "#262626",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            pressed={
-                "back_color": "#212121",
-                "border_color": "#2a2a2a",
-                "border_color2": "#262626",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#cfcfcf",
-            }
-        )
+        self._theme("dark", "standard")
+
+    def _dark_menu(self):
+        self._theme("dark", "menu")
 
     def _dark_accent(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#60cdff",
-                "border_color": "#6cd1ff",
-                "border_color2": "#56b4df",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#000000",
-            },
-            hover={
-                "back_color": "#5abce9",
-                "border_color": "#67c1eb",
-                "border_color2": "#50a5cc",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#000000",
-            },
-            pressed={
-                "back_color": "#52a9d1",
-                "border_color": "#60b0d5",
-                "border_color2": "#60b0d5",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#295468",
-            }
-        )
+        self._theme("dark", "accent")
 
     def invoke(self):
         self.attributes.command()
+
+    def _event_off_button1(self, event=None):
+        self.button1 = False
+
+        self._draw(event)
+
+        if self.enter:
+            # self.focus_set()
+            if self.dcget("state") == "normal":
+                self.event_generate("<<Clicked>>")

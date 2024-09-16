@@ -17,6 +17,7 @@ plugins:
         - tags
 
 theme:
+  logo: assets/logo.png
   name: material  # 主题
   palette:
     - media: "(prefers-color-scheme)"

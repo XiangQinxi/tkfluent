@@ -2,18 +2,30 @@ from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.drawwidget import DDrawWidget
 
+from .designs.badge import badge
+
 
 class FluBadgeDraw(DSvgDraw):
     def create_roundrect(self,
                          x1, y1, x2, y2, temppath=None,
-                         fill="transparent", outline="black", width=1
+                         fill="transparent", fill_opacity=1,
+                         outline="black", outline_opacity=1, width=1
                          ):
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         drawing[1].add(
             drawing[1].rect(
                 (x1, y1), (x2 - x1, y2 - y1), 20, 25,
-                fill=fill, stroke_width=width,
-                stroke=outline,
+                id=".Badge", transform="translate(0.500000 0.500000)",
+                fill=fill, fill_opacity=fill_opacity,
+                stroke=outline, stroke_opacity=outline_opacity, stroke_width=width,
+            )
+        )
+        drawing[1].add(
+            drawing[1].rect(
+                (x1, y1), (x2 - x1, y2 - y1), 20, 25,
+                id=".Badge", transform="translate(0.500000 0.500000)",
+                fill="white", fill_opacity=0,
+                stroke=outline, stroke_opacity=outline_opacity, stroke_width=width,
             )
         )
         drawing[1].save()
@@ -25,11 +37,13 @@ class FluBadgeCanvas(DCanvas):
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, temppath=None,
-                               fill="transparent", outline="black", width=1
+                               fill="transparent", fill_opacity=1,
+                               outline="black", outline_opacity=1, width=1
                                ):
         self._img = self.svgdraw.create_roundrect(
             x1, y1, x2, y2, temppath=temppath,
-            fill=fill, outline=outline, width=width
+            fill=fill, fill_opacity=fill_opacity,
+            outline=outline, outline_opacity=outline_opacity, width=width
         )
         self._tkimg = self.svgdraw.create_tksvg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
@@ -72,9 +86,8 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
 
-        if font is None:
-            from tkdeft.utility.fonts import SegoeFont
-            self.attributes.font = SegoeFont()
+        from .defs import set_default_font
+        set_default_font(font, self.attributes)
 
     def _init(self, mode, style):
         from easydict import EasyDict
@@ -86,7 +99,9 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
                 "font": None,
 
                 "back_color": None,
+                "back_opacity": None,
                 "border_color": None,
+                "border_color_opacity": None,
                 "border_width": None,
                 "text_color": None
             }
@@ -107,13 +122,16 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
         self.delete("all")
 
         _back_color = self.attributes.back_color
+        _back_opacity = self.attributes.back_opacity
         _border_color = self.attributes.border_color
+        _border_color_opacity = self.attributes.border_color_opacity
         _border_width = self.attributes.border_width
         _text_color = self.attributes.text_color
 
         self.element_border = self.create_round_rectangle(
             0, 0, self.winfo_width(), self.winfo_height(), temppath=self.temppath,
-            fill=_back_color, outline=_border_color, width=_border_width
+            fill=_back_color, fill_opacity=_back_opacity,
+            outline=_border_color, outline_opacity=_border_color_opacity, width=_border_width
         )
 
         self.element_text = self.create_text(
@@ -121,11 +139,12 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
-    def theme(self, mode, style=None):
-        self.mode = mode
+    def theme(self, mode=None, style=None):
+        if mode:
+            self.mode = mode
         if style:
             self.style = style
-        if mode.lower() == "dark":
+        if self.mode.lower() == "dark":
             if self.style.lower() == "accent":
                 self._dark_accent()
             else:
@@ -136,34 +155,25 @@ class FluBadge(FluBadgeCanvas, DDrawWidget):
             else:
                 self._light()
 
-    def _light(self):
+    def _theme(self, mode, style):
+        n = badge(mode, style)
         self.dconfigure(
-            back_color="#f9f9f9",
-            border_color="#f0f0f0",
-            border_width=1,
-            text_color="#191919",
+            back_color=n["back_color"],
+            back_opacity=n["back_opacity"],
+            border_color=n["border_color"],
+            border_color_opacity=n["border_color_opacity"],
+            border_width=n["border_width"],
+            text_color=n["text_color"],
         )
+
+    def _light(self):
+        self._theme("light", "standard")
 
     def _light_accent(self):
-        self.dconfigure(
-            back_color="#005fb8",
-            border_color="#005fb8",
-            border_width=1,
-            text_color="#ffffff",
-        )
+        self._theme("light", "accent")
 
     def _dark(self):
-        self.dconfigure(
-            back_color="#242424",
-            border_color="#242424",
-            border_width=1,
-            text_color="#ffffff",
-        )
+        self._theme("dark", "standard")
 
     def _dark_accent(self):
-        self.dconfigure(
-            back_color="#60cdff",
-            border_color="#60cdff",
-            border_width=1,
-            text_color="#000000",
-        )
+        self._theme("dark", "accent")

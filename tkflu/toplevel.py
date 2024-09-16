@@ -24,7 +24,6 @@ class FluToplevel(Toplevel, BWm, DObject):
 
         Toplevel.__init__(self, *args, **kwargs)
 
-        self.bind("<Configure>", self._event_configure)
-
-    def _exit(self):
-        self.destroy()
+        self.bind("<Configure>", self._event_configure, add="+")
+        self.bind("<Escape>", self._event_key_esc, add="+")
+        self.protocol("WM_DELETE_WINDOW", self._event_delete_window)

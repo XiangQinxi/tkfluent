@@ -1,11 +1,14 @@
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
 
+from .designs.frame import frame
+
 
 class FluFrameDraw(DSvgDraw):
     def create_roundrect(self,
                          x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                         fill="transparent", outline="black", outline2="black", width=1
+                         fill="transparent",  #fill_opacity=1,
+                         outline="black", outline_opacity=1, width=1
                          ):
         if radiusy:
             _rx = radius
@@ -13,15 +16,63 @@ class FluFrameDraw(DSvgDraw):
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border")
-        border.add_stop_color("0%", outline)
-        border.add_stop_color("100%", outline2)
-        drawing[1].defs.add(border)
+        filter1 = drawing[1].defs.add(
+            drawing[1].filter(id="filter", start=(0, 0), size=(x2 - x1, y2 - y1), filterUnits="userSpaceOnUse",
+                              color_interpolation_filters="sRGB")
+        )
+
+        filter1.feFlood(flood_opacity="0", result="BackgroundImageFix")
+        filter1.feColorMatrix("SourceAlpha", type="matrix", values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0",
+                              result="hardAlpha")
+        filter1.feOffset(dx="0", dy="2")
+        filter1.feGaussianBlur(stdDeviation="1.33333")
+        filter1.feComposite(in2="hardAlpha", operator="out", k2="-1", k3="1")
+        filter1.feColorMatrix(type="matrix", values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.039 0")
+        filter1.feBlend(mode="normal", in2="BackgroundImageFix", result="effect_dropShadow_1")
+        filter1.feBlend(mode="normal", in2="effect_dropShadow_1", result="shape")
+
+        """if outline2:
+            border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border")
+            border.add_stop_color("0%", outline)
+            border.add_stop_color("100%", outline2)
+            drawing[1].defs.add(border)
+            _border = f"url(#{border.get_id()})"
+        else:
+            _border = outline"""
+
+        """
+        <rect id="Surface / Card Surface" rx="-0.500000" width="159.000000" height="79.000000" transform="translate(3.500000 1.500000)" fill="#FFFFFF" fill-opacity="0"/>
+        """
+        """drawing[1].add(
+            drawing[1].rect(
+                rx="-0.500000",
+                size=(x2 - x1 - 7, y2 - y1 - 7),
+                transform="translate(3.500000 1.500000)",
+                fill="#FFFFFF",
+                fill_opacity="0"
+            )
+        )
+        drawing[1].add(
+            drawing[1].rect(
+                (4, 2), (x2 - x1 - 8, y2 - y1 - 8), _rx, _ry,
+                fill="#FFFFFF",
+                fill_opacity="0.700000",
+            )
+        )
+        group = drawing[1].g(filter="url(#filter)", style="mix-blend-mode:multiply")
+        group.add(
+            drawing[1].rect(
+                (4, 2), (x2 - x1 - 8, y2 - y1 - 8), _rx, _ry,
+                fill="#FFFFFF",
+                fill_opacity="1",
+            )
+        )"""
         drawing[1].add(
             drawing[1].rect(
                 (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
-                fill=fill, stroke_width=width,
-                stroke=f"url(#{border.get_id()})",
+                fill=fill,  #fill_opacity=fill_opacity,
+                stroke_width=width,
+                stroke=outline, stroke_opacity=outline_opacity
             )
         )
         drawing[1].save()
@@ -51,11 +102,13 @@ class FluFrameCanvas(DCanvas):
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, r1, r2=None, temppath=None,
-                               fill="transparent", outline="black", outline2="black", width=1
+                               fill="transparent",  #fill_opacity=1,
+                               outline="black", outline_opacity=1, width=1
                                ):
         self._img = self.svgdraw.create_roundrect(
             x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill, outline=outline, outline2=outline2, width=width
+            fill=fill,  #fill_opacity=fill_opacity,
+            outline=outline, outline_opacity=outline_opacity, width=width
         )
         self._tkimg = self.svgdraw.create_tksvg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
@@ -74,6 +127,7 @@ class FluFrame(Frame, DObject):
                  width=300,
                  height=150,
                  mode="light",
+                 style="standard",
                  **kwargs,
                  ):
         from tempfile import mkstemp
@@ -84,7 +138,7 @@ class FluFrame(Frame, DObject):
 
         super().__init__(master=self.canvas)
 
-        self._init(mode)
+        self._init(mode, style)
 
         self.enter = False
         self.button1 = False
@@ -93,45 +147,58 @@ class FluFrame(Frame, DObject):
 
         self.canvas.bind("<Configure>", self._event_configure, add="+")
 
-    def _init(self, mode):
+    def _init(self, mode, style):
         from easydict import EasyDict
 
         self.attributes = EasyDict(
             {
                 "back_color": None,
+                #"back_opacity": None,
                 "border_color": None,
-                "border_color2": None,
+                "border_color_opacity": None,
                 "border_width": None,
                 "radius": None,
             }
         )
 
-        self.theme(mode)
+        self.theme(mode=mode, style=style)
 
-    def theme(self, mode="light"):
-        self.mode = mode
-        if mode.lower() == "dark":
-            self._dark()
+    def theme(self, mode=None, style=None):
+        if mode:
+            self.mode = mode
+        if style:
+            self.style = style
+        if self.mode.lower() == "dark":
+            if self.style.lower() == "popupmenu":
+                self._dark_popupmenu()
+            else:
+                self._dark()
         else:
-            self._light()
+            if self.style.lower() == "popupmenu":
+                self._light_popupmenu()
+            else:
+                self._light()
+
+    def _theme(self, mode, style):
+        n = frame(mode, style)
+        self.dconfigure(
+            back_color=n["back_color"],
+            border_color=n["border_color"],
+            border_color_opacity=n["border_color_opacity"],
+            border_width=n["border_width"],
+            radius=n["radius"],
+        )
 
     def _light(self):
-        self.dconfigure(
-            back_color="#f9f9f9",
-            border_color="#ebebeb",
-            border_color2="#e4e4e4",
-            border_width=1.5,
-            radius=6,
-        )
+        self._theme("light", "standard")
+
+    def _light_popupmenu(self):
+        self._theme("light", "popupmenu")
 
     def _dark(self):
-        self.dconfigure(
-            back_color="#242424",
-            border_color="#303030",
-            border_color2="#282828",
-            border_width=1.5,
-            radius=6,
-        )
+        self._theme("dark", "standard")
+    def _dark_popupmenu(self):
+        self._theme("dark", "popupmenu")
 
     def pack_info(self):
         return self.canvas.pack_info()
@@ -203,20 +270,23 @@ class FluFrame(Frame, DObject):
     place = place_configure
 
     def _draw(self, event=None):
+
         self.canvas.delete("all")
         self.canvas.config(background=self.canvas.master.cget("background"))
-        self.config(background=self.attributes.back_color)
-
         _back_color = self.attributes.back_color
+        #_back_opacity = self.attributes.back_opacity
         _border_color = self.attributes.border_color
-        _border_color2 = self.attributes.border_color2
+        _border_color_opacity = self.attributes.border_color_opacity
         _border_width = self.attributes.border_width
         _radius = self.attributes.radius
 
         self.element1 = self.canvas.create_round_rectangle(
             0, 0, self.canvas.winfo_width(), self.canvas.winfo_height(), _radius, temppath=self.temppath,
-            fill=_back_color, outline=_border_color, outline2=_border_color2, width=_border_width
+            fill=_back_color,  #fill_opacity=_back_opacity,
+            outline=_border_color, outline_opacity=_border_color_opacity, width=_border_width
         )
+
+        self.config(background=_back_color)
 
         self.element2 = self.canvas.create_window(
             self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2,
@@ -227,4 +297,3 @@ class FluFrame(Frame, DObject):
 
     def _event_configure(self, event=None):
         self._draw(event)
-

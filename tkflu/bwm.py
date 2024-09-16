@@ -18,31 +18,57 @@ class BWm(object):
             if hasattr(self, "closebutton"):
                 self.closebutton.dconfigure(
                     rest={
-                        "back_color": self.titlebar.cget("background"),
-                        "border_color": "#f0f0f0",
-                        "border_color2": "#d6d6d6",
-                        "border_width": 0,
+                        "back_color": "#ffffff",
+                        "back_opacity": 0,
+                        "border_color": "#000000",
+                        "border_color_opacity": 0,
+                        "border_color2": None,
+                        "border_color2_opacity": None,
+                        "border_width": 1,
                         "radius": 0,
                         "text_color": self.attributes.closebutton.text_color,
                     },
                     hover={
                         "back_color": self.attributes.closebutton.back_color,
-                        "border_color": "#f0f0f0",
-                        "border_color2": "#d6d6d6",
-                        "border_width": 0,
+                        "back_opacity": 1,
+                        "border_color": "#000000",
+                        "border_color_opacity": 0,
+                        "border_color2": None,
+                        "border_color2_opacity": None,
+                        "border_width": 1,
                         "radius": 0,
                         "text_color": self.attributes.closebutton.text_hover_color,
                     },
                     pressed={
                         "back_color": self.attributes.closebutton.back_color,
-                        "border_color": "#f0f0f0",
-                        "border_color2": "#f0f0f0",
-                        "border_width": 0,
+                        "back_opacity": 0.7,
+                        "border_color": "#000000",
+                        "border_color_opacity": 0,
+                        "border_color2": None,
+                        "border_color2_opacity": None,
+                        "border_width": 1,
                         "radius": 0,
                         "text_color": self.attributes.closebutton.text_hover_color,
-                    }
+                    },
+                    disabled={
+                        "back_color": "#ffffff",
+                        "back_opacity": 0.3,
+                        "border_color": "#000000",
+                        "border_color_opacity": 0,
+                        "border_color2": None,
+                        "border_color2_opacity": None,
+                        "border_width": 1,
+                        "radius": 0,
+                        "text_color": "#a2a2a2",
+                    },
                 )
                 self.closebutton._draw()
+
+    def _event_key_esc(self, event=None):
+        self._event_delete_window()
+
+    def _event_delete_window(self):
+        self.destroy()
 
     def _event_configure(self, event=None):
 
@@ -71,9 +97,6 @@ class BWm(object):
 
         self.theme(mode)
 
-    def _exit(self):
-        self.quit()
-
     def theme(self, mode: str):
 
         """
@@ -100,27 +123,24 @@ class BWm(object):
         else:
             self._light()
 
-    def _light(self):
+    def _theme(self, mode):
+        from .designs.window import window
+        n = window(mode)
         self.dconfigure(
-            back_color="#ffffff",
-            text_color="#000000",
+            back_color=n["back_color"],
+            text_color=n["text_color"],
             closebutton={
-                "back_color": "red",
-                "text_color": "#000000",
-                "text_hover_color": "#ffffff"
+                "back_color": n["closebutton"]["back_color"],
+                "text_color": n["closebutton"]["text_color"],
+                "text_hover_color": n["closebutton"]["text_hover_color"]
             }
         )
 
+    def _light(self):
+        self._theme("light")
+
     def _dark(self):
-        self.dconfigure(
-            back_color="#202020",
-            text_color="#ffffff",
-            closebutton={
-                "back_color": "red",
-                "text_color": "#ffffff",
-                "text_hover_color": "#000000"
-            }
-        )
+        self._theme("dark")
 
     def wincustom(self, wait=200, way=1):
 
@@ -139,7 +159,7 @@ class BWm(object):
         self.titlebar = Frame(self, width=180, height=35, background=self.attributes.back_color)
         self.titlelabel = FluLabel(self.titlebar, text=self.title(), width=50)
         self.titlelabel.pack(fill="y", side="left")
-        self.closebutton = FluButton(self.titlebar, text="", width=32, height=32, command=lambda: self._exit())
+        self.closebutton = FluButton(self.titlebar, text="", width=32, height=32, command=lambda: self._event_delete_window())
         self.closebutton.pack(fill="y", side="right")
         self.titlebar.pack(fill="x", side="top")
 

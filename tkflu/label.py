@@ -17,9 +17,8 @@ class FluLabel(DDrawWidget):
             text=text,
         )
 
-        if font is None:
-            from tkdeft.utility.fonts import SegoeFont
-            self.attributes.font = SegoeFont()
+        from .defs import set_default_font
+        set_default_font(font, self.attributes)
 
     def _init(self, mode):
 

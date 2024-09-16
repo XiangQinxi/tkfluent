@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="full" fill="none" height="32" version="1.1" width="160">
+    <defs>
+        <clipPath id="id1">
+            <rect fill="white" fill-opacity="0" height="32.000000" width="160.000000" x="0" y="0"/>
+        </clipPath>
+        <linearGradient gradientUnits="userSpaceOnUse" id="paint_linear_31_43213_0" x1="80.000000" x2="80.000000" y1="0.000000" y2="30.000000">
+            <stop offset="0.939453" stop-color="#FFFFFF" stop-opacity="0.000000"/>
+            <stop offset="0.941406" stop-color="#FFFFFF"/>
+        </linearGradient>
+    </defs>
+    <rect fill="#FFFFFF" fill-opacity="1.000000" height="30.000000" rx="3.000000" width="158.000000" x="1.000000" y="1.000000"/>
+    <g clip-path="url(#id1)">
+        <rect height="31.000000" rx="3.000000" stroke="#000000" stroke-opacity="0.057800" stroke-width="1.000000" width="159.000000" x="0.500000" y="0.500000"/>
+        <mask height="30.000000" id="id2" maskUnits="userSpaceOnUse" width="160.000000" x="0.000000" y="0.000000">
+            <rect height="32.000000" stroke="url(#paint_linear_31_43213_0)" stroke-opacity="1.000000" stroke-width="2.000000" width="162.000000" x="-1.000000" y="-1.000000"/>
+        </mask>
+        <g mask="url(#id2)">
+            <rect height="30.000000" rx="4.000000" stroke="#005FB8" stroke-opacity="1.000000" stroke-width="2.000000" width="158.000000" x="1.000000" y="1.000000"/>
+        </g>
+    </g>
+</svg>

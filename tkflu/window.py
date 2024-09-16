@@ -24,8 +24,11 @@ class FluWindow(Tk, BWm, DObject):
 
         super().__init__(*args, className=className, **kwargs)
 
-        self.bind("<Configure>", self._event_configure)
+        from .icons import light
+        from tkinter import PhotoImage
 
+        self.iconphoto(False, PhotoImage(file=light()))
 
-
-
+        self.bind("<Configure>", self._event_configure, add="+")
+        self.bind("<Escape>", self._event_key_esc, add="+")
+        self.protocol("WM_DELETE_WINDOW", self._event_delete_window)

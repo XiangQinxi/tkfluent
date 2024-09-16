@@ -2,30 +2,50 @@ from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.drawwidget import DDrawWidget
 
+from .designs.entry import entry
 
 class FluEntryDraw(DSvgDraw):
     def create_roundrect(self,
                          x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                         fill="transparent", outline="black", outline2="black", width=1
+                         fill="transparent", fill_opacity=1,
+                         stop1="0.93", outline="black", outline_opacity=1,
+                         stop2="0.94", outline2=None, outline2_opacity=1,
+                         width=1
                          ):
         if radiusy:
             _rx = radius
             _ry = radiusy
         else:
             _rx, _ry = radius, radius
-        drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border")
-        border.add_stop_color("0%", outline)
-        border.add_stop_color("85%", outline)
-        border.add_stop_color("100%", outline2)
-        drawing[1].defs.add(border)
+        drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath, fill="none")
+        if outline2:
+            border = drawing[1].linearGradient(start=(x1, y1 + 1), end=(x1, y2 - 1), id="DButton.Border",
+                                               gradientUnits="userSpaceOnUse")
+            border.add_stop_color(stop1, outline, outline_opacity)
+            border.add_stop_color(stop2, outline2, outline2_opacity)
+            drawing[1].defs.add(border)
+            stroke = f"url(#{border.get_id()})"
+            stroke_opacity = 1
+        else:
+            stroke = outline
+            stroke_opacity = outline_opacity
+
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
-                fill=fill, stroke_width=width,
-                stroke=f"url(#{border.get_id()})",
+                (x1 + 1, y1 + 1), (x2 - x1 - 2, y2 - y1 - 2), _rx, _ry,
+                id="Base",
+                fill=fill, fill_opacity=fill_opacity,
             )
         )
+        drawing[1].add(
+            drawing[1].rect(
+                (x1 + 0.5, y1 + 0.5), (x2 - x1 - 1, y2 - y1 - 1), _rx, _ry,
+                id="Base",
+                fill="white", fill_opacity="0",
+                stroke=stroke, stroke_width=width, stroke_opacity=stroke_opacity,
+            )
+        )
+        #print("FluEntry", drawing[0])
         drawing[1].save()
         return drawing[0]
 
@@ -35,11 +55,15 @@ class FluEntryCanvas(DCanvas):
 
     def create_round_rectangle(self,
                                x1, y1, x2, y2, r1, r2=None, temppath=None,
-                               fill="transparent", outline="black", outline2="black", width=1
+                               fill="transparent", fill_opacity=1, stop1="0.93", stop2="0.94",
+                               outline="black", outline2="black", outline_opacity=1, outline2_opacity=1,
+                               width=1
                                ):
         self._img = self.svgdraw.create_roundrect(
             x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill, outline=outline, outline2=outline2, width=width
+            fill=fill, fill_opacity=fill_opacity, stop1=stop1, stop2=stop2,
+            outline=outline, outline2=outline2, outline_opacity=outline_opacity, outline2_opacity=outline2_opacity,
+            width=width
         )
         self._tkimg = self.svgdraw.create_tksvg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
@@ -55,6 +79,7 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
                  cursor="xterm",
                  textvariable=None,
                  mode="light",
+                 state="normal",
                  **kwargs):
         self._init(mode)
 
@@ -71,9 +96,14 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
 
         super().__init__(*args, width=width, height=height, cursor=cursor, **kwargs)
 
-        if font is None:
-            from tkdeft.utility.fonts import SegoeFont
-            self.attributes.font = SegoeFont()
+        self.bind("<FocusIn>", self._event_focus_in, add="+")
+
+        self.dconfigure(
+            state=state,
+        )
+
+        from .defs import set_default_font
+        set_default_font(font, self.attributes)
 
     def _init(self, mode):
         from easydict import EasyDict
@@ -81,11 +111,12 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
         self.attributes = EasyDict(
             {
                 "font": None,
+                "state": "normal",
 
                 "rest": {},
-
-                "focus": {}
-
+                "hover": {},
+                "pressed": {},
+                "disabled": {},
             }
         )
 
@@ -94,35 +125,65 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
     def _draw(self, event=None):
         super()._draw(event)
 
+        width = self.winfo_width()
+        height = self.winfo_height()
+
         self.delete("all")
 
         self.entry.configure(font=self.attributes.font)
 
-        if self.isfocus:
-            _back_color = self.attributes.focus.back_color
-            _border_color = self.attributes.focus.border_color
-            _border_color2 = self.attributes.focus.border_color2
-            _border_width = self.attributes.focus.border_width
-            _radius = self.attributes.focus.radius
-            _text_color = self.attributes.focus.text_color
-        else:
-            _back_color = self.attributes.rest.back_color
-            _border_color = self.attributes.rest.border_color
-            _border_color2 = self.attributes.rest.border_color2
-            _border_width = self.attributes.rest.border_width
-            _radius = self.attributes.rest.radius
-            _text_color = self.attributes.rest.text_color
+        state = self.dcget("state")
 
-        self.entry.configure(background=_back_color, insertbackground=_text_color, foreground=_text_color)
+        _dict = None
+
+        if state == "normal":
+            if self.isfocus:
+                _dict = self.attributes.pressed
+            else:
+                if self.enter:
+                    _dict = self.attributes.hover
+                else:
+                    _dict = self.attributes.rest
+            self.entry.configure(state="normal")
+        else:
+            _dict = self.attributes.disabled
+            self.entry.configure(state="disabled")
+
+        _stop1 = _dict.stop1
+        _stop2 = _dict.stop2
+        _back_color = _dict.back_color
+        _back_opacity = _dict.back_opacity
+        _border_color = _dict.border_color
+        _border_color_opacity = _dict.border_color_opacity
+        _border_color2 = _dict.border_color2
+        _border_color2_opacity = _dict.border_color2_opacity
+        _border_width = _dict.border_width
+        _radius = _dict.radius
+        _text_color = _dict.text_color
+        _underline_fill = _dict.underline_fill
+        _underline_width = _dict.underline_width
+
+        self.entry.configure(background=_back_color, insertbackground=_text_color, foreground=_text_color,
+                             disabledbackground=_back_color, disabledforeground=_text_color)
 
         self.element_border = self.create_round_rectangle(
-            0, 0, self.winfo_width(), self.winfo_height(), _radius, temppath=self.temppath,
-            fill=_back_color, outline=_border_color, outline2=_border_color2, width=_border_width
+            0, 0, width, height, _radius, temppath=self.temppath,
+            fill=_back_color, fill_opacity=_back_opacity, stop1=_stop1, stop2=_stop2,
+            outline=_border_color, outline_opacity=_border_color_opacity, outline2=_border_color2,
+            outline2_opacity=_border_color2_opacity,
+            width=_border_width
         )
 
+        if _underline_fill:
+            self.element_line = self.create_line(
+                _radius / 3 + _border_width, self.winfo_height() - _radius / 3,
+                self.winfo_width() - _radius / 3 - _border_width * 2, self.winfo_height() - _radius / 3,
+                width=_underline_width, fill=_underline_fill
+            )
+
         self.element_text = self.create_window(
-            self.winfo_width() / 2, self.winfo_height() / 2,
-            window=self.entry,
+            _radius/2+_border_width, _radius/2+_border_width,
+            window=self.entry, anchor="nw",
             width=self.winfo_width() - _border_width * 2 - _radius,
             height=self.winfo_height() - _border_width * 2 - _radius
         )
@@ -144,42 +205,92 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
         else:
             self._light()
 
-    def _light(self):
+    def _theme(self, mode):
+        r = entry(mode, "rest")
+        h = entry(mode, "hover")
+        p = entry(mode, "pressed")
+        d = entry(mode, "disabled")
         self.dconfigure(
             rest={
-                "back_color": "#ffffff",
-                "border_color": "#f0f0f0",
-                "border_color2": "#8d8d8d",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#646464",
+                "back_color": r["back_color"],
+                "back_opacity": r["back_opacity"],
+
+                "stop1": r["stop1"],
+                "border_color": r["border_color"],
+                "border_color_opacity": r["border_color_opacity"],
+
+                "stop2": r["stop2"],
+                "border_color2": r["border_color2"],
+                "border_color2_opacity": r["border_color2_opacity"],
+
+                "border_width": r["border_width"],
+                "radius": r["radius"],
+                "text_color": r["text_color"],
+
+                "underline_fill": r["underline_fill"],
+                "underline_width": r["underline_width"]
             },
-            focus={
-                "back_color": "#ffffff",
-                "border_color": "#f0f0f0",
-                "border_color2": "#005fb8",
-                "border_width": 2,
-                "radius": 6,
-                "text_color": "#636363",
+            hover={
+                "back_color": h["back_color"],
+                "back_opacity": h["back_opacity"],
+
+                "stop1": h["stop1"],
+                "border_color": h["border_color"],
+                "border_color_opacity": h["border_color_opacity"],
+
+                "stop2": h["stop2"],
+                "border_color2": h["border_color2"],
+                "border_color2_opacity": h["border_color2_opacity"],
+
+                "border_width": h["border_width"],
+                "radius": h["radius"],
+                "text_color": h["text_color"],
+
+                "underline_fill": h["underline_fill"],
+                "underline_width": r["underline_width"]
+            },
+            pressed={
+                "back_color": p["back_color"],
+                "back_opacity": p["back_opacity"],
+
+                "stop1": p["stop1"],
+                "border_color": p["border_color"],
+                "border_color_opacity": p["border_color_opacity"],
+
+                "stop2": p["stop2"],
+                "border_color2": p["border_color2"],
+                "border_color2_opacity": p["border_color2_opacity"],
+
+                "border_width": p["border_width"],
+                "radius": p["radius"],
+                "text_color": p["text_color"],
+
+                "underline_fill": p["underline_fill"],
+                "underline_width": r["underline_width"]
+            },
+            disabled={
+                "back_color": d["back_color"],
+                "back_opacity": r["back_opacity"],
+
+                "stop1": d["stop1"],
+                "border_color": d["border_color"],
+                "border_color_opacity": d["border_color_opacity"],
+
+                "stop2": d["stop2"],
+                "border_color2": d["border_color2"],
+                "border_color2_opacity": d["border_color2_opacity"],
+
+                "border_width": d["border_width"],
+                "radius": d["radius"],
+                "text_color": d["text_color"],
+
+                "underline_fill": d["underline_fill"],
+                "underline_width": r["underline_width"]
             }
         )
 
+    def _light(self):
+        self._theme("light")
+
     def _dark(self):
-        self.dconfigure(
-            rest={
-                "back_color": "#272727",
-                "border_color": "#2c2c2c",
-                "border_color2": "#979797",
-                "border_width": 1,
-                "radius": 6,
-                "text_color": "#ffffff",
-            },
-            focus={
-                "back_color": "#1d1d1d",
-                "border_color": "#272727",
-                "border_color2": "#60cdff",
-                "border_width": 2,
-                "radius": 6,
-                "text_color": "#ffffff",
-            }
-        )
+        self._theme("dark")
