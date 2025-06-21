@@ -61,6 +61,9 @@ class FluButtonCanvas(DCanvas):
     create_roundrect = create_round_rectangle
 
 
+from .constants import MODE, STATE, BUTTONSTYLE
+
+
 class FluButton(FluButtonCanvas, DDrawWidget):
     def __init__(self, *args,
                  text="",
@@ -68,9 +71,9 @@ class FluButton(FluButtonCanvas, DDrawWidget):
                  height=32,
                  command=None,
                  font=None,
-                 mode="light",
-                 style="standard",
-                 state="normal",
+                 mode: MODE = "light",
+                 style: BUTTONSTYLE = "standard",
+                 state: STATE = "normal",
                  **kwargs):
         self._init(mode, style)
 
@@ -95,7 +98,7 @@ class FluButton(FluButtonCanvas, DDrawWidget):
         from .defs import set_default_font
         set_default_font(font, self.attributes)
 
-    def _init(self, mode, style):
+    def _init(self, mode: MODE, style: STATE):
 
         from easydict import EasyDict
 
@@ -161,7 +164,7 @@ class FluButton(FluButtonCanvas, DDrawWidget):
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
-    def theme(self, mode=None, style=None):
+    def theme(self, mode: MODE = None, style: BUTTONSTYLE = None):
         if mode:
             self.mode = mode
         if style:

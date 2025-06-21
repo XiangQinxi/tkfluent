@@ -1,11 +1,14 @@
-import svgwrite
-import random
+from tkflu import FluWindow, FluButton, FluToggleButton, FluThemeManager, toggle_theme, ACCENT
 
-dwg = svgwrite.Drawing('random_numbers.svg', size=(200, 20), profile='tiny')
+root = FluWindow()
 
-nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+theme_manager = FluThemeManager(root)
+toggle_button = FluToggleButton(
+    text="Toggle Theme", command=lambda: toggle_theme(toggle_button, theme_manager)
+)
+toggle_button.pack(padx=3, pady=3, )
 
-random.shuffle(nums)
-for i, num in enumerate(nums):
-    text = dwg.add(dwg.text(str(num), insert=(i * 20, 20), fill='black', font_size=16))
-dwg.save()
+button = FluButton(root, text="Accent Button", style=ACCENT)
+button.pack(padx=3, pady=3, )
+
+root.mainloop()

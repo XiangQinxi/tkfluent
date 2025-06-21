@@ -70,6 +70,9 @@ markdown_extensions:
 
 nav:
   - 主页: "index.md"
+  - 教程:
+      - tutorial/change_theme_color.md
+      - tutorial/change_theme_mode.md
   - 博客:
       - blog/index.md
 

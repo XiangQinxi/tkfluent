@@ -4,7 +4,7 @@ from tkinter.font import *
 
 from tkflu.listbox import FluListBox
 
-red_primary_color()
+blue_primary_color()
 
 root = FluWindow()
 #root.wincustom(way=0)
