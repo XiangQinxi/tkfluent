@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.0.5"
+version = "0.0.7"
 description = "Fluent Design for Tkinter"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
@@ -15,7 +15,7 @@ tksvg = "^0.7.4"
 tkextrafont = "^0.6.3"
 svgwrite = "^1.4.3"
 pillow = "^10.2.0"
-tkdeft = "^0.0.7"
+tkdeft = "^0.0.9"
 easydict = "^1.13"
 
 [build-system]

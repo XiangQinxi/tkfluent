@@ -2,11 +2,11 @@ from tkflu import *
 from tkinter import *
 from tkinter.font import *
 
-orange_primary_color()
+red_primary_color()
 
 root = FluWindow()
 #root.wincustom(way=0)
-root.wm_geometry("360x500")
+root.geometry("360x600")
 
 popupmenu = FluPopupMenu()
 
@@ -80,6 +80,9 @@ entry2.pack(fill="x", padx=5, pady=5)
 
 text1 = FluText(frame)
 text1.pack(fill="x", padx=5, pady=5)
+
+slider1 = FluSlider(frame, value=0)
+slider1.pack(fill="x", padx=5, pady=5)
 
 frame.pack(fill="both", expand="yes", side="right", padx=5, pady=5)
 

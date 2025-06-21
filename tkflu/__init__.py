@@ -18,6 +18,7 @@ from .menu import FluMenu
 from .menubar import FluMenuBar
 from .popupmenu import FluPopupMenu, FluPopupMenuWindow
 from .popupwindow import FluPopupWindow
+from .slider import FluSlider
 from .text import FluText
 from .thememanager import FluThemeManager
 from .togglebutton import FluToggleButton
