@@ -1,7 +1,7 @@
 def window(mode):
     if mode.lower() == "light":
         return {
-            "back_color": "#ffffff",
+            "back_color": "#f9f9f9",
             "text_color": "#000000",
             "closebutton": {
                 "back_color": "#cf392d",
@@ -11,7 +11,7 @@ def window(mode):
         }
     else:
         return {
-            "back_color": "#202020",
+            "back_color": "#282828",
             "text_color": "#ffffff",
             "closebutton": {
                 "back_color": "#c42b1c",

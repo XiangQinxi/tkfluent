@@ -84,19 +84,19 @@ class FluMenu(FluPopupMenu):
         else:
             id = widget._w
 
-        def command():
+        def command(event=None):
             print(menu._w)
-            menu.focus_set()
 
             menu.popup(widget.winfo_rootx()+widget.winfo_width()+100, widget.winfo_rooty())
             menu.window.deiconify()
             menu.window.attributes("-topmost")
 
         if hasattr(widget, "dconfigure"):
-            widget.dconfigure(text=label, command=command)
+            widget.dconfigure(text=label)
         else:
             if hasattr(widget, "configure"):
-                widget.configure(text=label, command=command)
+                widget.configure(text=label)
+        widget.bind("<Enter>", command, add="+")
         if hasattr(widget, "theme"):
             widget.theme(style=style)
 
