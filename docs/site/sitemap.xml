@@ -2,12 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://tkfluent.netlify.app/index.html</loc>
-         <lastmod>2024-08-14</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-06-21</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/index.html</loc>
-         <lastmod>2024-08-14</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/2024/08/15/%E7%89%88%E6%9C%AC002%E6%9B%B4%E6%96%B0.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/2025/06/21/%E7%89%88%E6%9C%AC008%E6%9B%B4%E6%96%B0.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/2025/06/21/%E7%89%88%E6%9C%AC007%E6%9B%B4%E6%96%B0.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/archive/2025.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/archive/2024.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/category/008.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/category/007.html</loc>
+         <lastmod>2025-06-21</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/category/002.html</loc>
+         <lastmod>2025-06-21</lastmod>
     </url>
 </urlset>

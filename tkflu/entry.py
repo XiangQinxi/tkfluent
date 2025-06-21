@@ -96,7 +96,7 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
 
         super().__init__(*args, width=width, height=height, cursor=cursor, **kwargs)
 
-        self.bind("<FocusIn>", self._event_focus_in, add="+")
+        self.bind("<Button-1>", lambda e: self.entry.focus_set())
 
         self.dconfigure(
             state=state,
@@ -187,6 +187,8 @@ class FluEntry(FluEntryCanvas, DDrawWidget):
             width=self.winfo_width() - _border_width * 2 - _radius,
             height=self.winfo_height() - _border_width * 2 - _radius
         )
+
+        self.tag_raise(self.element_text)
 
     def _event_focus_in(self, event=None):
         self.isfocus = True

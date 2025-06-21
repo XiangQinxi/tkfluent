@@ -3,6 +3,7 @@ copyright: Copyright &copy; 2024 XiangQinxi
 site_url: https://tkfluent.netlify.app/
 
 plugins:
+  - meta
   - search:
       lang: zh
   - offline
@@ -48,6 +49,12 @@ theme:
   language: zh
 
 markdown_extensions:
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - tables
   - abbr
   - attr_list
   - pymdownx.snippets
@@ -79,3 +86,7 @@ extra:
       link: tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1379773753
     - icon: fontawesome/brands/bilibili
       link: https://space.bilibili.com/471425191
+
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - javascripts/tablesort.js

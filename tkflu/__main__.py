@@ -2,6 +2,8 @@ from tkflu import *
 from tkinter import *
 from tkinter.font import *
 
+from tkflu.listbox import FluListBox
+
 red_primary_color()
 
 root = FluWindow()
@@ -83,6 +85,10 @@ text1.pack(fill="x", padx=5, pady=5)
 
 slider1 = FluSlider(frame, value=0)
 slider1.pack(fill="x", padx=5, pady=5)
+
+"""listbox1 = FluListBox(frame)
+listbox1.dconfigure()
+listbox1.pack(fill="x", padx=5, pady=5)"""
 
 frame.pack(fill="both", expand="yes", side="right", padx=5, pady=5)
 

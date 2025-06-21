@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.0.7"
+version = "0.0.8"
 description = "Fluent Design for Tkinter"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"

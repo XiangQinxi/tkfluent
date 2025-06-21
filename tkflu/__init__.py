@@ -9,10 +9,12 @@ Fluent设计的tkinter组件库（模板）
 
 from .badge import FluBadge
 from .button import FluButton
+from .bwm import BWm
 from .constants import *
 from .defs import *
 from .entry import FluEntry
 from .frame import FluFrame
+from .icons import *
 from .label import FluLabel
 from .menu import FluMenu
 from .menubar import FluMenuBar
