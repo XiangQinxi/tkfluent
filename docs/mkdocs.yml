@@ -73,6 +73,7 @@ nav:
   - 教程:
       - tutorial/change_theme_color.md
       - tutorial/change_theme_mode.md
+      - tutorial/tooltip.md
   - 博客:
       - blog/index.md
 
