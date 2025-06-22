@@ -646,6 +646,8 @@
       
         
       
+        
+      
     
     
     
@@ -755,6 +757,31 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="category/009.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    0.0.9
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -803,6 +830,63 @@
         <h1 id="_1">博客</h1>
 <p>记录</p>
       </header>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-06-22 00:00:00+00:00">2025年6月22日</time></li>
+        
+          <li class="md-meta__item">
+            分类于
+            
+              <a href="category/009.html" class="md-meta__link">0.0.9</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              需要 1 分钟阅读时间
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="009"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html">版本0.0.9更新！</a></h2>
+<h3 id="_1"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html#_1">新增</a></h3>
+<h4 id="tooltip"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html#tooltip">ToolTip 工具提示</a></h4>
+<p><img alt="FluToolTip截图" src="FluToolTip.png" /></p>
+<p>在这个版本中，我添加了一个新的小部件 -&gt; FluToolTip </p>
+<p>你可以这样使用
+<div class="highlight"><pre><span></span><code><span class="n">tooltip1</span> <span class="o">=</span> <span class="n">FluToolTip</span><span class="p">(</span><span class="n">master</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;One useful tooltip&quot;</span><span class="p">)</span>
+</code></pre></div>
+or
+或者
+<div class="highlight"><pre><span></span><code><span class="n">widget</span><span class="o">.</span><span class="n">tooltip</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;One useful tooltip&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="_2"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html#_2">示例</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">FluWindow</span><span class="p">()</span>
+
+<span class="n">thememanager</span> <span class="o">=</span> <span class="n">FluThemeManager</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">)</span>
+
+<span class="n">button</span> <span class="o">=</span> <span class="n">FluButton</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Click me&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clicked&quot;</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
+<span class="n">button</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+<span class="n">tooltip</span> <span class="o">=</span> <span class="n">FluToolTip</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;This is a tooltip&quot;</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</code></pre></div>
+    
+  </div>
+</article>
       
         <article class="md-post md-post--excerpt">
   <header class="md-post__header">

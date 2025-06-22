@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://tkfluent.netlify.app/blog/category/008.html">
+        <link rel="canonical" href="https://tkfluent.netlify.app/blog/category/009.html">
       
       
-        <link rel="prev" href="007.html">
+        <link rel="prev" href="008.html">
       
       
-        <link rel="next" href="009.html">
+        <link rel="next" href="../archive/2025.html">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS 订阅" href="../../feed_rss_created.xml">
@@ -25,7 +25,7 @@
     
     
       
-        <title>0.0.8 - tkfluent</title>
+        <title>0.0.9 - tkfluent</title>
       
     
     
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#008" class="md-skip">
+        <a href="#009" class="md-skip">
           跳转至
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              0.0.8
+              0.0.9
             
           </span>
         </div>
@@ -738,6 +738,31 @@
                 
   
   
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="008.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    0.0.8
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -754,33 +779,7 @@
         
       
       
-      <a href="008.html" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    0.0.8
-    
-  </span>
-  
-
-      </a>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    
-  
-  
-    <li class="md-nav__item">
-      <a href="009.html" class="md-nav__link">
+      <a href="009.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -791,6 +790,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -841,7 +841,7 @@
   <div class="md-content" data-md-component="content">
     <div class="md-content__inner">
       <header class="md-typeset">
-        <h1 id="008">0.0.8</h1>
+        <h1 id="009">0.0.9</h1>
       </header>
       
         <article class="md-post md-post--excerpt">
@@ -850,12 +850,12 @@
     <div class="md-post__meta md-meta">
       <ul class="md-meta__list">
         <li class="md-meta__item">
-          <time datetime="2025-06-21 00:00:00+00:00">2025年6月21日</time></li>
+          <time datetime="2025-06-22 00:00:00+00:00">2025年6月22日</time></li>
         
           <li class="md-meta__item">
             分类于
             
-              <a href="008.html" class="md-meta__link">0.0.8</a></li>
+              <a href="009.html" class="md-meta__link">0.0.9</a></li>
         
         
           
@@ -870,10 +870,33 @@
     </div>
   </header>
   <div class="md-post__content md-typeset">
-    <h2 id="008"><a class="toclink" href="../2025/06/21/%E7%89%88%E6%9C%AC008%E6%9B%B4%E6%96%B0.html">版本0.0.8更新！</a></h2>
-<h3 id="_1"><a class="toclink" href="../2025/06/21/%E7%89%88%E6%9C%AC008%E6%9B%B4%E6%96%B0.html#_1">修复</a></h3>
-<p>之前<code>FluEntry</code>及<code>FluText</code>有点"历史遗留问题"，焦点老是被其Canvas拦截，而不是嵌入的输入框组件，导致焦点难以聚焦到输入框上，点很多下才能聚焦。</p>
-<p>现在已经修复好了，强行拦截Canvas聚焦，直接改为聚焦输入框上。</p>
+    <h2 id="009"><a class="toclink" href="../2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html">版本0.0.9更新！</a></h2>
+<h3 id="_1"><a class="toclink" href="../2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html#_1">新增</a></h3>
+<h4 id="tooltip"><a class="toclink" href="../2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html#tooltip">ToolTip 工具提示</a></h4>
+<p><img alt="FluToolTip截图" src="../FluToolTip.png" /></p>
+<p>在这个版本中，我添加了一个新的小部件 -&gt; FluToolTip </p>
+<p>你可以这样使用
+<div class="highlight"><pre><span></span><code><span class="n">tooltip1</span> <span class="o">=</span> <span class="n">FluToolTip</span><span class="p">(</span><span class="n">master</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;One useful tooltip&quot;</span><span class="p">)</span>
+</code></pre></div>
+or
+或者
+<div class="highlight"><pre><span></span><code><span class="n">widget</span><span class="o">.</span><span class="n">tooltip</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;One useful tooltip&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="_2"><a class="toclink" href="../2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html#_2">示例</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">FluWindow</span><span class="p">()</span>
+
+<span class="n">thememanager</span> <span class="o">=</span> <span class="n">FluThemeManager</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">)</span>
+
+<span class="n">button</span> <span class="o">=</span> <span class="n">FluButton</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Click me&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clicked&quot;</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
+<span class="n">button</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+<span class="n">tooltip</span> <span class="o">=</span> <span class="n">FluToolTip</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;This is a tooltip&quot;</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</code></pre></div>
     
   </div>
 </article>
@@ -905,7 +928,7 @@
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         
           
-          <a href="007.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 0.0.7">
+          <a href="008.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 0.0.8">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -915,20 +938,20 @@
                 上一页
               </span>
               <div class="md-ellipsis">
-                0.0.7
+                0.0.8
               </div>
             </div>
           </a>
         
         
           
-          <a href="009.html" class="md-footer__link md-footer__link--next" aria-label="下一页: 0.0.9">
+          <a href="../archive/2025.html" class="md-footer__link md-footer__link--next" aria-label="下一页: 2025">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 下一页
               </span>
               <div class="md-ellipsis">
-                0.0.9
+                2025
               </div>
             </div>
             <div class="md-footer__button md-icon">
