@@ -1,8 +1,9 @@
 from .popupmenu import FluPopupMenu
 from tkdeft.object import DObject
+from .tooltip import FluToolTipBase
 
 
-class FluMenu(FluPopupMenu):
+class FluMenu(FluPopupMenu, FluToolTipBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

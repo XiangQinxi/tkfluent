@@ -24,7 +24,7 @@ from .slider import FluSlider
 from .text import FluText
 from .thememanager import FluThemeManager
 from .togglebutton import FluToggleButton
-from .tooltip import FluToolTip
+from .tooltip import FluToolTip, FluToolTip2, FluToolTipBase
 from .toplevel import FluToplevel
 from .window import FluWindow
 

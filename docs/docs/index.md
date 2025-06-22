@@ -33,6 +33,6 @@ title: TkFluent文档主页
 | FluSlider                 | 滑块组件        | :no_entry_sign:暂未制作完成  |
 | FluText(FluTextBox)       | 文本编辑框窗口     | :white_check_mark:较为完善 |
 | FluToggleButton           | 切换按钮组件      | :white_check_mark:完善   |
-| FluToolTip                | 工具提示组件      | :no_entry_sign:暂未制作完成  |
+| FluToolTip                | 工具提示组件      | :white_check_mark:较为完善 |
 | FluToplevel(FluSubWindow) | 子窗口组件       | :white_check_mark:较为完善 |
 | FluWindow(FluMainWindow)  | 主窗口组件       | :white_check_mark:较为完善 |

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.0.8"
+version = "0.0.9"
 description = "Fluent Design for Tkinter"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
@@ -8,9 +8,30 @@ documentation = "https://tkfluent.netlify.app"
 packages = [
     { include = "tkflu" }
 ]
+license = "MIT"
+keywords = [ "tkfluent", "tksvg", "tkinter", "fluent", "modern", "UI", "interface" ]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: MacOS X",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: X11 Applications",
+    "Natural Language :: Chinese (Simplified)",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Tcl",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 tksvg = "^0.7.4"
 tkextrafont = "^0.6.3"
 svgwrite = "^1.4.3"

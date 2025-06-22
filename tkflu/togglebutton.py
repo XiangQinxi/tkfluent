@@ -59,7 +59,10 @@ class FluToggleButtonCanvas(DCanvas):
     create_roundrect = create_round_rectangle_with_text
 
 
-class FluToggleButton(FluToggleButtonCanvas, DDrawWidget):
+from .tooltip import FluToolTipBase
+
+
+class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase):
     def __init__(self, *args,
                  text="",
                  width=120,

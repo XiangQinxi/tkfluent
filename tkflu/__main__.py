@@ -2,10 +2,23 @@ from tkflu import *
 from tkinter import *
 from tkinter.font import *
 
-from tkflu.listbox import FluListBox
-
 blue_primary_color()
 
+def togglestate():
+    if button1.dcget("state") == NORMAL:
+        button1.dconfigure(state=DISABLED)
+        button2.dconfigure(state=DISABLED)
+        entry1.dconfigure(state=DISABLED)
+        button1._draw()
+        button2._draw()
+        entry1._draw()
+    else:
+        button1.dconfigure(state=NORMAL)
+        button2.dconfigure(state=NORMAL)
+        entry1.dconfigure(state=NORMAL)
+        button1._draw()
+        button2._draw()
+        entry1._draw()
 root = FluWindow()
 #root.wincustom(way=0)
 root.geometry("360x600")
@@ -54,6 +67,14 @@ badge1.pack(padx=5, pady=5)
 badge2 = FluBadge(frame, text="FluBadge (Accent)", width=120, style="accent")
 badge2.pack(padx=5, pady=5)
 
+label1 = FluLabel(frame, text="FluLabel(Hover Me)")
+label1.tooltip(text="FluToolTip")
+label1.pack(padx=5, pady=5)
+
+label2 = FluLabel(frame, text="FluLabel2(Hover Me)")
+label2.tooltip(text="FluToolTip2", way=1)
+label2.pack(padx=5, pady=5)
+
 button1 = FluButton(
     frame, text="FluButton", command=lambda: print("FluButton -> Clicked")
 )
@@ -73,6 +94,11 @@ togglebutton2 = FluToggleButton(
     frame, text="Toggle Theme", command=lambda: toggle_theme(togglebutton2, thememanager)
 )
 togglebutton2.pack(fill="x", padx=5, pady=5)
+
+togglebutton3 = FluToggleButton(
+    frame, text="Toggle State", command=lambda: togglestate()
+)
+togglebutton3.pack(fill="x", padx=5, pady=5)
 
 entry1 = FluEntry(frame)
 entry1.pack(fill="x", padx=5, pady=5)

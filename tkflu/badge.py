@@ -51,7 +51,10 @@ class FluBadgeCanvas(DCanvas):
     create_roundrect = create_round_rectangle
 
 
-class FluBadge(FluBadgeCanvas, DDrawWidget):
+from .tooltip import FluToolTipBase
+
+
+class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
 
     def __init__(self, *args,
                  text="",

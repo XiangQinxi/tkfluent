@@ -1,7 +1,8 @@
 from tkdeft.windows.drawwidget import DDrawWidget
+from .tooltip import FluToolTipBase
 
 
-class FluLabel(DDrawWidget):
+class FluLabel(DDrawWidget, FluToolTipBase):
     def __init__(self, *args,
                  text="",
                  width=120,

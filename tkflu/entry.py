@@ -71,7 +71,10 @@ class FluEntryCanvas(DCanvas):
     create_roundrect = create_round_rectangle
 
 
-class FluEntry(FluEntryCanvas, DDrawWidget):
+from .tooltip import FluToolTipBase
+
+
+class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
     def __init__(self, *args,
                  width=120,
                  height=32,

@@ -126,6 +126,8 @@ class BWm(object):
     def _theme(self, mode):
         from .designs.window import window
         n = window(mode)
+        """if self.attributes.back_color is not None:
+            n["back_color"] = self.attributes.back_color"""
         self.dconfigure(
             back_color=n["back_color"],
             text_color=n["text_color"],

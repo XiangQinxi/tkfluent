@@ -62,9 +62,9 @@ class FluButtonCanvas(DCanvas):
 
 
 from .constants import MODE, STATE, BUTTONSTYLE
+from .tooltip import FluToolTipBase
 
-
-class FluButton(FluButtonCanvas, DDrawWidget):
+class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
     def __init__(self, *args,
                  text="",
                  width=120,
@@ -98,7 +98,7 @@ class FluButton(FluButtonCanvas, DDrawWidget):
         from .defs import set_default_font
         set_default_font(font, self.attributes)
 
-    def _init(self, mode: MODE, style: STATE):
+    def _init(self, mode: MODE, style: BUTTONSTYLE):
 
         from easydict import EasyDict
 

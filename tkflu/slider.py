@@ -29,14 +29,14 @@ class FluSliderDraw(DSvgDraw):
         border.add_stop_color(0.954545, outline2, outline2_opacity)
         drawing[1].defs.add(border)
         stroke = f"url(#{border.get_id()})"
-        print("x1:", x1, "\n", "y1:", y1, "\n", "x2:", x2, "\n", "y2:", y2, "\n", "r1:", r1, "\n", sep="")
+        #print("x1:", x1, "\n", "y1:", y1, "\n", "x2:", x2, "\n", "y2:", y2, "\n", "r1:", r1, "\n", sep="")
 
         x = x1 + r1 - 4
         xx = x2 - r1 + 4
 
-        print("track_x1:", x, "\n", "track_x2:", xx, sep="")
+        #print("track_x1:", x, "\n", "track_x2:", xx, sep="")
 
-        print("")
+        #print("")
 
         drawing[1].add(
             drawing[1].rect(
@@ -188,9 +188,9 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
 
         super()._draw(event)
 
-        print("width:", self.winfo_width(), "\n", "height:", self.winfo_height(), sep="")
+        #print("width:", self.winfo_width(), "\n", "height:", self.winfo_height(), sep="")
 
-        print("")
+        #print("")
 
         self.delete("all")
 
@@ -263,8 +263,8 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
                 self.dconfigure(
                     value=value
                 )
-                print("value:", value, sep="")
-                print("")
+                #print("value:", value, sep="")
+                #print("")
 
     def _event_button1_motion(self, event):
         self.pos(event)
