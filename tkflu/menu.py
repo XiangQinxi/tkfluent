@@ -86,7 +86,7 @@ class FluMenu(FluPopupMenu, FluToolTipBase):
             id = widget._w
 
         def command(event=None):
-            print(menu._w)
+            #print(menu._w)
 
             menu.popup(widget.winfo_rootx()+widget.winfo_width()+100, widget.winfo_rooty())
             menu.window.deiconify()

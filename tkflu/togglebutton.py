@@ -1,3 +1,4 @@
+from easydict import EasyDict
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.drawwidget import DDrawWidget
@@ -60,9 +61,10 @@ class FluToggleButtonCanvas(DCanvas):
 
 
 from .tooltip import FluToolTipBase
+from .designs.gradient import FluGradient
 
 
-class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase):
+class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
     def __init__(self, *args,
                  text="",
                  width=120,
@@ -117,7 +119,7 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase):
 
         self.theme(mode=mode)
 
-    def _draw(self, event=None):
+    def _draw(self, event=None, tempcolor: dict = None):
         super()._draw(event)
 
         width = self.winfo_width()
@@ -128,39 +130,49 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase):
         state = self.dcget("state")
 
         _dict = None
-
-        if not self.attributes.checked:
-            if state == "normal":
-                if self.enter:
-                    if self.button1:
-                        _dict = self.attributes.uncheck.pressed
+        if not tempcolor:
+            if not self.attributes.checked:
+                if state == "normal":
+                    if self.enter:
+                        if self.button1:
+                            _dict = self.attributes.uncheck.pressed
+                        else:
+                            _dict = self.attributes.uncheck.hover
                     else:
-                        _dict = self.attributes.uncheck.hover
+                        _dict = self.attributes.uncheck.rest
                 else:
-                    _dict = self.attributes.uncheck.rest
+                    _dict = self.attributes.uncheck.disabled
             else:
-                _dict = self.attributes.uncheck.disabled
+                if state == "normal":
+                    if self.enter:
+                        if self.button1:
+                            _dict = self.attributes.check.pressed
+                        else:
+                            _dict = self.attributes.check.hover
+                    else:
+                        _dict = self.attributes.check.rest
+                else:
+                    _dict = self.attributes.check.disabled
+
+            _back_color = _dict.back_color
+            _back_opacity = _dict.back_opacity
+            _border_color = _dict.border_color
+            _border_color_opacity = _dict.border_color_opacity
+            _border_color2 = _dict.border_color2
+            _border_color2_opacity = _dict.border_color2_opacity
+            _border_width = _dict.border_width
+            _radius = _dict.radius
+            _text_color = _dict.text_color
         else:
-            if state == "normal":
-                if self.enter:
-                    if self.button1:
-                        _dict = self.attributes.check.pressed
-                    else:
-                        _dict = self.attributes.check.hover
-                else:
-                    _dict = self.attributes.check.rest
-            else:
-                _dict = self.attributes.check.disabled
-
-        _back_color = _dict.back_color
-        _back_opacity = _dict.back_opacity
-        _border_color = _dict.border_color
-        _border_color_opacity = _dict.border_color_opacity
-        _border_color2 = _dict.border_color2
-        _border_color2_opacity = _dict.border_color2_opacity
-        _border_width = _dict.border_width
-        _radius = _dict.radius
-        _text_color = _dict.text_color
+            _back_color = tempcolor.back_color
+            _back_opacity = tempcolor.back_opacity
+            _border_color = tempcolor.border_color
+            _border_color_opacity = tempcolor.border_color_opacity
+            _border_color2 = tempcolor.border_color2
+            _border_color2_opacity = tempcolor.border_color2_opacity
+            _border_width = tempcolor.border_width
+            _radius = tempcolor.radius
+            _text_color = tempcolor.text_color
 
         self.element_border = self.create_round_rectangle_with_text(
             0, 0, width, height, _radius, temppath=self.temppath,
@@ -379,9 +391,90 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase):
     def invoke(self):
         self.attributes.command()
 
-    def toggle(self):
+    def toggle(self, animate_steps: int = 10):
+        """
+
+        "back_color": "#ffffff",
+        "back_opacity": "0.7",
+        "border_color": "#000000",
+        "border_color_opacity": "0.2",
+        "border_color2": "#000000",
+        "border_color2_opacity": "0.3",
+        "border_width": 1,
+        "radius": 6,
+        "text_color": "#000000",
+        :return:
+        """
+        steps = animate_steps
+        check = self.attributes.check
+        uncheck = self.attributes.uncheck
+        if uncheck.pressed.border_color2 is None:
+            uncheck.pressed.border_color2 = uncheck.pressed.border_color
+        if check.pressed.border_color2  is None:
+            check.pressed.border_color2 = check.pressed.border_color
+        if uncheck.pressed.border_color2_opacity is None:
+            uncheck.pressed.border_color2_opacity = uncheck.pressed.border_color_opacity
+        if check.pressed.border_color2_opacity is None:
+            check.pressed.border_color2_opacity = check.pressed.border_color_opacity
         if self.attributes.checked:
             self.attributes.checked = False
+            back_colors = self.generate_hex2hex(
+                check.pressed.back_color, uncheck.rest.back_color, steps
+            )
+            border_colors = self.generate_hex2hex(
+                check.pressed.border_color, uncheck.rest.border_color, steps
+            )
+            border_colors2 = self.generate_hex2hex(
+                check.pressed.border_color2, uncheck.rest.border_color2, steps
+            )
+            text_colors = self.generate_hex2hex(
+                check.pressed.text_color, uncheck.rest.text_color, steps
+            )
+            import numpy as np
+            back_opacitys = np.linspace(
+                float(check.pressed.back_opacity), float(uncheck.rest.back_opacity), steps).tolist()
+            border_color_opacitys = np.linspace(
+                float(check.pressed.border_color_opacity), float(uncheck.rest.border_color_opacity), steps).tolist()
+            border_color2_opacitys = np.linspace(
+                float(check.pressed.border_color2_opacity), float(uncheck.rest.border_color2_opacity), steps).tolist()
         else:
             self.attributes.checked = True
-        self._draw(None)
+            back_colors = self.generate_hex2hex(
+                uncheck.pressed.back_color, check.rest.back_color, steps
+            )
+            border_colors = self.generate_hex2hex(
+                uncheck.pressed.back_color, check.rest.back_color, steps
+            )
+            border_colors2 = self.generate_hex2hex(
+                uncheck.pressed.border_color2, check.rest.border_color2, steps
+            )
+            text_colors = self.generate_hex2hex(
+                uncheck.pressed.text_color, check.rest.text_color, steps
+            )
+            import numpy as np
+            back_opacitys = np.linspace(float(uncheck.pressed.back_opacity), float(check.rest.back_opacity),
+                                        steps).tolist()
+            border_color_opacitys = np.linspace(float(uncheck.pressed.border_color_opacity), float(check.rest.border_color_opacity),
+                                        steps).tolist()
+            border_color2_opacitys = np.linspace(float(uncheck.pressed.border_color2_opacity),
+                                                float(check.rest.border_color2_opacity),
+                                                steps).tolist()
+        for i in range(steps):
+            def update(ii=i):
+                from easydict import EasyDict
+                tempcolor = EasyDict(
+                    {
+                        "back_color": back_colors[ii],
+                        "back_opacity": back_opacitys[ii],
+                        "border_color": border_colors[ii],
+                        "border_color_opacity": str(border_color_opacitys[ii]),
+                        "border_color2": border_colors2[ii],
+                        "border_color2_opacity": str(border_color2_opacitys[ii]),
+                        "border_width": 1,
+                        "text_color": text_colors[ii],
+                        "radius": 6,
+                    }
+                )
+                self._draw(None, tempcolor)
+            self.after(i*10, update)
+        self.after(steps*10+10, lambda: self._draw(None, None))

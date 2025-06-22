@@ -66,7 +66,7 @@ class FluToolTip(FluPopupWindow):
             background=n["back_color"]
         )
         self.wm_attributes("-transparentcolor", n["back_color"])
-        print(n["back_color"])
+        #print(n["back_color"])
         if hasattr(self, "_frame"):
             self._frame.dconfigure(
                 back_color=n["frame_color"],
@@ -128,7 +128,7 @@ class FluToolTip2(FluPopupWindow):
             background=n["back_color"]
         )
         self.wm_attributes("-transparentcolor", n["back_color"])
-        print(n["back_color"])
+        #print(n["back_color"])
         if hasattr(self, "_frame"):
             self._frame.dconfigure(
                 back_color=n["frame_color"],

@@ -188,6 +188,8 @@ class FluFrame(Frame, DObject):
             border_width=n["border_width"],
             radius=n["radius"],
         )
+        self._draw()
+        self.canvas.update()
 
     def _light(self):
         self._theme("light", "standard")

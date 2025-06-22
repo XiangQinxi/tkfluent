@@ -1,8 +1,9 @@
 from tkinter import Frame, Menu
 from tkdeft.object import DObject
+from .designs.gradient import FluGradient
 
 
-class FluMenuBar(Frame, DObject):
+class FluMenuBar(Frame, DObject, FluGradient):
     def __init__(self, *args, mode="light", height=40, **kwargs):
         self._init(mode)
 
@@ -25,6 +26,9 @@ class FluMenuBar(Frame, DObject):
         )
 
         self.theme(mode=mode)
+
+    def show(self):
+        self.pack(fill="x")
 
     def add_command(self, custom_widget=None, width=40, **kwargs):
         if custom_widget:
@@ -103,6 +107,16 @@ class FluMenuBar(Frame, DObject):
     def action(self, id):
         return self.dcget("actions")[id]
 
+    def update_children(self):
+        actions = self.dcget("actions")
+        for key in actions:
+            widget = actions[key]
+            if hasattr(widget, "theme"):
+                widget.theme(mode=self.mode)
+                if hasattr(widget, "_draw"):
+                    widget._draw()
+                widget.update()
+
     def theme(self, mode="light"):
         self.theme_myself(mode=mode)
 
@@ -116,22 +130,30 @@ class FluMenuBar(Frame, DObject):
                     widget._draw()
                 widget.update()
 
-    def theme_myself(self, mode="light"):
+    def theme_myself(self, mode="light", animate_steps: int = 10):
+        from .designs.menubar import menubar
+        m = menubar(mode)
         self.mode = mode
         if mode.lower() == "dark":
-            self._dark()
+            if hasattr(self, "tk"):
+                back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=10)
+                for i in range(10):
+                    def update(ii=i):  # 使用默认参数立即捕获i的值
+                        self.dconfigure(back_color=back_colors[ii])
+                        self._draw()
+
+                    self.after(i * 10, update)  # 直接传递函数，不需要lambda
+                self.after(animate_steps*10+50, lambda: self.update_children())
         else:
-            self._light()
+            if hasattr(self, "tk"):
+                back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=10)
+                for i in range(10):
+                    def update(ii=i):  # 使用默认参数立即捕获i的值
+                        self.dconfigure(back_color=back_colors[ii])
+                        self._draw()
 
-    def _light(self):
-        self.dconfigure(
-            back_color="#f3f3f3"
-        )
+                    self.after(i * 20, update)  # 直接传递函数，不需要lambda
 
-    def _dark(self):
-        self.dconfigure(
-            back_color="#202020"
-        )
 
     def _draw(self, event=None):
         self.config(background=self.attributes.back_color)

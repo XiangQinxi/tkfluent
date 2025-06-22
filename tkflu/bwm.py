@@ -1,4 +1,7 @@
-class BWm(object):
+from .designs.gradient import FluGradient
+
+
+class BWm(FluGradient):
     def _draw(self, event=None):
 
         """
@@ -128,6 +131,16 @@ class BWm(object):
         n = window(mode)
         """if self.attributes.back_color is not None:
             n["back_color"] = self.attributes.back_color"""
+
+        if self.dcget("back_color"):
+            back_colors = self.generate_hex2hex(self.dcget("back_color"), n["back_color"], steps=10)
+            for i in range(10):
+                def update(ii=i):  # 使用默认参数立即捕获i的值
+                    self.dconfigure(back_color=back_colors[ii])
+                    self._draw()
+
+                self.after(i * 10, update)  # 直接传递函数，不需要lambda
+
         self.dconfigure(
             back_color=n["back_color"],
             text_color=n["text_color"],
