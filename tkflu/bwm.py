@@ -126,20 +126,25 @@ class BWm(FluGradient):
         else:
             self._light()
 
-    def _theme(self, mode):
+    def _theme(self, mode, animation_steps: int = None, animation_step_time: int = None):
         from .designs.window import window
         n = window(mode)
         """if self.attributes.back_color is not None:
             n["back_color"] = self.attributes.back_color"""
-
+        if animation_steps is None:
+            from .designs.animation import get_animation_steps
+            animation_steps = get_animation_steps()
+        if animation_step_time is None:
+            from .designs.animation import get_animation_step_time
+            animation_step_time = get_animation_step_time()
         if self.dcget("back_color"):
-            back_colors = self.generate_hex2hex(self.dcget("back_color"), n["back_color"], steps=10)
-            for i in range(10):
+            back_colors = self.generate_hex2hex(self.dcget("back_color"), n["back_color"], steps=animation_steps)
+            for i in range(animation_steps):
                 def update(ii=i):  # 使用默认参数立即捕获i的值
                     self.dconfigure(back_color=back_colors[ii])
                     self._draw()
 
-                self.after(i * 10, update)  # 直接传递函数，不需要lambda
+                self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
 
         self.dconfigure(
             back_color=n["back_color"],

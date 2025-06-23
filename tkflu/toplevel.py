@@ -18,12 +18,28 @@ class FluToplevel(Toplevel, BWm, DObject):
         :param kwargs: 参照tkinter.TK.__init__
         """
 
+        Toplevel.__init__(self, *args, **kwargs)
+
         self._init(mode)
 
         self.custom = False
 
-        Toplevel.__init__(self, *args, **kwargs)
+        # 设置窗口图标
+        from .icons import light
+        from tkinter import PhotoImage
+        self.iconphoto(False, PhotoImage(file=light()))
 
         self.bind("<Configure>", self._event_configure, add="+")
         self.bind("<Escape>", self._event_key_esc, add="+")
         self.protocol("WM_DELETE_WINDOW", self._event_delete_window)
+
+    def theme(self, mode: str):
+        super().theme(mode)
+        self._mode = mode
+        for widget in self.winfo_children():
+            if hasattr(widget, "theme"):
+                widget.theme(mode=mode)
+                if hasattr(widget, "_draw"):
+                    widget._draw()
+                if hasattr(widget, "update_children"):
+                    widget.update_children()

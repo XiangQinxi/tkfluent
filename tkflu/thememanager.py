@@ -40,7 +40,7 @@ class FluThemeManager(object):
                 if hasattr(widget, "update_children"):
                     widget.update_children()
                 widget.update()
-        print(len(self._window.winfo_children()))
+        #print(len(self._window.winfo_children()))
         self._window.after(delay+len(self._window.winfo_children()), __)
 
     def toggle(self, delay: int or None = None):

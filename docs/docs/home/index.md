@@ -1,13 +1,14 @@
 ---
-title: TkFluent文档主页
+title: TkFluent 文档主页
 
 ---
 
-# 欢迎来到tkfluent的文档网站
+# tkfluent ( `tkflu` )
 
-`tkfluent`是现代化`tkinter`第三方界面库。
+`tkfluent`是现代化`tkinter`第三方界面库，设计采用`winui3`的`sunvalley`(或`fluent`)设计。
 
-!!! info 前身
+!!! info "前身"
+
     `tkfluent`原本是`tkdeft`的默认模板界面库，后面又单独移出
 
     [点击查阅*tkdeft*文档](https://tkdeft.netlify.app/){ .md-button .md-button--primary }

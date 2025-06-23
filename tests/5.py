@@ -1,14 +1,22 @@
-from tkflu import FluWindow, FluButton, FluToggleButton, FluThemeManager, toggle_theme, ACCENT
+from tkflu import *
 
 root = FluWindow()
+root.title("tkfluent designer")
+root.geometry("500x300")
 
 theme_manager = FluThemeManager(root)
-toggle_button = FluToggleButton(
-    text="Toggle Theme", command=lambda: toggle_theme(toggle_button, theme_manager)
-)
-toggle_button.pack(padx=3, pady=3, )
 
-button = FluButton(root, text="Accent Button", style=ACCENT)
-button.pack(padx=3, pady=3, )
+menubar = FluMenuBar(root)
+
+menu1 = FluMenu()
+menu1.geometry("90x90")
+menu1.add_command(label="Light", command=lambda: theme_manager.mode("light"))
+menu1.add_command(label="Dark", command=lambda: theme_manager.mode("dark"))
+
+menubar.add_command(label="File", style="standard", width=40, command=lambda: print("File -> Clicked"))
+menubar.add_cascade(label="Theme Mode", style="standard", width=100, menu=menu1)
+
+menubar.show()
+
 
 root.mainloop()

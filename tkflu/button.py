@@ -201,12 +201,17 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             else:
                 self._light()
 
-    def _theme(self, mode, style, animate_steps: int = 10):
+    def _theme(self, mode, style, animation_steps: int = None, animation_step_time: int = None):
+        if animation_steps is None:
+            from .designs.animation import get_animation_steps
+            animation_steps = get_animation_steps()
+        if animation_step_time is None:
+            from .designs.animation import get_animation_step_time
+            animation_step_time = get_animation_step_time()
         r = button(mode, style, "rest")
         h = button(mode, style, "hover")
         p = button(mode, style, "pressed")
         d = button(mode, style, "disabled")
-        steps = animate_steps
         if self.dcget("state") == "normal":
             if self.enter:
                 if self.button1:
@@ -217,35 +222,37 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
                 now = r
         else:
             now = d
+        #print(animation_step_time)
+        #print(type(animation_step_time))
         if hasattr(self.attributes.rest, "back_color"):
             back_colors = self.generate_hex2hex(
-                self.attributes.rest.back_color, now["back_color"], steps
+                self.attributes.rest.back_color, now["back_color"], animation_steps
             )
             border_colors = self.generate_hex2hex(
-                self.attributes.rest.border_color, now["border_color"], steps
+                self.attributes.rest.border_color, now["border_color"], animation_steps
             )
             if self.attributes.rest.border_color2 is None:
                 self.attributes.rest.border_color2 = self.attributes.rest.border_color
             if now["border_color2"] is None:
                 now["border_color2"] = now["border_color"]
             border_colors2 = self.generate_hex2hex(
-                self.attributes.rest.border_color2, now["border_color2"], steps
+                self.attributes.rest.border_color2, now["border_color2"], animation_steps
             )
             text_colors = self.generate_hex2hex(
-                self.attributes.rest.text_color, now["text_color"], steps
+                self.attributes.rest.text_color, now["text_color"], animation_steps
             )
             import numpy as np
             back_opacitys = np.linspace(
-                float(self.attributes.rest.back_opacity), float(now["back_opacity"]), steps).tolist()
+                float(self.attributes.rest.back_opacity), float(now["back_opacity"]), animation_steps).tolist()
             border_color_opacitys = np.linspace(
-                float(self.attributes.rest.border_color_opacity), float(now["border_color_opacity"]), steps).tolist()
+                float(self.attributes.rest.border_color_opacity), float(now["border_color_opacity"]), animation_steps).tolist()
             if self.attributes.rest.border_color2_opacity is None:
                 self.attributes.rest.border_color2_opacity = self.attributes.rest.border_color_opacity
             if now["border_color2_opacity"] is None:
                 now["border_color2_opacity"] = now["border_color_opacity"]
             border_color2_opacitys = np.linspace(
-                float(self.attributes.rest.border_color2_opacity), float(now["border_color2_opacity"]), steps).tolist()
-            for i in range(steps):
+                float(self.attributes.rest.border_color2_opacity), float(now["border_color2_opacity"]), animation_steps).tolist()
+            for i in range(animation_steps):
                 def update(ii=i):
                     from easydict import EasyDict
                     tempcolor = EasyDict(
@@ -263,8 +270,8 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
                     )
                     self._draw(None, tempcolor)
 
-                self.after(i * 10, update)
-            self.after(steps * 10 + 10, lambda: self._draw(None, None))
+                self.after(i * animation_step_time, update)
+            #self.after(animation_steps * animation_step_time + 10, lambda: self._draw(None, None))
 
         self.dconfigure(
             rest={

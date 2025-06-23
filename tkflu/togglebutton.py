@@ -391,21 +391,14 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
     def invoke(self):
         self.attributes.command()
 
-    def toggle(self, animate_steps: int = 10):
-        """
-
-        "back_color": "#ffffff",
-        "back_opacity": "0.7",
-        "border_color": "#000000",
-        "border_color_opacity": "0.2",
-        "border_color2": "#000000",
-        "border_color2_opacity": "0.3",
-        "border_width": 1,
-        "radius": 6,
-        "text_color": "#000000",
-        :return:
-        """
-        steps = animate_steps
+    def toggle(self, animation_steps: int = None, animation_step_time: int = None):
+        if animation_steps is None:
+            from .designs.animation import get_animation_steps
+            animation_steps = get_animation_steps()
+        if animation_step_time is None:
+            from .designs.animation import get_animation_step_time
+            animation_step_time = get_animation_step_time()
+        steps = animation_steps
         check = self.attributes.check
         uncheck = self.attributes.uncheck
         if uncheck.pressed.border_color2 is None:
@@ -476,5 +469,5 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                     }
                 )
                 self._draw(None, tempcolor)
-            self.after(i*10, update)
-        self.after(steps*10+10, lambda: self._draw(None, None))
+            self.after(i*animation_step_time, update)
+        self.after(steps*animation_step_time+10, lambda: self._draw(None, None))

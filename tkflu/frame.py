@@ -180,16 +180,26 @@ class FluFrame(Frame, DObject, FluGradient):
             else:
                 self._light()
 
-    def _theme(self, mode, style, animate_steps: int = 10):
+    def _theme(self, mode, style, animation_steps: int = None, animation_step_time: int = None):
         n = frame(mode, style)
-        if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
-            back_colors = self.generate_hex2hex(self.attributes.back_color, n["back_color"], steps=10)
-            for i in range(10):
-                def update(ii=i):  # 使用默认参数立即捕获i的值
-                    self._draw(tempcolor=back_colors[ii])
 
-                self.after(i * 10, update)  # 直接传递函数，不需要lambda
-        self.after(animate_steps * 10 + 10, lambda: self._draw())
+        if animation_steps is None:
+            from .designs.animation import get_animation_steps
+            animation_steps = get_animation_steps()
+        if animation_step_time is None:
+            from .designs.animation import get_animation_step_time
+            animation_step_time = get_animation_step_time()
+
+        if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
+            back_colors = self.generate_hex2hex(self.attributes.back_color, n["back_color"], steps=animation_steps)
+            for i in range(animation_steps):
+                def update(ii=i):  # 使用默认参数立即捕获i的值
+                    print(back_colors[ii])
+                    self._draw(tempcolor=back_colors[ii])
+                    self.update()
+
+                self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+        self.after(animation_steps * animation_step_time + 10, lambda: self._draw())
         self.dconfigure(
             back_color=n["back_color"],
             border_color=n["border_color"],
@@ -310,9 +320,9 @@ class FluFrame(Frame, DObject, FluGradient):
             height=self.canvas.winfo_height() - _border_width * 2 - _radius
         )
 
-        self.update_idletasks()
+        self.update()
 
-        self.after(100, lambda: self.update_idletasks())
+        self.after(100, lambda: self.update())
         self.after(100, lambda: self.config(background=_back_color))
 
     def _event_configure(self, event=None):

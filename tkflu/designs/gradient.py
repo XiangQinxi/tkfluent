@@ -34,6 +34,8 @@ class FluGradient:
         rgb_end = self.hex_to_rgb(end_hex)
         import numpy as np
         gradient = []
+        if steps is None:
+            return None
         for t in np.linspace(0, 1, steps):
             # 计算每个通道的中间值
             r = int(rgb_start[0] + (rgb_end[0] - rgb_start[0]) * t)

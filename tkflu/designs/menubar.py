@@ -1,6 +1,3 @@
-from .primary_color import get_primary_color
-
-
 def menubar(mode):
     mode = mode.lower()
     if mode == "light":

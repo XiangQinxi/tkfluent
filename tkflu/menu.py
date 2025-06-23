@@ -88,7 +88,7 @@ class FluMenu(FluPopupMenu, FluToolTipBase):
         def command(event=None):
             #print(menu._w)
 
-            menu.popup(widget.winfo_rootx()+widget.winfo_width()+100, widget.winfo_rooty())
+            menu.popup(widget.winfo_rootx()+widget.winfo_width()+self.winfo_width(), widget.winfo_rooty())
             menu.window.deiconify()
             menu.window.attributes("-topmost")
 
