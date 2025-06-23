@@ -1,5 +1,6 @@
 from .popupwindow import FluPopupWindow
 from tkinter import Event, Widget
+import sys
 
 
 class FluToolTip(FluPopupWindow):
@@ -44,10 +45,12 @@ class FluToolTip(FluPopupWindow):
 
                 # 渐显动画
                 def fade_in(step=0):
-                    alpha = step / 10  # 分10步从0到1
+                    FRAMES_COUNT = 60
+                    alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
                     self.wm_attributes("-alpha", alpha)
-                    if step < 10:
-                        self.after(int(round(self._show_time/10)), lambda: fade_in(step + 1))  # 每50ms增加一次透明度
+                    if step < FRAMES_COUNT:
+                        # 每执行一次，增加一次透明度，间隔由帧数决定
+                        self.after(int(round(self._show_time/FRAMES_COUNT)), lambda: fade_in(step + 1))
 
                 fade_in()  # 启动动画
 
@@ -127,7 +130,8 @@ class FluToolTip2(FluPopupWindow):
         self.configure(
             background=n["back_color"]
         )
-        self.wm_attributes("-transparentcolor", n["back_color"])
+        if sys.platform("win32"): # Only Windows supports the transparentcolor attribute
+            self.wm_attributes("-transparentcolor", n["back_color"])
         #print(n["back_color"])
         if hasattr(self, "_frame"):
             self._frame.dconfigure(

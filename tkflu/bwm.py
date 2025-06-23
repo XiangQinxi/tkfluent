@@ -186,6 +186,8 @@ class BWm(FluGradient):
         if platform == "win32":
             if way == 0:
                 from .customwindow import CustomWindow
+                import warnings
+                warnings.warn("This is EXPERIMENTAL! Please consider way=1 in production.")
                 self.customwindow = CustomWindow(self, wait=wait)
                 self.customwindow.bind_drag(self.titlebar)
                 self.customwindow.bind_drag(self.titlelabel)
