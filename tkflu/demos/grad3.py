@@ -6,17 +6,11 @@ root = FluWindow()
 theme_manager = FluThemeManager(root)
 
 menubar = FluMenuBar(root)
-menubar.add_command(label="Item1", width=80, command=lambda: print("FluMenu1 -> Clicked"))
+for i in range(5):
+    menubar.add_command(label=f"Item{i+1}")
 menubar.show()
 
-button = FluToggleButton(
-    text="Toggle Theme", command=lambda: toggle_theme(button, theme_manager)
-)
-button.pack(padx=3, pady=3, )
-
-button2 = FluToggleButton(
-    text="Toggle Button"
-)
-button2.pack(padx=3, pady=3, )
+btn = FluButton(root, text="Button", mode="light", style="standard", command=lambda: theme_manager.toggle())
+btn.pack(padx=20, pady=20, fill="both", expand="yes")
 
 root.mainloop()

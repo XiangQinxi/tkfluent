@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fluent Design for Tkinter"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
@@ -8,7 +8,7 @@ documentation = "https://tkfluent.netlify.app"
 packages = [
     { include = "tkflu" }
 ]
-license = "MIT"
+license = "GPL-3.0"
 keywords = [ "tkfluent", "tksvg", "tkinter", "fluent", "modern", "UI", "interface" ]
 classifiers = [
     "Development Status :: 4 - Beta",

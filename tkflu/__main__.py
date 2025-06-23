@@ -103,9 +103,6 @@ togglebutton3.pack(fill="x", padx=5, pady=5)
 entry1 = FluEntry(frame)
 entry1.pack(fill="x", padx=5, pady=5)
 
-entry2 = FluEntry(frame, height=50)
-entry2.pack(fill="x", padx=5, pady=5)
-
 text1 = FluText(frame)
 text1.pack(fill="x", padx=5, pady=5)
 
@@ -116,6 +113,6 @@ slider1.pack(fill="x", padx=5, pady=5)
 listbox1.dconfigure()
 listbox1.pack(fill="x", padx=5, pady=5)"""
 
-frame.pack(fill="both", expand="yes", side="right", padx=5, pady=5)
-
+frame.pack(fill="both", expand="yes", side="right", padx=15, pady=15)
+frame.update_idletasks()
 root.mainloop()

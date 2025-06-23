@@ -650,6 +650,8 @@
       
         
       
+        
+      
     
     
     
@@ -809,6 +811,31 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="category/011.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    0.1.1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -857,6 +884,52 @@
         <h1 id="_1">博客</h1>
 <p>记录</p>
       </header>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-06-23 00:00:00+00:00">2025年6月23日</time></li>
+        
+          <li class="md-meta__item">
+            分类于
+            
+              <a href="category/011.html" class="md-meta__link">0.1.1</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              需要 1 分钟阅读时间
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="011"><a class="toclink" href="2025/06/23/%E7%89%88%E6%9C%AC011%E6%9B%B4%E6%96%B0.html">版本0.1.1更新！</a></h2>
+<h3 id="_1"><a class="toclink" href="2025/06/23/%E7%89%88%E6%9C%AC011%E6%9B%B4%E6%96%B0.html#_1">新增</a></h3>
+<h4 id="_2"><a class="toclink" href="2025/06/23/%E7%89%88%E6%9C%AC011%E6%9B%B4%E6%96%B0.html#_2"><em>部分组件</em>实现切换主题时渐变</a></h4>
+<p><img alt="渐变效果" src="FluButton%E5%AE%9E%E7%8E%B0%E6%B8%90%E5%8F%98.gif" />
+<img alt="渐变效果" src="FluFrame%E5%AE%9E%E7%8E%B0%E6%B8%90%E5%8F%98.gif" /></p>
+<p>增进多实现了<code>FluButton</code>、<code>FluFrame(不太完善)</code>的渐变效果</p>
+<blockquote>
+<p>不久将会实现<code>FluFrame</code>边框渐变，现在只是实现了容器组件的渐变效果，而边框还未制作，导致看的不是太流畅</p>
+</blockquote>
+<h3 id="_3"><a class="toclink" href="2025/06/23/%E7%89%88%E6%9C%AC011%E6%9B%B4%E6%96%B0.html#_3">优化</a></h3>
+<p><img alt="优化" src="FluMenu%E5%AE%9E%E7%8E%B0%E6%B8%90%E5%8F%98.gif" /></p>
+<p>优化了下部分组件如<code>FluMenu</code>的切换主题时的刷新重绘问题，不会在重绘后出现一些奇怪的问题</p>
+<blockquote>
+<p><code>FluMenuBar</code>通过<code>add_command</code>创建的项实际上是<code>FluButton</code>，因此未列入增添渐变列表</p>
+<p>不过从实际上看，高速切换主题也会导致部分组件未渲染</p>
+</blockquote>
+    
+  </div>
+</article>
       
         <article class="md-post md-post--excerpt">
   <header class="md-post__header">

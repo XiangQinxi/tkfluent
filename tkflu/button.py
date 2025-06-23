@@ -63,8 +63,9 @@ class FluButtonCanvas(DCanvas):
 
 from .constants import MODE, STATE, BUTTONSTYLE
 from .tooltip import FluToolTipBase
+from .designs.gradient import FluGradient
 
-class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
+class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
     def __init__(self, *args,
                  text="",
                  width=120,
@@ -102,6 +103,9 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
 
         from easydict import EasyDict
 
+        self.enter = False
+        self.button1 = False
+
         self.attributes = EasyDict(
             {
                 "text": "",
@@ -118,7 +122,7 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
 
         self.theme(mode=mode, style=style)
 
-    def _draw(self, event=None):
+    def _draw(self, event=None, tempcolor: dict = None):
         super()._draw(event)
 
         width = self.winfo_width()
@@ -130,26 +134,37 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
 
         _dict = None
 
-        if state == "normal":
-            if self.enter:
-                if self.button1:
-                    _dict = self.attributes.pressed
+        if not tempcolor:
+            if state == "normal":
+                if self.enter:
+                    if self.button1:
+                        _dict = self.attributes.pressed
+                    else:
+                        _dict = self.attributes.hover
                 else:
-                    _dict = self.attributes.hover
+                    _dict = self.attributes.rest
             else:
-                _dict = self.attributes.rest
-        else:
-            _dict = self.attributes.disabled
+                _dict = self.attributes.disabled
 
-        _back_color = _dict.back_color
-        _back_opacity = _dict.back_opacity
-        _border_color = _dict.border_color
-        _border_color_opacity = _dict.border_color_opacity
-        _border_color2 = _dict.border_color2
-        _border_color2_opacity = _dict.border_color2_opacity
-        _border_width = _dict.border_width
-        _radius = _dict.radius
-        _text_color = _dict.text_color
+            _back_color = _dict.back_color
+            _back_opacity = _dict.back_opacity
+            _border_color = _dict.border_color
+            _border_color_opacity = _dict.border_color_opacity
+            _border_color2 = _dict.border_color2
+            _border_color2_opacity = _dict.border_color2_opacity
+            _border_width = _dict.border_width
+            _radius = _dict.radius
+            _text_color = _dict.text_color
+        else:
+            _back_color = tempcolor.back_color
+            _back_opacity = tempcolor.back_opacity
+            _border_color = tempcolor.border_color
+            _border_color_opacity = tempcolor.border_color_opacity
+            _border_color2 = tempcolor.border_color2
+            _border_color2_opacity = tempcolor.border_color2_opacity
+            _border_width = tempcolor.border_width
+            _radius = tempcolor.radius
+            _text_color = tempcolor.text_color
 
         self.element_border = self.create_round_rectangle(
             0, 0, width, height, _radius, temppath=self.temppath,
@@ -163,6 +178,8 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
             self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
+
+        self.update()
 
     def theme(self, mode: MODE = None, style: BUTTONSTYLE = None):
         if mode:
@@ -184,11 +201,71 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase):
             else:
                 self._light()
 
-    def _theme(self, mode, style):
+    def _theme(self, mode, style, animate_steps: int = 10):
         r = button(mode, style, "rest")
         h = button(mode, style, "hover")
         p = button(mode, style, "pressed")
         d = button(mode, style, "disabled")
+        steps = animate_steps
+        if self.dcget("state") == "normal":
+            if self.enter:
+                if self.button1:
+                    now = p
+                else:
+                    now = h
+            else:
+                now = r
+        else:
+            now = d
+        if hasattr(self.attributes.rest, "back_color"):
+            back_colors = self.generate_hex2hex(
+                self.attributes.rest.back_color, now["back_color"], steps
+            )
+            border_colors = self.generate_hex2hex(
+                self.attributes.rest.border_color, now["border_color"], steps
+            )
+            if self.attributes.rest.border_color2 is None:
+                self.attributes.rest.border_color2 = self.attributes.rest.border_color
+            if now["border_color2"] is None:
+                now["border_color2"] = now["border_color"]
+            border_colors2 = self.generate_hex2hex(
+                self.attributes.rest.border_color2, now["border_color2"], steps
+            )
+            text_colors = self.generate_hex2hex(
+                self.attributes.rest.text_color, now["text_color"], steps
+            )
+            import numpy as np
+            back_opacitys = np.linspace(
+                float(self.attributes.rest.back_opacity), float(now["back_opacity"]), steps).tolist()
+            border_color_opacitys = np.linspace(
+                float(self.attributes.rest.border_color_opacity), float(now["border_color_opacity"]), steps).tolist()
+            if self.attributes.rest.border_color2_opacity is None:
+                self.attributes.rest.border_color2_opacity = self.attributes.rest.border_color_opacity
+            if now["border_color2_opacity"] is None:
+                now["border_color2_opacity"] = now["border_color_opacity"]
+            border_color2_opacitys = np.linspace(
+                float(self.attributes.rest.border_color2_opacity), float(now["border_color2_opacity"]), steps).tolist()
+            for i in range(steps):
+                def update(ii=i):
+                    from easydict import EasyDict
+                    tempcolor = EasyDict(
+                        {
+                            "back_color": back_colors[ii],
+                            "back_opacity": back_opacitys[ii],
+                            "border_color": border_colors[ii],
+                            "border_color_opacity": str(border_color_opacitys[ii]),
+                            "border_color2": border_colors2[ii],
+                            "border_color2_opacity": str(border_color2_opacitys[ii]),
+                            "border_width": 1,
+                            "text_color": text_colors[ii],
+                            "radius": 6,
+                        }
+                    )
+                    self._draw(None, tempcolor)
+
+                self.after(i * 10, update)
+            self.after(steps * 10 + 10, lambda: self._draw(None, None))
+
         self.dconfigure(
             rest={
                 "back_color": r["back_color"],

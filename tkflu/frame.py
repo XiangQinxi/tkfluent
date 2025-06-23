@@ -118,9 +118,10 @@ class FluFrameCanvas(DCanvas):
 
 from tkinter import Frame
 from tkdeft.object import DObject
+from .designs.gradient import FluGradient
 
 
-class FluFrame(Frame, DObject):
+class FluFrame(Frame, DObject, FluGradient):
     def __init__(self,
                  master=None,
                  *args,
@@ -179,8 +180,16 @@ class FluFrame(Frame, DObject):
             else:
                 self._light()
 
-    def _theme(self, mode, style):
+    def _theme(self, mode, style, animate_steps: int = 10):
         n = frame(mode, style)
+        if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
+            back_colors = self.generate_hex2hex(self.attributes.back_color, n["back_color"], steps=10)
+            for i in range(10):
+                def update(ii=i):  # 使用默认参数立即捕获i的值
+                    self._draw(tempcolor=back_colors[ii])
+
+                self.after(i * 10, update)  # 直接传递函数，不需要lambda
+        self.after(animate_steps * 10 + 10, lambda: self._draw())
         self.dconfigure(
             back_color=n["back_color"],
             border_color=n["border_color"],
@@ -189,6 +198,7 @@ class FluFrame(Frame, DObject):
             radius=n["radius"],
         )
         self._draw()
+        self.update()
         self.canvas.update()
 
     def _light(self):
@@ -271,11 +281,14 @@ class FluFrame(Frame, DObject):
 
     place = place_configure
 
-    def _draw(self, event=None):
+    def _draw(self, event=None, tempcolor: dict = None):
 
         self.canvas.delete("all")
         self.canvas.config(background=self.canvas.master.cget("background"))
-        _back_color = self.attributes.back_color
+        if not tempcolor:
+            _back_color = self.attributes.back_color
+        else:
+            _back_color = tempcolor
         #_back_opacity = self.attributes.back_opacity
         _border_color = self.attributes.border_color
         _border_color_opacity = self.attributes.border_color_opacity
@@ -296,6 +309,11 @@ class FluFrame(Frame, DObject):
             width=self.canvas.winfo_width() - _border_width * 2 - _radius,
             height=self.canvas.winfo_height() - _border_width * 2 - _radius
         )
+
+        self.update_idletasks()
+
+        self.after(100, lambda: self.update_idletasks())
+        self.after(100, lambda: self.config(background=_back_color))
 
     def _event_configure(self, event=None):
         self._draw(event)

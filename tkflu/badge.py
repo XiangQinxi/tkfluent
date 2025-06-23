@@ -142,6 +142,8 @@ class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
             fill=_text_color, text=self.attributes.text, font=self.attributes.font
         )
 
+        self.after(10, lambda: self.update())
+
     def theme(self, mode=None, style=None):
         if mode:
             self.mode = mode
