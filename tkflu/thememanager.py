@@ -1,9 +1,10 @@
 from .window import FluWindow
 from .toplevel import FluToplevel
+from typing import Union
 
 
 class FluThemeManager(object):
-    def __init__(self, window=None, mode: str = "light", delay: int or None = 100):
+    def __init__(self, window=None, mode: str = "light", delay: Union[int, None] = 100):
         if window:
             self._window = window
         else:
@@ -13,7 +14,7 @@ class FluThemeManager(object):
         self.mode(self._mode)
         self._window.after(delay, lambda: self.mode(self._mode))
 
-    def mode(self, mode: str, delay: int or None = 50):
+    def mode(self, mode: str, delay: Union[int, None] = 50):
         def _():
             self._mode = mode
             if hasattr(self._window, "theme"):
@@ -43,7 +44,7 @@ class FluThemeManager(object):
         #print(len(self._window.winfo_children()))
         self._window.after(delay+len(self._window.winfo_children()), __)
 
-    def toggle(self, delay: int or None = None):
+    def toggle(self, delay: Union[int, None] = None):
         if self._mode == "light":
             mode = "dark"
         else:
