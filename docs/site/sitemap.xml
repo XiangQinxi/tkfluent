@@ -1,103 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
+         <loc>https://tkfluent.netlify.app/index.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/index.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/tkflu.badge.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/tkflu.button.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/tkflu.entry.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/tkflu.frame.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/tkflu.label.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/api/tkflu.html</loc>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
          <loc>https://tkfluent.netlify.app/blog/index.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2024/08/15/%E7%89%88%E6%9C%AC002%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2025/06/21/%E7%89%88%E6%9C%AC007%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2025/06/21/%E7%89%88%E6%9C%AC008%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2025/06/22/%E7%89%88%E6%9C%AC009%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2025/06/22/%E7%89%88%E6%9C%AC010%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2025/06/23/%E7%89%88%E6%9C%AC011%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/2025/06/23/%E7%89%88%E6%9C%AC012%E6%9B%B4%E6%96%B0.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/2025/06/24/%E7%89%88%E6%9C%AC013%E6%9B%B4%E6%96%B0.html</loc>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/getstarted/download.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/getstarted/easytouse.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/getstarted/the_1st_app.html</loc>
-         <lastmod>2025-06-23</lastmod>
-    </url>
-    <url>
-         <loc>https://tkfluent.netlify.app/home/index.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/home/about.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/tutorial/change_theme_color.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/tutorial/change_theme_mode.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/tutorial/tooltip.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/archive/2025.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/archive/2024.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
+    </url>
+    <url>
+         <loc>https://tkfluent.netlify.app/blog/category/013.html</loc>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/011.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/012.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/009.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/010.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/007.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/008.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
     <url>
          <loc>https://tkfluent.netlify.app/blog/category/002.html</loc>
-         <lastmod>2025-06-23</lastmod>
+         <lastmod>2025-06-24</lastmod>
     </url>
 </urlset>
