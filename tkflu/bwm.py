@@ -137,14 +137,15 @@ class BWm(FluGradient):
         if animation_step_time is None:
             from .designs.animation import get_animation_step_time
             animation_step_time = get_animation_step_time()
-        if self.dcget("back_color"):
-            back_colors = self.generate_hex2hex(self.dcget("back_color"), n["back_color"], steps=animation_steps)
-            for i in range(animation_steps):
-                def update(ii=i):  # 使用默认参数立即捕获i的值
-                    self.dconfigure(back_color=back_colors[ii])
-                    self._draw()
+        if not animation_steps == 0 or not animation_step_time == 0:
+            if self.dcget("back_color"):
+                back_colors = self.generate_hex2hex(self.dcget("back_color"), n["back_color"], steps=animation_steps)
+                for i in range(animation_steps):
+                    def update(ii=i):  # 使用默认参数立即捕获i的值
+                        self.dconfigure(back_color=back_colors[ii])
+                        self._draw()
 
-                self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
 
         self.dconfigure(
             back_color=n["back_color"],

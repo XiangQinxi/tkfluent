@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.1.2"
-description = "Fluent Design for Tkinter"
+version = "0.1.3"
+description = "Fluent(SunValley) Design for Tkinter. Modern GUI"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
 documentation = "https://tkfluent.netlify.app"
@@ -9,7 +9,7 @@ packages = [
     { include = "tkflu" }
 ]
 license = "GPL-3.0"
-keywords = [ "tkfluent", "tksvg", "tkinter", "fluent", "modern", "UI", "interface" ]
+keywords = [ "tkfluent", "tksvg", "tkinter", "fluent", "modern", "GUI", "interface" ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: MacOS X",
@@ -36,9 +36,9 @@ tksvg = "^0.7.4"
 tkextrafont = "^0.6.3"
 svgwrite = "^1.4.3"
 pillow = "^10.2.0"
-tkdeft = "^0.0.9"
+tkdeft = "0.0.9"
 easydict = "^1.13"
-numpy = "^2.3.1"
+numpy = "*"
 
 [build-system]
 requires = ["poetry-core"]

@@ -6,10 +6,18 @@
 ![Light.png](https://img.picui.cn/free/2025/06/22/6857e613bc150.png)
 ![Dark.png](https://img.picui.cn/free/2025/06/22/6857e613b7fc2.png)
 
+## 文档
+请查阅[tkfluent文档网站](https://tkfluent.netlify.app/)。
+使用`mkdocs`和`mkdocs-material`构建，由`netlify`部署
+
+## 贡献者
+1. [真_人工智障](https://github.com/TotoWang-hhh)
+
 ## 依赖图
 ```bash
 PS .\tkfluent> poetry show --tree                                                                                                                                                                                        
 easydict 1.13 Access dict values as attributes (works recursively).
+numpy 1.24.4 Fundamental package for array computing in Python
 pillow 10.4.0 Python Imaging Library (Fork)
 svgwrite 1.4.3 A Python library to create SVG drawings.
 tkdeft 0.0.9 使用tkinter+tksvg开发的现代化界面库

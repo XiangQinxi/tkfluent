@@ -172,6 +172,8 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
             height=self.winfo_height() - _border_width * 2 - _radius
         )
 
+        if hasattr(self, "element_border"):
+            self.delete(self.element_border)
         self.element_border = self.create_round_rectangle(
             0, 0, width, height, _radius, temppath=self.temppath,
             fill=_back_color, fill_opacity=_back_opacity, stop1=_stop1, stop2=_stop2,
@@ -179,20 +181,50 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
             outline2_opacity=_border_color2_opacity,
             width=_border_width
         )
-
+        """if _underline_fill:
+            if not hasattr(self, "element_line"):
+                self.element_line = self.create_line(
+                    _radius / 3 + _border_width, self.winfo_height() - _radius / 3,
+                    self.winfo_width() - _radius / 3 - _border_width * 2, self.winfo_height() - _radius / 3,
+                    width=_underline_width, fill=_underline_fill
+                )
+            else:
+                self.coords(
+                    self.element_line, _radius / 3 + _border_width, self.winfo_height() - _radius / 3,
+                    self.winfo_width() - _radius / 3 - _border_width * 2, self.winfo_height() - _radius / 3,
+                )
+                self.itemconfigure(self.element_line, width=_underline_width, fill=_underline_fill)
+        """
+        if hasattr(self, "element_line"):
+            self.delete(self.element_line)
         if _underline_fill:
             self.element_line = self.create_line(
                 _radius / 3 + _border_width, self.winfo_height() - _radius / 3,
                 self.winfo_width() - _radius / 3 - _border_width * 2, self.winfo_height() - _radius / 3,
                 width=_underline_width, fill=_underline_fill
             )
-
+        """        
+        if not hasattr(self, "element_text"):
+            self.element_text = self.create_window(
+                self.winfo_width() / 2, self.winfo_height() / 2,
+                window=self.text,
+                width=self.winfo_width() - _border_width * 2 - _radius,
+                height=self.winfo_height() - _border_width * 2 - _radius
+            )
+        else:
+            self.coords(self.element_text, self.winfo_width() / 2, self.winfo_height() / 2,
+                        self.winfo_width() - _border_width * 2 - _radius, self.winfo_height() - _border_width * 2 - _radius)
+        """
+        if hasattr(self, "element_text"):
+            self.delete(self.element_text)
         self.element_text = self.create_window(
             self.winfo_width() / 2, self.winfo_height() / 2,
             window=self.text,
             width=self.winfo_width() - _border_width * 2 - _radius,
             height=self.winfo_height() - _border_width * 2 - _radius
         )
+        self.tag_raise(self.element_text, self.element_border)
+        self.tag_raise(self.element_line, self.element_border)
 
         #self.tag_raise(self.element_text)
 

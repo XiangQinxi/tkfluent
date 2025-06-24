@@ -1,7 +1,7 @@
 from tkflu import *
 
 set_animation_steps(20)
-set_animation_step_time(50)
+set_animation_step_time(20)
 
 root = FluWindow()
 

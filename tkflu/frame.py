@@ -189,17 +189,17 @@ class FluFrame(Frame, DObject, FluGradient):
         if animation_step_time is None:
             from .designs.animation import get_animation_step_time
             animation_step_time = get_animation_step_time()
+        if not animation_steps == 0 or not animation_step_time == 0:
+            if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
+                back_colors = self.generate_hex2hex(self.attributes.back_color, n["back_color"], steps=animation_steps)
+                for i in range(animation_steps):
+                    def update(ii=i):  # 使用默认参数立即捕获i的值
+                        print(back_colors[ii])
+                        self._draw(tempcolor=back_colors[ii])
+                        self.update()
 
-        if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
-            back_colors = self.generate_hex2hex(self.attributes.back_color, n["back_color"], steps=animation_steps)
-            for i in range(animation_steps):
-                def update(ii=i):  # 使用默认参数立即捕获i的值
-                    print(back_colors[ii])
-                    self._draw(tempcolor=back_colors[ii])
-                    self.update()
-
-                self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
-        self.after(animation_steps * animation_step_time + 10, lambda: self._draw())
+                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+            self.after(animation_steps * animation_step_time + 10, lambda: self._draw())
         self.dconfigure(
             back_color=n["back_color"],
             border_color=n["border_color"],

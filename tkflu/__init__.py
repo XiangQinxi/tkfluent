@@ -1,9 +1,11 @@
-"""、
+"""
 
 Fluent设计的tkinter组件库（模板）
 
 -------------
 作者：XiangQinxi
+
+贡献者：totowang-hhh
 -------------
 """
 

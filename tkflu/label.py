@@ -41,17 +41,19 @@ class FluLabel(DDrawWidget, FluToolTipBase, FluGradient):
     def _draw(self, event=None, tempcolor=None):
         super()._draw(event)
 
-        self.delete("all")
-
         if tempcolor:
             _text_color = tempcolor
         else:
             _text_color = self.attributes.text_color
 
-        self.element_text = self.create_text(
-            self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
-            fill=_text_color, text=self.attributes.text, font=self.attributes.font
-        )
+        if not hasattr(self, "element_text"):
+            self.element_text = self.create_text(
+                self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
+                fill=_text_color, text=self.attributes.text, font=self.attributes.font
+            )
+        else:
+            self.coords(self.element_text, self.winfo_width() / 2, self.winfo_height() / 2)
+            self.itemconfigure(self.element_text, fill=_text_color, text=self.attributes.text, font=self.attributes.font)
 
     def theme(self, mode="light", animation_steps: int = None, animation_step_time: int = None):
         from .designs.label import label

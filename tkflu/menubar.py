@@ -141,24 +141,31 @@ class FluMenuBar(Frame, DObject, FluGradient):
         m = menubar(mode)
         self.mode = mode
         if hasattr(self, "tk"):
-            if mode.lower() == "dark":
-                back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
-                for i in range(animation_steps):
-                    def update(ii=i):  # 使用默认参数立即捕获i的值
-                        self.dconfigure(back_color=back_colors[ii])
-                        self._draw()
+            if not animation_steps == 0 or not animation_step_time == 0:
+                if mode.lower() == "dark":
+                    back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
+                    for i in range(animation_steps):
+                        def update(ii=i):  # 使用默认参数立即捕获i的值
+                            self.dconfigure(back_color=back_colors[ii])
+                            self._draw()
 
-                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                        self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                else:
+                    back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
+                    for i in range(animation_steps):
+                        def update(ii=i):  # 使用默认参数立即捕获i的值
+                            self.dconfigure(back_color=back_colors[ii])
+                            self._draw()
+
+                        self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+
+                self.after(animation_steps * animation_step_time + 50, lambda: self.update_children())
             else:
-                back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
-                for i in range(animation_steps):
-                    def update(ii=i):  # 使用默认参数立即捕获i的值
-                        self.dconfigure(back_color=back_colors[ii])
-                        self._draw()
-
-                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
-
-            self.after(animation_steps * animation_step_time + 50, lambda: self.update_children())
+                if mode.lower() == "dark":
+                    self.dconfigure(back_color=m["back_color"])
+                else:
+                    self.dconfigure(back_color=m["back_color"])
+                self._draw()
 
     def _draw(self, event=None):
         self.config(background=self.attributes.back_color)

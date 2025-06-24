@@ -4,13 +4,39 @@ from tkdeft.windows.drawwidget import DDrawWidget
 
 from .designs.button import button
 
+from typing import Union
+
 
 class FluButtonDraw(DSvgDraw):
     def create_roundrect(self,
-                         x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                         fill="transparent", fill_opacity=1,
-                         outline="black", outline2=None, outline_opacity=1, outline2_opacity=1, width=1,
-                         ):
+                         x1: Union[int, float], y1: Union[int, float], x2: Union[int, float], y2: Union[int, float],
+                         radius: Union[int, float], radiusy: Union[int, float] = None, temppath: Union[str, None] = None,
+                         fill: Union[str, tuple]="transparent", fill_opacity: Union[int, float]=1,
+                         outline: Union[str, tuple] = "black", outline2: Union[str, tuple] = None,
+                         outline_opacity: Union[int, float] = 1, outline2_opacity: Union[int, float] = 1, width: Union[int, float] = 1,
+                         ) -> str:
+        """
+        用于生成svg圆角矩形图片，图片默认将会保存至临时文件夹。
+
+        Parameters:
+          x1: 第一个x轴的坐标
+          y1: 第一个y轴的坐标
+          x2: 第二个x轴的坐标，与x1连起来
+          y2: 第二个y轴的坐标，与y1连起来
+          radius: 圆角大小
+          radiusy: 圆角大小（y轴方向），如果不设置，将默认为参数radius的值
+          temppath: 临时文件地址，如果你不知道，就别设置
+          fill: 背景颜色
+          fill_opacity: 背景透明度
+          outline: 边框颜色
+          outline2: 边框颜色2（渐变），如果取了这个值，边框将会变为渐变，从左到右，outline为第一个渐变色,outline2为第二个渐变色
+          outline_opacity: 边框透明度
+          outline2_opacity: 第二个边框渐变颜色的透明度，如果outline没有设置，则这个值不会被用到
+          width: 边框宽度
+
+        Returns:
+         svg图片保存地址
+        """
         if radiusy:
             _rx = radius
             _ry = radiusy
@@ -19,9 +45,9 @@ class FluButtonDraw(DSvgDraw):
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         if outline2:
             border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border",
-                                               gradientUnits="userSpaceOnUse")
-            border.add_stop_color("0.9", outline, outline_opacity)
-            border.add_stop_color("1", outline2, outline2_opacity)
+                                               gradientUnits="userSpaceOnUse")  # 渐变色配置
+            border.add_stop_color("0.9", outline, outline_opacity)  # 第一个渐变色的位置、第一个渐变色、第一个渐变色的透明度
+            border.add_stop_color("1", outline2, outline2_opacity)  # 第二个渐变色的位置、第二个渐变色、第二个渐变色的透明度
             drawing[1].defs.add(border)
             stroke = f"url(#{border.get_id()})"
             stroke_opacity = 1
@@ -41,41 +67,80 @@ class FluButtonDraw(DSvgDraw):
 
 
 class FluButtonCanvas(DCanvas):
-    draw = FluButtonDraw
+
+    draw = FluButtonDraw  # 设置svg绘图引擎
 
     def create_round_rectangle(self,
-                               x1, y1, x2, y2, r1, r2=None, temppath=None,
-                               fill="transparent", fill_opacity=1,
-                               outline="black", outline2="black", outline_opacity=1, outline2_opacity=1,
-                               width=1,
-                               ):
+                               x1: Union[int, float], y1: Union[int, float], x2: Union[int, float], y2: Union[int, float],
+                               r1: Union[int, float], r2: Union[int, float] = None, temppath: Union[str, None] = None,
+                               fill: Union[str, tuple]="transparent", fill_opacity: Union[int, float] = 1,
+                               outline: Union[str, tuple] = "black", outline2: Union[str, tuple] = "black",
+                               outline_opacity: Union[int, float] = 1, outline2_opacity: Union[int, float] = 1,
+                               width: Union[int, float] = 1, *args, **kwargs
+                               ) -> int:
+        """
+        在画布上创建个圆角矩形
+
+        Parameters:
+          x1: 第一个x轴的坐标
+          y1: 第一个y轴的坐标
+          x2: 第二个x轴的坐标，与x1连起来
+          y2: 第二个y轴的坐标，与y1连起来
+          r1: 圆角大小
+          r2: 圆角大小（y轴方向），如果不设置，将默认为参数r1的值
+          temppath: 临时文件地址，如果你不知道，就别设置
+          fill: 背景颜色
+          fill_opacity: 背景透明度
+          outline: 边框颜色
+          outline2: 边框颜色2（渐变），如果取了这个值，边框将会变为渐变，从左到右，outline为第一个渐变色,outline2为第二个渐变色
+          outline_opacity: 边框透明度
+          outline2_opacity: 第二个边框渐变颜色的透明度，如果outline没有设置，则这个值不会被用到
+          width: 边框宽度
+
+        Returns: svg图片保存地址
+        """
         self._img = self.svgdraw.create_roundrect(
             x1, y1, x2, y2, r1, r2, temppath=temppath,
             fill=fill, fill_opacity=fill_opacity,
             outline=outline, outline2=outline2, outline_opacity=outline_opacity, outline2_opacity=outline2_opacity,
             width=width,
-        )
-        self._tkimg = self.svgdraw.create_tksvg_image(self._img)
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        )  # 创建个svg圆角矩形图片
+        self._tkimg = self.svgdraw.create_tksvg_image(self._img)  # 用tksvg读取svg图片
+        return self.create_image(x1, y1, anchor="nw", image=self._tkimg, *args, **kwargs)  # 在画布上创建个以svg图片为图片的元件
 
-    create_roundrect = create_round_rectangle
+    create_roundrect = create_round_rectangle  # 缩写
 
 
 from .constants import MODE, STATE, BUTTONSTYLE
 from .tooltip import FluToolTipBase
 from .designs.gradient import FluGradient
+from tkinter import Event
+from tkinter.font import Font
 
 class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
     def __init__(self, *args,
-                 text="",
-                 width=120,
-                 height=32,
-                 command=None,
-                 font=None,
+                 text: Union[str, int, float]= "",
+                 width: Union[int, float] = 120,
+                 height: Union[int, float] = 32,
+                 command: callable = None,
+                 font: Union[Font, tuple] = None,
                  mode: MODE = "light",
                  style: BUTTONSTYLE = "standard",
                  state: STATE = "normal",
-                 **kwargs):
+                 **kwargs) -> None:
+        """
+        按钮组件
+
+        Parameters:
+          text: 按钮的标签文本
+          width: 默认宽带
+          height: 默认高度
+          command: 点击时出发的事件
+          font: 自定义标签字体
+          mode: 按钮深浅主题，参考tkflu.constants.MODE
+          style: 按钮样式，参考tkflu.constants.BUTTONSTYLE
+          state: 按钮的状态，参考tkflu.constants.STATE
+        """
         self._init(mode, style)
 
         super().__init__(*args, width=width, height=height, **kwargs)
@@ -101,6 +166,14 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
 
     def _init(self, mode: MODE, style: BUTTONSTYLE):
 
+        """
+        初始化按钮，正常情况下无需在程序中调用
+
+        Parameters:
+          mode: 按钮深浅主题，参考tkflu.constants.MODE
+          style: 按钮样式，参考tkflu.constants.BUTTONSTYLE
+        """
+
         from easydict import EasyDict
 
         self.enter = False
@@ -122,13 +195,17 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
 
         self.theme(mode=mode, style=style)
 
-    def _draw(self, event=None, tempcolor: dict = None):
+    def _draw(self, event: Union[Event, None] = None, tempcolor: Union[dict, None] = None):
+        """
+
+        Parameters:
+          绘制按钮
+        """
         super()._draw(event)
 
         width = self.winfo_width()
         height = self.winfo_height()
-
-        self.delete("all")
+        # 提前定义，反正多次调用浪费资源
 
         state = self.dcget("state")
 
@@ -166,6 +243,9 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             _radius = tempcolor.radius
             _text_color = tempcolor.text_color
 
+        if hasattr(self, "element_border"):
+            self.delete(self.element_border)
+
         self.element_border = self.create_round_rectangle(
             0, 0, width, height, _radius, temppath=self.temppath,
             fill=_back_color, fill_opacity=_back_opacity,
@@ -174,10 +254,15 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             width=_border_width,
         )
 
-        self.element_text = self.create_text(
-            self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
-            fill=_text_color, text=self.attributes.text, font=self.attributes.font
-        )
+        if hasattr(self, "element_text"):
+            self.itemconfigure(self.element_text, fill=_text_color, text=self.attributes.text, font=self.attributes.font)
+            self.coords(self.element_text, width / 2, height / 2)
+        else:
+            self.element_text = self.create_text(
+                width / 2, height / 2, anchor="center",
+                fill=_text_color, text=self.attributes.text, font=self.attributes.font
+            )
+        self.tag_raise(self.element_text, self.element_border)
 
         self.update()
 
@@ -186,7 +271,17 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             self.mode = mode
         if style:
             self.style = style
-        if self.mode.lower() == "dark":
+        theme_handlers = {
+            ("light", "accent"): self._light_accent,
+            ("light", "menu"): self._light_menu,
+            ("light", "standard"): self._light,
+            ("dark", "accent"): self._dark_accent,
+            ("dark", "menu"): self._dark_menu,
+            ("dark", "standard"): self._dark,
+        }
+        handler = theme_handlers.get((self.mode.lower(), self.style.lower()))
+        handler()
+        """if self.mode.lower() == "dark":
             if self.style.lower() == "accent":
                 self._dark_accent()
             elif self.style.lower() == "menu":
@@ -199,9 +294,9 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             elif self.style.lower() == "menu":
                 self._light_menu()
             else:
-                self._light()
+                self._light()"""
 
-    def _theme(self, mode, style, animation_steps: int = None, animation_step_time: int = None):
+    def _theme(self, mode: MODE, style: BUTTONSTYLE, animation_steps: int = None, animation_step_time: int = None):
         if animation_steps is None:
             from .designs.animation import get_animation_steps
             animation_steps = get_animation_steps()
@@ -212,66 +307,67 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
         h = button(mode, style, "hover")
         p = button(mode, style, "pressed")
         d = button(mode, style, "disabled")
-        if self.dcget("state") == "normal":
-            if self.enter:
-                if self.button1:
-                    now = p
+        if not animation_steps == 0 or not animation_step_time == 0:
+            if self.dcget("state") == "normal":
+                if self.enter:
+                    if self.button1:
+                        now = p
+                    else:
+                        now = h
                 else:
-                    now = h
+                    now = r
             else:
-                now = r
-        else:
-            now = d
-        #print(animation_step_time)
-        #print(type(animation_step_time))
-        if hasattr(self.attributes.rest, "back_color"):
-            back_colors = self.generate_hex2hex(
-                self.attributes.rest.back_color, now["back_color"], animation_steps
-            )
-            border_colors = self.generate_hex2hex(
-                self.attributes.rest.border_color, now["border_color"], animation_steps
-            )
-            if self.attributes.rest.border_color2 is None:
-                self.attributes.rest.border_color2 = self.attributes.rest.border_color
-            if now["border_color2"] is None:
-                now["border_color2"] = now["border_color"]
-            border_colors2 = self.generate_hex2hex(
-                self.attributes.rest.border_color2, now["border_color2"], animation_steps
-            )
-            text_colors = self.generate_hex2hex(
-                self.attributes.rest.text_color, now["text_color"], animation_steps
-            )
-            import numpy as np
-            back_opacitys = np.linspace(
-                float(self.attributes.rest.back_opacity), float(now["back_opacity"]), animation_steps).tolist()
-            border_color_opacitys = np.linspace(
-                float(self.attributes.rest.border_color_opacity), float(now["border_color_opacity"]), animation_steps).tolist()
-            if self.attributes.rest.border_color2_opacity is None:
-                self.attributes.rest.border_color2_opacity = self.attributes.rest.border_color_opacity
-            if now["border_color2_opacity"] is None:
-                now["border_color2_opacity"] = now["border_color_opacity"]
-            border_color2_opacitys = np.linspace(
-                float(self.attributes.rest.border_color2_opacity), float(now["border_color2_opacity"]), animation_steps).tolist()
-            for i in range(animation_steps):
-                def update(ii=i):
-                    from easydict import EasyDict
-                    tempcolor = EasyDict(
-                        {
-                            "back_color": back_colors[ii],
-                            "back_opacity": back_opacitys[ii],
-                            "border_color": border_colors[ii],
-                            "border_color_opacity": str(border_color_opacitys[ii]),
-                            "border_color2": border_colors2[ii],
-                            "border_color2_opacity": str(border_color2_opacitys[ii]),
-                            "border_width": 1,
-                            "text_color": text_colors[ii],
-                            "radius": 6,
-                        }
-                    )
-                    self._draw(None, tempcolor)
+                now = d
+            #print(animation_step_time)
+            #print(type(animation_step_time))
+            if hasattr(self.attributes.rest, "back_color"):
+                back_colors = self.generate_hex2hex(
+                    self.attributes.rest.back_color, now["back_color"], animation_steps
+                )
+                border_colors = self.generate_hex2hex(
+                    self.attributes.rest.border_color, now["border_color"], animation_steps
+                )
+                if self.attributes.rest.border_color2 is None:
+                    self.attributes.rest.border_color2 = self.attributes.rest.border_color
+                if now["border_color2"] is None:
+                    now["border_color2"] = now["border_color"]
+                border_colors2 = self.generate_hex2hex(
+                    self.attributes.rest.border_color2, now["border_color2"], animation_steps
+                )
+                text_colors = self.generate_hex2hex(
+                    self.attributes.rest.text_color, now["text_color"], animation_steps
+                )
+                import numpy as np
+                back_opacitys = np.linspace(
+                    float(self.attributes.rest.back_opacity), float(now["back_opacity"]), animation_steps).tolist()
+                border_color_opacitys = np.linspace(
+                    float(self.attributes.rest.border_color_opacity), float(now["border_color_opacity"]), animation_steps).tolist()
+                if self.attributes.rest.border_color2_opacity is None:
+                    self.attributes.rest.border_color2_opacity = self.attributes.rest.border_color_opacity
+                if now["border_color2_opacity"] is None:
+                    now["border_color2_opacity"] = now["border_color_opacity"]
+                border_color2_opacitys = np.linspace(
+                    float(self.attributes.rest.border_color2_opacity), float(now["border_color2_opacity"]), animation_steps).tolist()
+                for i in range(animation_steps):
+                    def update(ii=i):
+                        from easydict import EasyDict
+                        tempcolor = EasyDict(
+                            {
+                                "back_color": back_colors[ii],
+                                "back_opacity": back_opacitys[ii],
+                                "border_color": border_colors[ii],
+                                "border_color_opacity": str(border_color_opacitys[ii]),
+                                "border_color2": border_colors2[ii],
+                                "border_color2_opacity": str(border_color2_opacitys[ii]),
+                                "border_width": 1,
+                                "text_color": text_colors[ii],
+                                "radius": 6,
+                            }
+                        )
+                        self._draw(None, tempcolor)
 
-                self.after(i * animation_step_time, update)
-            #self.after(animation_steps * animation_step_time + 10, lambda: self._draw(None, None))
+                    self.after(i * animation_step_time, update)
+                #self.after(animation_steps * animation_step_time + 10, lambda: self._draw(None, None))
 
         self.dconfigure(
             rest={
@@ -341,7 +437,7 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
     def invoke(self):
         self.attributes.command()
 
-    def _event_off_button1(self, event=None):
+    def _event_off_button1(self, event: Event = None):
         self.button1 = False
 
         self._draw(event)

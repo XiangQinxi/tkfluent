@@ -2,9 +2,9 @@ from tkflu import *
 from tkinter import *
 from tkinter.font import *
 
-orange_primary_color()
+purple_primary_color()
 set_animation_steps(10)
-set_animation_step_time(20)
+set_animation_step_time(10)
 
 def togglestate():
     if button1.dcget("state") == NORMAL:

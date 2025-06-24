@@ -27,7 +27,7 @@ class FluToolTip(FluPopupWindow):
         self._widget.bind('<Enter>', self.enter, add="+")
         self._widget.bind('<Leave>', self.leave, add="+")
 
-        #self.theme(mode)
+        self.theme(mode)
 
     def enter(self, event: Event):
         def check() -> None:
@@ -45,7 +45,7 @@ class FluToolTip(FluPopupWindow):
 
                 # 渐显动画
                 def fade_in(step=0):
-                    FRAMES_COUNT = 60
+                    FRAMES_COUNT = 20
                     alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
                     self.wm_attributes("-alpha", alpha)
                     if step < FRAMES_COUNT:
@@ -106,7 +106,7 @@ class FluToolTip2(FluPopupWindow):
         self._widget.bind('<Leave>', self.hide, add="+")
         self._widget.bind('<Motion>', self.move, add="+")
 
-        #self.theme(mode)
+        self.theme(mode)
 
     def show(self, event: Event):
         self.popup(
@@ -130,7 +130,8 @@ class FluToolTip2(FluPopupWindow):
         self.configure(
             background=n["back_color"]
         )
-        if sys.platform("win32"): # Only Windows supports the transparentcolor attribute
+
+        if sys.platform == "win32": # Only Windows supports the transparentcolor attribute
             self.wm_attributes("-transparentcolor", n["back_color"])
         #print(n["back_color"])
         if hasattr(self, "_frame"):

@@ -1,8 +1,15 @@
 site_name: tkfluent
 copyright: Copyright &copy; 2024 XiangQinxi
 site_url: https://tkfluent.netlify.app/
+repo_url: https://github.com/XiangQinxi/tkfluent
 
 plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [..]
+          options:
+            allow_inspection: true
   - meta
   - search:
       lang: zh
@@ -41,12 +48,12 @@ theme:
         name: Switch to system preference
 
   features:
+    - navigation.instant
     - content.code.copy
     - content.tabs.link
     - navigation.footer  # Footer
     - content.tooltips  # ToolTip
     - blog  # Blog
-    - navigation.instant
     - navigation.tracking
     - navigation.tabs
     - navigation.indexes
@@ -81,7 +88,7 @@ markdown_extensions:
 
 nav:
   - Home 主页:
-      - home/index.md
+      - index.md
       - home/about.md
   - Get Started 开始:
       - getstarted/download.md
@@ -91,13 +98,25 @@ nav:
       - tutorial/change_theme_color.md
       - tutorial/change_theme_mode.md
       - tutorial/tooltip.md
+  - API 文档:
+      - api/index.md
+      - api/tkflu.md
+      - api/tkflu.badge.md
+      - api/tkflu.button.md
+      - api/tkflu.entry.md
+      - api/tkflu.frame.md
+      - api/tkflu.label.md
   - Blog 博客:
       - blog/index.md
+  - Aunthor`s Blog 作者博客: https://xiangqinxi.github.io
+  - tkAdwite: https://tkadwite.netlify.app/
 
 extra_css:
   - stylesheets/extra.css
 
 extra:
+  version:
+    provider: mike
   social:
     - icon: fontawesome/brands/gitlab
       link: https://gitlab.com/XiangQinxi
