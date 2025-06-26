@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://tkfluent.netlify.app/blog/archive/2025.html">
       
       
-        <link rel="prev" href="../category/013.html">
+        <link rel="prev" href="../category/014.html">
       
       
         <link rel="next" href="2024.html">
@@ -1195,6 +1195,8 @@
       
         
       
+        
+      
     
     
     
@@ -1429,6 +1431,31 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../category/014.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    0.1.4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1520,6 +1547,90 @@
       <header class="md-typeset">
         <h1 id="2025">2025</h1>
       </header>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-06-26 00:00:00+00:00">2025年6月26日</time></li>
+        
+          <li class="md-meta__item">
+            分类于
+            
+              <a href="../category/014.html" class="md-meta__link">0.1.4</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              需要 2 分钟阅读时间
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="014"><a class="toclink" href="../2025/06/26/%E7%89%88%E6%9C%AC014%E6%9B%B4%E6%96%B0.html">版本0.1.4更新！</a></h2>
+<h3 id="_1"><a class="toclink" href="../2025/06/26/%E7%89%88%E6%9C%AC014%E6%9B%B4%E6%96%B0.html#_1">新增</a></h3>
+<p><code>FluSlider</code>滑块已经制作的较为完善</p>
+<blockquote>
+<p>仍有地方需要完善，如按住滑块时，滑块应与鼠标相对运动，而不是直接移动到鼠标位置。但这是一些无外乎的问题，可稍后解决。</p>
+</blockquote>
+<p><img alt="" src="../FluSlider%20Light.gif" /></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">Frame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">FluWindow</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;300x50&quot;</span><span class="p">)</span>
+
+<span class="n">slider</span> <span class="o">=</span> <span class="n">FluSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+<span class="n">slider</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</code></pre></div>
+<p><img alt="" src="../FluSlider%20Dark.gif" /></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">Frame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">FluWindow</span><span class="p">()</span>
+<span class="n">root</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;300x50&quot;</span><span class="p">)</span>
+
+<span class="n">slider</span> <span class="o">=</span> <span class="n">FluSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">slider</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="_2"><a class="toclink" href="../2025/06/26/%E7%89%88%E6%9C%AC014%E6%9B%B4%E6%96%B0.html#_2">修改最大值，最小值，当前数值</a></h4>
+<blockquote>
+<p>咳咳，填反了，但问题不大，能读取数值就可
+<div class="highlight"><pre><span></span><code><span class="n">slider</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="nb">max</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></p>
+</blockquote>
+<p><img alt="" src="../FluSlider%20Dark%20Check.gif" /></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">Frame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">FluWindow</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;300x100&quot;</span><span class="p">)</span>
+
+<span class="n">slider</span> <span class="o">=</span> <span class="n">FluSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+<span class="n">slider</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="nb">max</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">slider</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">button</span> <span class="o">=</span> <span class="n">FluButton</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Check Value&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">slider</span><span class="o">.</span><span class="n">dcget</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)))</span>
+<span class="n">button</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="_3"><a class="toclink" href="../2025/06/26/%E7%89%88%E6%9C%AC014%E6%9B%B4%E6%96%B0.html#_3">修复</a></h3>
+<p>更改tkdeft依赖，只能为0.1.0。</p>
+    
+  </div>
+</article>
       
         <article class="md-post md-post--excerpt">
   <header class="md-post__header">
@@ -1917,7 +2028,7 @@ or
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         
           
-          <a href="../category/013.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 0.1.3">
+          <a href="../category/014.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 0.1.4">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1927,7 +2038,7 @@ or
                 上一页
               </span>
               <div class="md-ellipsis">
-                0.1.3
+                0.1.4
               </div>
             </div>
           </a>

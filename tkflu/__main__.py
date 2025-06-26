@@ -4,7 +4,7 @@ from tkinter.font import *
 
 purple_primary_color()
 set_animation_steps(10)
-set_animation_step_time(10)
+set_animation_step_time(12)
 
 def togglestate():
     if button1.dcget("state") == NORMAL:
@@ -23,7 +23,7 @@ def togglestate():
         entry1._draw()
 root = FluWindow()
 #root.wincustom(way=0)
-root.geometry("360x600")
+root.geometry("360x650")
 
 popupmenu = FluPopupMenu()
 
@@ -108,7 +108,7 @@ entry1.pack(fill="x", padx=5, pady=5)
 text1 = FluText(frame)
 text1.pack(fill="x", padx=5, pady=5)
 
-slider1 = FluSlider(frame, value=0)
+slider1 = FluSlider(frame, value=0, max=200)
 slider1.pack(fill="x", padx=5, pady=5)
 
 """listbox1 = FluListBox(frame)
@@ -116,5 +116,8 @@ listbox1.dconfigure()
 listbox1.pack(fill="x", padx=5, pady=5)"""
 
 frame.pack(fill="both", expand="yes", side="right", padx=15, pady=15)
-frame.update_idletasks()
+#frame.update_idletasks()
+
+#thememanager.mode("light")
+
 root.mainloop()

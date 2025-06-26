@@ -40,10 +40,6 @@ class FluToolTip(FluPopupWindow):
                 self.wm_attributes("-alpha", 0.0)
                 self.deiconify()
 
-                # 设置初始透明度为0
-
-
-                # 渐显动画
                 def fade_in(step=0):
                     FRAMES_COUNT = 20
                     alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
@@ -131,8 +127,7 @@ class FluToolTip2(FluPopupWindow):
             background=n["back_color"]
         )
 
-        if sys.platform == "win32": # Only Windows supports the transparentcolor attribute
-            self.wm_attributes("-transparentcolor", n["back_color"])
+        self.wm_attributes("-transparentcolor", n["back_color"])
         #print(n["back_color"])
         if hasattr(self, "_frame"):
             self._frame.dconfigure(

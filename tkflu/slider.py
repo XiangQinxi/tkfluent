@@ -1,27 +1,52 @@
-from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
+from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
 
 from .designs.slider import slider
 
 
 class FluSliderDraw(DSvgDraw):
-    def create_slider(
+    def create_track(
             self,
-            x1, y1, x2, y2,
-            x3,  # 滑块的x坐标
+            width, height, width2,
+            temppath=None,
+            radius=3,  # 滑块进度条圆角大小
+            track_fill="transparent", track_opacity=1,  # 滑块进度条的选中部分矩形的背景颜色、高度、透明度
+            rail_fill="transparent", rail_opacity=1  #
+    ):
+        drawing = self.create_drawing(width, height, temppath=temppath, fill_opacity=0)
+
+        drawing[1].add(
+            drawing[1].rect(
+                (0, 0), (width2, height),
+                rx=radius,
+                fill=track_fill, fill_opacity=track_opacity, fill_rule="evenodd"
+            )
+        )  # 滑块进度左边的选中区域 (只左部分)
+
+        drawing[1].add(
+            drawing[1].rect(
+                (width2, 0), (width-width2, height),
+                rx=radius,
+                fill=rail_fill, fill_opacity=rail_opacity
+            )
+        )  # 滑块进度未选中区域 (占全部)
+
+        drawing[1].save()
+        return drawing[0]
+
+    def create_thumb(
+            self,
+            width, height,
             r1,  # 滑块外圆半径
             r2,  # 滑块内圆半径
             temppath=None,
             fill="transparent", fill_opacity=1,  # 滑块外圆的背景颜色、透明度
-            radius=3,  # 滑块进度条圆角大小
             outline="transparent", outline_opacity=1,  # 滑块伪阴影的渐变色中的第一个渐变颜色、透明度
             outline2="transparent", outline2_opacity=1,  # 滑块伪阴影的渐变色中的第二个渐变颜色、透明度
             inner_fill="transparent", inner_fill_opacity=1,  # 滑块内圆的背景颜色、透明度
-            track_fill="transparent", track_height=4, track_opacity=1,  # 滑块进度条的选中部分矩形的背景颜色、高度、透明度
-            rail_fill="transparent", rail_opacity=1  #
     ):
-        drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath, fill_opacity=0)
+        drawing = self.create_drawing(width, height, temppath=temppath, fill_opacity=0)
 
         border = drawing[1].linearGradient(start=(r1, 1), end=(r1, r1 * 2 - 1), id="DButton.Border",
                                            gradientUnits="userSpaceOnUse")
@@ -29,57 +54,22 @@ class FluSliderDraw(DSvgDraw):
         border.add_stop_color(0.954545, outline2, outline2_opacity)
         drawing[1].defs.add(border)
         stroke = f"url(#{border.get_id()})"
-        #print("x1:", x1, "\n", "y1:", y1, "\n", "x2:", x2, "\n", "y2:", y2, "\n", "r1:", r1, "\n", sep="")
-
-        x = x1 + r1 - 4
-        xx = x2 - r1 + 4
-
-        #print("track_x1:", x, "\n", "track_x2:", xx, sep="")
-
-        #print("")
-
-        drawing[1].add(
-            drawing[1].rect(
-                (x, (y2 - y1) / 2 - track_height / 2),
-                # 矩形x位置：画布最左的x坐标 + 滑块外半径 - 滑块内半径
-                # 矩形y位置：画布高度(画布最上的y坐标 - 画布最上的y坐标)一半 - 进度条的高度的一半
-                (xx - x, track_height),
-                # 矩形宽度：画布最右的x坐标 - 滑块外半径 + 滑块内半径 | 矩形高度：进度条的高度
-                rx=radius,
-                fill=rail_fill, fill_opacity=rail_opacity
-            )
-        )  # 滑块进度未选中区域 (占全部)
-
-        drawing[1].add(
-            drawing[1].rect(
-                (x, (y2 - y1) / 2 - track_height / 2),
-                # 矩形x位置：画布最左的x坐标 + 滑块外半径 - 滑块内半径
-                # 矩形y位置：画布高度(画布最上的y坐标 - 画布最上的y坐标)一半 - 进度条的高度的一半
-                (x3 - x, track_height),
-                # 矩形宽度：(滑块的x坐标 - 矩形x位置) | 矩形高度：进度条的高度
-                rx=radius,
-                fill=track_fill, fill_opacity=track_opacity, fill_rule="evenodd"
-            )
-        )  # 滑块进度左边的选中区域 (只左部分)
-
-        x = x3
-        y = (y2 - y1) / 2
 
         drawing[1].add(
             drawing[1].circle(
-                (x, y), r1,
+                (width / 2, height / 2), r1,
                 fill=stroke, fill_opacity=1, fill_rule="evenodd"
             )
         )  # 圆形滑块的伪阴影边框
         drawing[1].add(
             drawing[1].circle(
-                (x, y), r1 - 1,
+                (width / 2, height / 2), r1 - 1,
                 fill=fill, fill_opacity=fill_opacity, fill_rule="nonzero"
             )
         )  # 圆形滑块的外填充
         drawing[1].add(
             drawing[1].circle(
-                (x, y), r2,
+                (width / 2, height / 2), r2,
                 fill=inner_fill, fill_opacity=inner_fill_opacity, fill_rule="nonzero"
             )
         )  # 圆形滑块的内填充
@@ -90,23 +80,35 @@ class FluSliderDraw(DSvgDraw):
 class FluSliderCanvas(DCanvas):
     draw = FluSliderDraw
 
-    def create_slider(self,
-                      x1, y1, x2, y2, x3, r1, r2, temppath=None,
-                      fill="transparent", fill_opacity=1, radius=3,
-                      outline="transparent", outline_opacity=1,
-                      outline2="transparent", outline2_opacity=1,
-                      inner_fill="transparent", inner_fill_opacity=1,
-                      track_fill="transparent", track_height=4, track_opacity=1,
-                      rail_fill="transparent", rail_opacity=1
-                      ):
-        self._img = self.svgdraw.create_slider(
-            x1, y1, x2, y2, x3, r1, r2, temppath=temppath,
-            fill=fill, fill_opacity=fill_opacity, radius=radius,
+    def create_track(
+            self,
+            x1, y1, width, height, width2, temppath=None, radius=3,
+            track_fill="transparent", track_opacity=1,
+            rail_fill="transparent", rail_opacity=1
+    ):
+        self._img2 = self.svgdraw.create_track(
+             width, height, width2, temppath=temppath, radius=radius,
+            track_fill=track_fill, track_opacity=track_opacity,
+            rail_fill=rail_fill, rail_opacity=rail_opacity
+        )
+        self._tkimg2 = self.svgdraw.create_tksvg_image(self._img2)
+        #print(self._img2)
+        return self.create_image(x1, y1, anchor="nw", image=self._tkimg2)
+
+    def create_thumb(
+            self,
+            x1, y1, width, height, r1, r2, temppath=None,
+            fill="transparent", fill_opacity=1,
+            outline="transparent", outline_opacity=1,
+            outline2="transparent", outline2_opacity=1,
+            inner_fill="transparent", inner_fill_opacity=1,
+    ):
+        self._img = self.svgdraw.create_thumb(
+            width, height, r1, r2, temppath=temppath,
+            fill=fill, fill_opacity=fill_opacity,
             outline=outline, outline_opacity=outline_opacity,
             outline2=outline2, outline2_opacity=outline2_opacity,
             inner_fill=inner_fill, inner_fill_opacity=inner_fill_opacity,
-            track_fill=track_fill, track_height=track_height, track_opacity=track_opacity,
-            rail_fill=rail_fill, rail_opacity=rail_opacity
         )
         self._tkimg = self.svgdraw.create_tksvg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
@@ -152,7 +154,9 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
 
-        self.bind("<Motion>", self._event_button1_motion)
+        self.bind("<B1-Motion>", self._event_button1_motion)
+
+        self.enter_thumb = False
 
         from .defs import set_default_font
         set_default_font(font, self.attributes)
@@ -192,6 +196,11 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
 
         #print("")
 
+        if hasattr(self, "_e1"):
+            self.tag_unbind(self.element_track, "<Enter>", self._e1)
+        if hasattr(self, "_e2"):
+            self.tag_unbind(self.element_track, "<Leave>", self._e2)
+
         self.delete("all")
 
         state = self.dcget("state")
@@ -200,13 +209,16 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
 
         if state == "normal":
             if event:
-                if self.enter:
-                    if self.button1:
-                        _dict = self.attributes.pressed
+                if self.enter:  # 先检查是否在组件内
+                    if self.enter_thumb:  # 再检查是否在滑块上
+                        if self.button1:
+                            _dict = self.attributes.pressed
+                        else:
+                            _dict = self.attributes.hover
                     else:
-                        _dict = self.attributes.hover
+                        _dict = self.attributes.hover  # 在组件内但不在滑块上
                 else:
-                    _dict = self.attributes.rest
+                    _dict = self.attributes.rest  # 不在组件内
             else:
                 _dict = self.attributes.rest
         else:
@@ -224,6 +236,8 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
         _thumb_radius = _dict.thumb.radius
         _thumb_inner_radius = _dict.thumb.inner_radius
 
+        _thumb_width = _dict.thumb.width
+
         _thumb_back_color = _dict.thumb.back_color
         _thumb_back_opacity = _dict.thumb.back_opacity
 
@@ -237,34 +251,81 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
         _thumb_inner_back_opacity = _dict.thumb.inner_back_opacity
 
         thumb_xp = self.attributes.value / (self.attributes.max - self.attributes.min)  # 滑块对应数值的比例
-        thumb_x = (self.winfo_width() - (_thumb_radius + 4) * 2) * thumb_xp  # 滑块对应数值的x左边
+        thumb_x = self.winfo_width() * thumb_xp  # 滑块对应数值的x左边
 
-        self.attributes["^r"] = _thumb_radius  # 滑块进度条x坐标
-        self.attributes["^x"] = _thumb_radius - 4  # 滑块进度条
-        self.attributes["^xx"] = self.winfo_width() - _thumb_radius + 4
+        width = self.winfo_width()
+        height = self.winfo_height()
+        # 修改滑块位置计算
+        thumb_width = _thumb_width
+        min_x = thumb_width / 2
+        max_x = self.winfo_width() - thumb_width / 2
+        track_length = max_x - min_x
 
-        self.element_thumb = self.create_slider(
-            0, 0, self.winfo_width(), self.winfo_height(), thumb_x, _thumb_radius, _thumb_inner_radius,
-            temppath=self.temppath,
-            fill=_thumb_back_color, fill_opacity=_thumb_back_opacity, radius=_radius,
-            outline=_thumb_border_color, outline_opacity=_thumb_border_color_opacity,
-            outline2=_thumb_border_color2, outline2_opacity=_thumb_border_color2_opacity,
-            inner_fill=_thumb_inner_back_color, inner_fill_opacity=_thumb_inner_back_opacity,
-            track_height=_track_height, track_fill=_track_back_color, track_opacity=_track_back_opacity,
+        # 计算轨道实际可用宽度（减去滑块宽度）
+        effective_track_width = self.winfo_width() - thumb_width
+
+        thumb_xp = (self.attributes.value - self.attributes.min) / (self.attributes.max - self.attributes.min)
+        thumb_center = thumb_width / 2 + thumb_xp * effective_track_width
+
+        thumb_width = _thumb_width
+        effective_width = self.winfo_width() - thumb_width
+        ratio = (self.attributes.value - self.attributes.min) / (self.attributes.max - self.attributes.min)
+        thumb_left = thumb_width / 2 + ratio * effective_width - thumb_width / 2
+
+        # 确保不会超出右边界
+        thumb_left = min(thumb_left, self.winfo_width() - thumb_width)
+
+        # 创建轨道时，width2 参数应为选中部分的宽度（滑块中心位置）
+        self.element_track = self.create_track(
+            _thumb_width / 4,
+            height / 2 - _track_height,
+            self.winfo_width() - _thumb_width / 2,
+            _track_height,
+            thumb_center - _thumb_width / 4,  # 关键修正：使用滑块中心相对于轨道起点的距离
+            temppath=self.temppath, radius=_radius,
+            track_fill=_track_back_color, track_opacity=_track_back_opacity,
             rail_fill=_rail_back_color, rail_opacity=_rail_back_opacity
         )
 
+        self.element_thumb = self.create_thumb(
+            thumb_left, 0,  # 直接使用计算出的左上角位置
+            thumb_width, thumb_width,
+            _thumb_radius, _thumb_inner_radius,
+            temppath=self.temppath2, fill=_thumb_back_color, fill_opacity=_thumb_back_opacity,
+            outline=_thumb_border_color, outline_opacity=_thumb_border_color_opacity,
+            outline2=_thumb_border_color2, outline2_opacity=_thumb_border_color2_opacity,
+            inner_fill=_thumb_inner_back_color, inner_fill_opacity=_thumb_inner_back_opacity,
+        )
+
+        self._e1 = self.tag_bind(self.element_thumb, "<Enter>", self._event_enter_thumb, add="+")
+        self._e2 = self.tag_bind(self.element_thumb, "<Leave>", self._event_leave_thumb, add="+")
+
     def pos(self, event):
-        if self.enter:
-            if self.button1:
-                valuep = (event.x - self.attributes["^x"]) / (self.attributes["^xx"] - self.attributes["^x"]) # 数值的比例：(鼠标点击的x坐标 - 滑块进度条的x坐标) ÷ 滑块进度条的宽度
-                value = (event.x - self.attributes["max"] - self.attributes["min"])  # 数值的比例 × 数值范围(最大数值 - 最小数值)
-                value = ((event.x + self.attributes["^r"]) / (self.winfo_width())) * self.attributes.max
-                self.dconfigure(
-                    value=value
-                )
-                #print("value:", value, sep="")
-                #print("")
+        #print(event.x, event.y)
+        #if self.enter and self.button1:
+        # 获取滑块宽度
+        thumb_width = self.attributes.pressed.thumb.width
+
+        # 计算有效轨道长度
+        effective_width = self.winfo_width() - thumb_width
+
+        # 计算滑块位置比例（考虑滑块宽度边界）
+        ratio = (event.x - thumb_width/2) / effective_width
+        ratio = max(0, min(1, ratio))  # 限制在0-1范围内
+
+        # 计算实际值
+        value = self.attributes.min + ratio * (self.attributes.max - self.attributes.min)
+        self.dconfigure(value=value)
+        self._draw()
+        #print(self.focus_get())
+
+
+    def _event_enter_thumb(self, event=None):
+        self.enter_thumb = True
+        self.update()
+
+    def _event_leave_thumb(self, event=None):
+        self.enter_thumb = False
 
     def _event_button1_motion(self, event):
         self.pos(event)
@@ -293,6 +354,8 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
                     "radius": r["thumb"]["radius"],
                     "inner_radius": r["thumb"]["inner_radius"],
 
+                    "width": r["thumb"]["width"],
+
                     "back_color": r["thumb"]["back_color"],
                     "back_opacity": r["thumb"]["back_opacity"],
 
@@ -319,6 +382,8 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
                 "thumb": {
                     "radius": h["thumb"]["radius"],
                     "inner_radius": h["thumb"]["inner_radius"],
+
+                    "width": r["thumb"]["width"],
 
                     "back_color": h["thumb"]["back_color"],
                     "back_opacity": h["thumb"]["back_opacity"],
@@ -347,6 +412,8 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
                     "radius": p["thumb"]["radius"],
                     "inner_radius": p["thumb"]["inner_radius"],
 
+                    "width": r["thumb"]["width"],
+
                     "back_color": p["thumb"]["back_color"],
                     "back_opacity": p["thumb"]["back_opacity"],
 
@@ -373,6 +440,8 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
                 "thumb": {
                     "radius": d["thumb"]["radius"],
                     "inner_radius": d["thumb"]["inner_radius"],
+
+                    "width": r["thumb"]["width"],
 
                     "back_color": d["thumb"]["back_color"],
                     "back_opacity": d["thumb"]["back_opacity"],

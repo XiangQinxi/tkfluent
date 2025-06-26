@@ -13,6 +13,8 @@ def slider(mode: str, state: str):
                     "radius": 12,
                     "inner_radius": 6,
 
+                    "width": 28,
+
                     "back_color": "#FFFFFF",
                     "back_opacity": 1,
 
@@ -42,6 +44,8 @@ def slider(mode: str, state: str):
                 "thumb": {
                     "radius": 12,
                     "inner_radius": 8,
+
+                    "width": 28,
 
                     "back_color": "#FFFFFF",
                     "back_opacity": 1,
@@ -73,6 +77,8 @@ def slider(mode: str, state: str):
                     "radius": 12,
                     "inner_radius": 5,
 
+                    "width": 28,
+
                     "back_color": "#FFFFFF",
                     "back_opacity": 1,
 
@@ -102,6 +108,8 @@ def slider(mode: str, state: str):
                 "thumb": {
                     "radius": 12,
                     "inner_radius": 6,
+
+                    "width": 28,
 
                     "back_color": "#FFFFFF",
                     "back_opacity": 1,
@@ -133,6 +141,8 @@ def slider(mode: str, state: str):
                 "thumb": {
                     "radius": 12,
 
+                    "width": 28,
+
                     "inner_radius": 6,
                     "inner_back_color": get_primary_color()[1],
                     "inner_back_opacity": 1,
@@ -163,6 +173,8 @@ def slider(mode: str, state: str):
                 "radius": 2,
                 "thumb": {
                     "radius": 12,
+
+                    "width": 28,
 
                     "inner_radius": 8,
                     "inner_back_color": get_primary_color()[1],
@@ -195,6 +207,8 @@ def slider(mode: str, state: str):
                 "thumb": {
                     "radius": 12,
 
+                    "width": 28,
+
                     "inner_radius": 5,
                     "inner_back_color": get_primary_color()[1],
                     "inner_back_opacity": 0.8,
@@ -225,6 +239,8 @@ def slider(mode: str, state: str):
                 "radius": 2,
                 "thumb": {
                     "radius": 12,
+
+                    "width": 28,
 
                     "inner_radius": 6,
                     "inner_back_color": "#FFFFFF",
