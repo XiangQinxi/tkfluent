@@ -1,8 +1,11 @@
-# tkfluent
+<div align="center">
 
+# tkfluent
 `tkinter`现代化组件库。设计来于`Fluent` `WinUI3` 设计
 
-## 效果图
+</div>
+
+
 ![Light.png](https://img.picui.cn/free/2025/06/22/6857e613bc150.png)
 ![Dark.png](https://img.picui.cn/free/2025/06/22/6857e613b7fc2.png)
 

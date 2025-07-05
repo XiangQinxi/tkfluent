@@ -37,18 +37,6 @@ class FluToolTip(FluPopupWindow):
                     round(self._widget.winfo_rootx() + self._widget.winfo_width() / 2 - self.winfo_width() / 2),
                     round(self._widget.winfo_rooty() + self._widget.winfo_height() + 2)
                 )
-                self.wm_attributes("-alpha", 0.0)
-                self.deiconify()
-
-                def fade_in(step=0):
-                    FRAMES_COUNT = 20
-                    alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
-                    self.wm_attributes("-alpha", alpha)
-                    if step < FRAMES_COUNT:
-                        # 每执行一次，增加一次透明度，间隔由帧数决定
-                        self.after(int(round(self._show_time/FRAMES_COUNT)), lambda: fade_in(step + 1))
-
-                fade_in()  # 启动动画
 
         self.id = self.after(self._delay, check)
         self._enter = True
@@ -104,6 +92,9 @@ class FluToolTip2(FluPopupWindow):
 
         self.theme(mode)
 
+    def popup2(self, x, y):
+        self.geometry(f"+{x}+{y}")
+
     def show(self, event: Event):
         self.popup(
             round(event.x_root - self.winfo_width() / 2),
@@ -115,7 +106,7 @@ class FluToolTip2(FluPopupWindow):
         self.withdraw()
 
     def move(self, event):
-        self.popup(
+        self.popup2(
             round(event.x_root - self.winfo_width() / 2),
             round(event.y_root + 10)
         )

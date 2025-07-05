@@ -39,24 +39,28 @@ class FluPopupWindow(Toplevel):
         self.withdraw()
 
     def popup(self, x, y):
-        self.geometry(f"+{x}+{y}")
-        #self.focus_set()
-        self.wm_attributes("-alpha", 0.0)
-        self.deiconify()
 
         from .designs.animation import get_animation_steps, get_animation_step_time
 
         FRAMES_COUNT = get_animation_steps()
         FRAME_DELAY = get_animation_step_time()
 
-        def fade_in(step=0):
-            alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
-            self.wm_attributes("-alpha", alpha)
-            if step < FRAMES_COUNT:
-                # 每执行一次，增加一次透明度，间隔由帧数决定
-                self.after(int(round(FRAME_DELAY*FRAMES_COUNT / FRAMES_COUNT)), lambda: fade_in(step + 1))
+        self.geometry(f"+{x}+{y}")
+        #self.focus_set()
+        if not FRAMES_COUNT == 0 or not FRAME_DELAY == 0:
+            self.wm_attributes("-alpha", 0.0)
+            self.deiconify()
 
-        fade_in()  # 启动动画
+            def fade_in(step=0):
+                alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
+                self.wm_attributes("-alpha", alpha)
+                if step < FRAMES_COUNT:
+                    # 每执行一次，增加一次透明度，间隔由帧数决定
+                    self.after(int(round(FRAME_DELAY*FRAMES_COUNT / FRAMES_COUNT)), lambda: fade_in(step + 1))
+
+            fade_in()  # 启动动画
+        else:
+            self.deiconify()
 
     def theme(self, mode=None):
         if mode:

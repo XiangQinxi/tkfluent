@@ -8,7 +8,7 @@ class FluPopupMenuWindow(FluPopupWindow):
 
 
 class FluPopupMenu(FluFrame):
-    def __init__(self, *args, width=100, height=46, transparent_color="#ffefa2", style="popupmenu", **kwargs):
+    def __init__(self, *args, width=100, height=46, transparent_color="gray", style="popupmenu", **kwargs):
         self.window = FluPopupMenuWindow(transparent_color=transparent_color, width=width, height=height)
 
         super().__init__(self.window, *args, style=style, **kwargs)

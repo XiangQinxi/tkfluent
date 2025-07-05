@@ -195,14 +195,7 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
                 )
                 self.itemconfigure(self.element_line, width=_underline_width, fill=_underline_fill)
         """
-        if hasattr(self, "element_line"):
-            self.delete(self.element_line)
-        if _underline_fill:
-            self.element_line = self.create_line(
-                _radius / 3 + _border_width, self.winfo_height() - _radius / 3,
-                self.winfo_width() - _radius / 3 - _border_width * 2, self.winfo_height() - _radius / 3,
-                width=_underline_width, fill=_underline_fill
-            )
+
         """        
         if not hasattr(self, "element_text"):
             self.element_text = self.create_window(
@@ -223,8 +216,16 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
             width=self.winfo_width() - _border_width * 2 - _radius,
             height=self.winfo_height() - _border_width * 2 - _radius
         )
+        if hasattr(self, "element_line"):
+            self.delete(self.element_line)
+        if _underline_fill:
+            self.element_line = self.create_line(
+                _radius / 3 + _border_width, self.winfo_height() - _radius / 3,
+                self.winfo_width() - _radius / 3 - _border_width * 2, self.winfo_height() - _radius / 3,
+                width=_underline_width, fill=_underline_fill
+            )
         self.tag_raise(self.element_text, self.element_border)
-        self.tag_raise(self.element_line, self.element_border)
+        #self.tag_raise(self.element_line, self.element_text)
 
         #self.tag_raise(self.element_text)
 

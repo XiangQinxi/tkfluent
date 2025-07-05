@@ -23,7 +23,7 @@ def text(mode, state):
                 "radius": _r,
                 "text_color": "#646464",
                 "underline_fill": "#8a8a8a",
-                "underline_width": 1,
+                "underline_width": 1.4,
             }
         elif state == "hover":
             return {
@@ -42,7 +42,7 @@ def text(mode, state):
                 "radius": _r,
                 "text_color": "#626262",
                 "underline_fill": "#8a8a8a",
-                "underline_width": 1,
+                "underline_width": 1.4,
             }
         elif state == "pressed":
             return {
@@ -101,7 +101,7 @@ def text(mode, state):
                 "radius": _r,
                 "text_color": "#d1d1d1",
                 "underline_fill": "#989898",
-                "underline_width": 1,
+                "underline_width": 1.4,
             }
         elif state == "hover":
             return {
@@ -121,7 +121,7 @@ def text(mode, state):
                 "text_color": "#d2d2d2",
 
                 "underline_fill": "#989898",
-                "underline_width": 1,
+                "underline_width": 1.4,
             }
         elif state == "pressed":
             return {
@@ -160,5 +160,5 @@ def text(mode, state):
                 "radius": _r,
                 "text_color": "#757575",
                 "underline_fill": None,
-                "underline_width": 1,
+                "underline_width": 1.4,
             }

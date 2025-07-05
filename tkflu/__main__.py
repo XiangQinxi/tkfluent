@@ -2,25 +2,32 @@ from tkflu import *
 from tkinter import *
 from tkinter.font import *
 
-purple_primary_color()
+blue_primary_color()
 set_animation_steps(10)
-set_animation_step_time(12)
+set_animation_step_time(20)
 
 def togglestate():
     if button1.dcget("state") == NORMAL:
         button1.dconfigure(state=DISABLED)
         button2.dconfigure(state=DISABLED)
         entry1.dconfigure(state=DISABLED)
-        button1._draw()
-        button2._draw()
-        entry1._draw()
+        text1.dconfigure(state=DISABLED)
+        togglebutton1.dconfigure(state=DISABLED)
+        slider1.dconfigure(state=DISABLED)
     else:
         button1.dconfigure(state=NORMAL)
         button2.dconfigure(state=NORMAL)
         entry1.dconfigure(state=NORMAL)
-        button1._draw()
-        button2._draw()
-        entry1._draw()
+        text1.dconfigure(state=NORMAL)
+        togglebutton1.dconfigure(state=NORMAL)
+        slider1.dconfigure(state=NORMAL)
+    button1._draw()
+    button2._draw()
+    entry1._draw()
+    text1._draw()
+    togglebutton1._draw()
+    slider1._draw()
+
 root = FluWindow()
 #root.wincustom(way=0)
 root.geometry("360x650")
@@ -62,6 +69,9 @@ menubar.add_cascade(
 menubar.pack(fill="x")
 
 frame = FluFrame(root)
+
+scrollbar1 = FluScrollBar(frame)
+scrollbar1.pack(fill="y", side="right", padx=5, pady=5)
 
 badge1 = FluBadge(frame, text="FluBadge", width=60)
 badge1.pack(padx=5, pady=5)
@@ -108,7 +118,7 @@ entry1.pack(fill="x", padx=5, pady=5)
 text1 = FluText(frame)
 text1.pack(fill="x", padx=5, pady=5)
 
-slider1 = FluSlider(frame, value=0, max=200)
+slider1 = FluSlider(frame, value=5, min=0, max=10, tick=False, changed=lambda: print(f"FluSlider -> Changed -> Value: {slider1.dcget('value')}"))
 slider1.pack(fill="x", padx=5, pady=5)
 
 """listbox1 = FluListBox(frame)

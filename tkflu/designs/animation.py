@@ -14,9 +14,9 @@ def get_animation_step_time():
     return int(environ["tkfluent.animation_step_time"])
 
 if "tkfluent.animation_steps" not in environ:
-    set_animation_steps(10)
+    set_animation_steps(0)
 if "tkfluent.animation_step_time" not in environ:
-    set_animation_step_time(10)
+    set_animation_step_time(0)
 
 
 class FluAnimation(object):

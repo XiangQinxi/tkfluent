@@ -20,6 +20,7 @@ class FluMenuBar(Frame, DObject, FluGradient):
         self.attributes = EasyDict(
             {
                 "back_color": "#f3f3f3",
+                "border_color": "#e5e5e5",
 
                 "actions": {}
             }
@@ -144,31 +145,32 @@ class FluMenuBar(Frame, DObject, FluGradient):
             if not animation_steps == 0 or not animation_step_time == 0:
                 if mode.lower() == "dark":
                     back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
-                    for i in range(animation_steps):
-                        def update(ii=i):  # 使用默认参数立即捕获i的值
-                            self.dconfigure(back_color=back_colors[ii])
-                            self._draw()
-
-                        self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                    border_colors = self.generate_hex2hex(self.attributes.border_color, m["border_color"],
+                                                          steps=animation_steps)
                 else:
                     back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
-                    for i in range(animation_steps):
-                        def update(ii=i):  # 使用默认参数立即捕获i的值
-                            self.dconfigure(back_color=back_colors[ii])
-                            self._draw()
+                    border_colors = self.generate_hex2hex(self.attributes.border_color, m["border_color"],
+                                                          steps=animation_steps)
+                for i in range(animation_steps):
+                    def update(ii=i):  # 使用默认参数立即捕获i的值
+                        self.dconfigure(back_color=back_colors[ii], border_color=border_colors[ii])
+                        self._draw()
 
-                        self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
 
                 self.after(animation_steps * animation_step_time + 50, lambda: self.update_children())
             else:
-                if mode.lower() == "dark":
-                    self.dconfigure(back_color=m["back_color"])
-                else:
-                    self.dconfigure(back_color=m["back_color"])
+                self.dconfigure(back_color=m["back_color"])
+                self.dconfigure(border_color=m["border_color"])
                 self._draw()
 
     def _draw(self, event=None):
         self.config(background=self.attributes.back_color)
+        if not hasattr(self, "border"):
+            self.border = Frame(self, height=1.2, background=self.attributes.border_color)
+        else:
+            self.border.configure(background=self.attributes.border_color)
+        self.border.pack(fill="x", expand="yes", side="bottom")
 
     def _event_configure(self, event=None):
         self._draw(event)

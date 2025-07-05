@@ -119,12 +119,15 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
                  text="",
                  width=70,
                  height=28,
+                 orient="horizontal",
+                 tick=False,  # 自动吸附
                  font=None,
                  mode="light",
                  state="normal",
                  value=20,
                  max=100,
                  min=0,
+                 changed=None,
                  **kwargs
                  ):
 
@@ -148,11 +151,16 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
             state=state,
             value=value,
             max=max, min=min,
+            orient=orient, tick=tick, changed=changed,
         )
+
+
 
         super().__init__(*args, width=width, height=height, **kwargs)
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
+
+        #self.bind("<Left>", lambda event:print("asd1"))
 
         self.bind("<B1-Motion>", self._event_button1_motion)
 
@@ -168,6 +176,9 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
             {
                 "command": None,
                 "state": None,
+                "orient": "horizontal",
+                "tick": False,
+                "changed": None,
 
                 "value": 20,
                 "max": 100,
@@ -250,74 +261,83 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
         _thumb_inner_back_color = _dict.thumb.inner_back_color
         _thumb_inner_back_opacity = _dict.thumb.inner_back_opacity
 
-        thumb_xp = self.attributes.value / (self.attributes.max - self.attributes.min)  # 滑块对应数值的比例
-        thumb_x = self.winfo_width() * thumb_xp  # 滑块对应数值的x左边
+        if self.attributes.orient == "horizontal":
+            thumb_xp = self.attributes.value / (self.attributes.max - self.attributes.min)  # 滑块对应数值的比例
+            thumb_x = self.winfo_width() * thumb_xp  # 滑块对应数值的x左边
 
-        width = self.winfo_width()
-        height = self.winfo_height()
-        # 修改滑块位置计算
-        thumb_width = _thumb_width
-        min_x = thumb_width / 2
-        max_x = self.winfo_width() - thumb_width / 2
-        track_length = max_x - min_x
+            width = self.winfo_width()
+            height = self.winfo_height()
+            # 修改滑块位置计算
+            thumb_width = _thumb_width
+            min_x = thumb_width / 2
+            max_x = self.winfo_width() - thumb_width / 2
+            track_length = max_x - min_x
 
-        # 计算轨道实际可用宽度（减去滑块宽度）
-        effective_track_width = self.winfo_width() - thumb_width
+            # 计算轨道实际可用宽度（减去滑块宽度）
+            effective_track_width = self.winfo_width() - thumb_width
 
-        thumb_xp = (self.attributes.value - self.attributes.min) / (self.attributes.max - self.attributes.min)
-        thumb_center = thumb_width / 2 + thumb_xp * effective_track_width
+            thumb_xp = (self.attributes.value - self.attributes.min) / (self.attributes.max - self.attributes.min)
+            thumb_center = thumb_width / 2 + thumb_xp * effective_track_width
 
-        thumb_width = _thumb_width
-        effective_width = self.winfo_width() - thumb_width
-        ratio = (self.attributes.value - self.attributes.min) / (self.attributes.max - self.attributes.min)
-        thumb_left = thumb_width / 2 + ratio * effective_width - thumb_width / 2
+            thumb_width = _thumb_width
+            effective_width = self.winfo_width() - thumb_width
+            ratio = (self.attributes.value - self.attributes.min) / (self.attributes.max - self.attributes.min)
+            thumb_left = thumb_width / 2 + ratio * effective_width - thumb_width / 2
 
-        # 确保不会超出右边界
-        thumb_left = min(thumb_left, self.winfo_width() - thumb_width)
+            # 确保不会超出右边界
+            thumb_left = min(thumb_left, self.winfo_width() - thumb_width)
 
-        # 创建轨道时，width2 参数应为选中部分的宽度（滑块中心位置）
-        self.element_track = self.create_track(
-            _thumb_width / 4,
-            height / 2 - _track_height,
-            self.winfo_width() - _thumb_width / 2,
-            _track_height,
-            thumb_center - _thumb_width / 4,  # 关键修正：使用滑块中心相对于轨道起点的距离
-            temppath=self.temppath, radius=_radius,
-            track_fill=_track_back_color, track_opacity=_track_back_opacity,
-            rail_fill=_rail_back_color, rail_opacity=_rail_back_opacity
-        )
+            # 创建轨道时，width2 参数应为选中部分的宽度（滑块中心位置）
+            self.element_track = self.create_track(
+                _thumb_width / 4,
+                height / 2 - _track_height,
+                self.winfo_width() - _thumb_width / 2,
+                _track_height,
+                thumb_center - _thumb_width / 4,  # 关键修正：使用滑块中心相对于轨道起点的距离
+                temppath=self.temppath, radius=_radius,
+                track_fill=_track_back_color, track_opacity=_track_back_opacity,
+                rail_fill=_rail_back_color, rail_opacity=_rail_back_opacity
+            )
 
-        self.element_thumb = self.create_thumb(
-            thumb_left, 0,  # 直接使用计算出的左上角位置
-            thumb_width, thumb_width,
-            _thumb_radius, _thumb_inner_radius,
-            temppath=self.temppath2, fill=_thumb_back_color, fill_opacity=_thumb_back_opacity,
-            outline=_thumb_border_color, outline_opacity=_thumb_border_color_opacity,
-            outline2=_thumb_border_color2, outline2_opacity=_thumb_border_color2_opacity,
-            inner_fill=_thumb_inner_back_color, inner_fill_opacity=_thumb_inner_back_opacity,
-        )
+            self.element_thumb = self.create_thumb(
+                thumb_left, 0,  # 直接使用计算出的左上角位置
+                thumb_width, thumb_width,
+                _thumb_radius, _thumb_inner_radius,
+                temppath=self.temppath2, fill=_thumb_back_color, fill_opacity=_thumb_back_opacity,
+                outline=_thumb_border_color, outline_opacity=_thumb_border_color_opacity,
+                outline2=_thumb_border_color2, outline2_opacity=_thumb_border_color2_opacity,
+                inner_fill=_thumb_inner_back_color, inner_fill_opacity=_thumb_inner_back_opacity,
+            )
 
         self._e1 = self.tag_bind(self.element_thumb, "<Enter>", self._event_enter_thumb, add="+")
         self._e2 = self.tag_bind(self.element_thumb, "<Leave>", self._event_leave_thumb, add="+")
 
     def pos(self, event):
-        #print(event.x, event.y)
-        #if self.enter and self.button1:
-        # 获取滑块宽度
-        thumb_width = self.attributes.pressed.thumb.width
+        if self.attributes.state == "normal":
+            #print(event.x, event.y)
+            #if self.enter and self.button1:
+            # 获取滑块宽度
+            thumb_width = self.attributes.pressed.thumb.width
 
-        # 计算有效轨道长度
-        effective_width = self.winfo_width() - thumb_width
+            # 计算有效轨道长度
+            effective_width = self.winfo_width() - thumb_width
 
-        # 计算滑块位置比例（考虑滑块宽度边界）
-        ratio = (event.x - thumb_width/2) / effective_width
-        ratio = max(0, min(1, ratio))  # 限制在0-1范围内
+            # 计算滑块位置比例（考虑滑块宽度边界）
+            ratio = (event.x - thumb_width/2) / effective_width
+            ratio = max(0, min(1, ratio))  # 限制在0-1范围内
 
-        # 计算实际值
-        value = self.attributes.min + ratio * (self.attributes.max - self.attributes.min)
-        self.dconfigure(value=value)
-        self._draw()
-        #print(self.focus_get())
+            # 计算实际值
+            value = self.attributes.min + ratio * (self.attributes.max - self.attributes.min)
+            if self.attributes.tick:
+                value = round(value)
+            self.dconfigure(value=value)
+            self._draw()
+            #print(self.focus_get())
+
+    def _event_off_button1(self, event=None):
+        if self.attributes.state == "normal":
+            if self.attributes.changed:
+                self.attributes.changed()
 
 
     def _event_enter_thumb(self, event=None):

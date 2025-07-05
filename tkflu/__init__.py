@@ -22,6 +22,7 @@ from .menu import FluMenu
 from .menubar import FluMenuBar
 from .popupmenu import FluPopupMenu, FluPopupMenuWindow
 from .popupwindow import FluPopupWindow
+from .scrollbar import FluScrollBar
 from .slider import FluSlider
 from .text import FluText
 from .thememanager import FluThemeManager

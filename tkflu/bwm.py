@@ -122,8 +122,18 @@ class BWm(FluGradient):
 
         self.mode = mode
         if mode.lower() == "dark":
+            try:
+                import pywinstyles
+                pywinstyles.apply_style(self, "dark")
+            except ModuleNotFoundError:
+                pass
             self._dark()
         else:
+            try:
+                import pywinstyles
+                pywinstyles.apply_style(self, "light")
+            except ModuleNotFoundError:
+                pass
             self._light()
 
     def _theme(self, mode, animation_steps: int = None, animation_step_time: int = None):

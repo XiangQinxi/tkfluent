@@ -21,7 +21,7 @@ def frame(mode, style):
     else:
         if style == "standard":
             return {
-                "back_color": "#282828",
+                "back_color": "#2b2b2b",
                 "border_color": "#000000",
                 "border_color_opacity": 0.100000,
                 "border_width": 2,
@@ -29,7 +29,7 @@ def frame(mode, style):
             }
         else:
             return {
-                "back_color": "#282828",
+                "back_color": "#2b2b2b",
                 "border_color": "#000000",
                 "border_color_opacity": 0.100000,
                 "border_width": 2,

@@ -24,8 +24,8 @@ def func1():
     label.pack(anchor="center")
 
 menubar.add_command(label="File", style="standard", width=40, command=lambda: print("File -> Clicked"))
-menubar.add_cascade(label="Theme Mode", style="standard", width=100, menu=menu1)
-menubar.add_command(label="About", style="standard", width=40, command=lambda: func1())
+menubar.add_cascade(label="Theme Mode", style="standard", width=85, menu=menu1)
+menubar.add_command(label="About", style="standard", width=45, command=lambda: func1())
 
 menubar.show()
 

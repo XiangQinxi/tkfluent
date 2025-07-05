@@ -91,9 +91,9 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
 
         self.bind("<<Clicked>>", lambda event=None: self.toggle(), add="+")
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
-        self.bind("<<Clicked>>", lambda event=None: self.attributes.command(), add="+")
+        self.bind("<<Clicked>>", lambda event=None: self.invoke(), add="+")
 
-        self.bind("<Return>", lambda event=None: self.attributes.command(), add="+")  # 可以使用回车键模拟点击
+        self.bind("<Return>", lambda event=None: self.invoke(), add="+")  # 可以使用回车键模拟点击
         self.bind("<Return>", lambda event=None: self.toggle(), add="+")  # 可以使用回车键模拟点击
 
         from .defs import set_default_font
@@ -389,91 +389,94 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
         )
 
     def invoke(self):
-        self.attributes.command()
+        if self.attributes.state == "normal":
+            self.attributes.command()
 
     def toggle(self, animation_steps: int = None, animation_step_time: int = None):
-        if animation_steps is None:
-            from .designs.animation import get_animation_steps
-            animation_steps = get_animation_steps()
-        if animation_step_time is None:
-            from .designs.animation import get_animation_step_time
-            animation_step_time = get_animation_step_time()
-        check = self.attributes.check
-        uncheck = self.attributes.uncheck
-        if not animation_steps == 0 or not animation_step_time == 0:
-            steps = animation_steps
-            if uncheck.pressed.border_color2 is None:
-                uncheck.pressed.border_color2 = uncheck.pressed.border_color
-            if check.pressed.border_color2  is None:
-                check.pressed.border_color2 = check.pressed.border_color
-            if uncheck.pressed.border_color2_opacity is None:
-                uncheck.pressed.border_color2_opacity = uncheck.pressed.border_color_opacity
-            if check.pressed.border_color2_opacity is None:
-                check.pressed.border_color2_opacity = check.pressed.border_color_opacity
-            if self.attributes.checked:
-                self.attributes.checked = False
-                back_colors = self.generate_hex2hex(
-                    check.pressed.back_color, uncheck.rest.back_color, steps
-                )
-                border_colors = self.generate_hex2hex(
-                    check.pressed.border_color, uncheck.rest.border_color, steps
-                )
-                border_colors2 = self.generate_hex2hex(
-                    check.pressed.border_color2, uncheck.rest.border_color2, steps
-                )
-                text_colors = self.generate_hex2hex(
-                    check.pressed.text_color, uncheck.rest.text_color, steps
-                )
-                import numpy as np
-                back_opacitys = np.linspace(
-                    float(check.pressed.back_opacity), float(uncheck.rest.back_opacity), steps).tolist()
-                border_color_opacitys = np.linspace(
-                    float(check.pressed.border_color_opacity), float(uncheck.rest.border_color_opacity), steps).tolist()
-                border_color2_opacitys = np.linspace(
-                    float(check.pressed.border_color2_opacity), float(uncheck.rest.border_color2_opacity), steps).tolist()
-            else:
-                self.attributes.checked = True
-                back_colors = self.generate_hex2hex(
-                    uncheck.pressed.back_color, check.rest.back_color, steps
-                )
-                border_colors = self.generate_hex2hex(
-                    uncheck.pressed.back_color, check.rest.back_color, steps
-                )
-                border_colors2 = self.generate_hex2hex(
-                    uncheck.pressed.border_color2, check.rest.border_color2, steps
-                )
-                text_colors = self.generate_hex2hex(
-                    uncheck.pressed.text_color, check.rest.text_color, steps
-                )
-                import numpy as np
-                back_opacitys = np.linspace(float(uncheck.pressed.back_opacity), float(check.rest.back_opacity),
-                                            steps).tolist()
-                border_color_opacitys = np.linspace(float(uncheck.pressed.border_color_opacity), float(check.rest.border_color_opacity),
-                                            steps).tolist()
-                border_color2_opacitys = np.linspace(float(uncheck.pressed.border_color2_opacity),
-                                                    float(check.rest.border_color2_opacity),
-                                                    steps).tolist()
-            for i in range(steps):
-                def update(ii=i):
-                    from easydict import EasyDict
-                    tempcolor = EasyDict(
-                        {
-                            "back_color": back_colors[ii],
-                            "back_opacity": back_opacitys[ii],
-                            "border_color": border_colors[ii],
-                            "border_color_opacity": str(border_color_opacitys[ii]),
-                            "border_color2": border_colors2[ii],
-                            "border_color2_opacity": str(border_color2_opacitys[ii]),
-                            "border_width": 1,
-                            "text_color": text_colors[ii],
-                            "radius": 6,
-                        }
+        if self.attributes.state == "normal":
+            if animation_steps is None:
+                from .designs.animation import get_animation_steps
+                animation_steps = get_animation_steps()
+            if animation_step_time is None:
+                from .designs.animation import get_animation_step_time
+                animation_step_time = get_animation_step_time()
+            check = self.attributes.check
+            uncheck = self.attributes.uncheck
+            if not animation_steps == 0 or not animation_step_time == 0:
+                steps = animation_steps
+                if uncheck.pressed.border_color2 is None:
+                    uncheck.pressed.border_color2 = uncheck.pressed.border_color
+                if check.pressed.border_color2  is None:
+                    check.pressed.border_color2 = check.pressed.border_color
+                if uncheck.pressed.border_color2_opacity is None:
+                    uncheck.pressed.border_color2_opacity = uncheck.pressed.border_color_opacity
+                if check.pressed.border_color2_opacity is None:
+                    check.pressed.border_color2_opacity = check.pressed.border_color_opacity
+                if self.attributes.checked:
+                    self.attributes.checked = False
+                    back_colors = self.generate_hex2hex(
+                        check.pressed.back_color, uncheck.rest.back_color, steps
                     )
-                    self._draw(None, tempcolor)
-                self.after(i*animation_step_time, update)
-            self.after(steps*animation_step_time+10, lambda: self._draw(None, None))
-        else:
-            if self.attributes.checked:
-                self.attributes.checked = False
+                    border_colors = self.generate_hex2hex(
+                        check.pressed.border_color, uncheck.rest.border_color, steps
+                    )
+                    border_colors2 = self.generate_hex2hex(
+                        check.pressed.border_color2, uncheck.rest.border_color2, steps
+                    )
+                    text_colors = self.generate_hex2hex(
+                        check.pressed.text_color, uncheck.rest.text_color, steps
+                    )
+                    import numpy as np
+                    back_opacitys = np.linspace(
+                        float(check.pressed.back_opacity), float(uncheck.rest.back_opacity), steps).tolist()
+                    border_color_opacitys = np.linspace(
+                        float(check.pressed.border_color_opacity), float(uncheck.rest.border_color_opacity), steps).tolist()
+                    border_color2_opacitys = np.linspace(
+                        float(check.pressed.border_color2_opacity), float(uncheck.rest.border_color2_opacity), steps).tolist()
+                else:
+                    self.attributes.checked = True
+                    back_colors = self.generate_hex2hex(
+                        uncheck.pressed.back_color, check.rest.back_color, steps
+                    )
+                    border_colors = self.generate_hex2hex(
+                        uncheck.pressed.back_color, check.rest.back_color, steps
+                    )
+                    border_colors2 = self.generate_hex2hex(
+                        uncheck.pressed.border_color2, check.rest.border_color2, steps
+                    )
+                    text_colors = self.generate_hex2hex(
+                        uncheck.pressed.text_color, check.rest.text_color, steps
+                    )
+                    import numpy as np
+                    back_opacitys = np.linspace(float(uncheck.pressed.back_opacity), float(check.rest.back_opacity),
+                                                steps).tolist()
+                    border_color_opacitys = np.linspace(float(uncheck.pressed.border_color_opacity), float(check.rest.border_color_opacity),
+                                                steps).tolist()
+                    border_color2_opacitys = np.linspace(float(uncheck.pressed.border_color2_opacity),
+                                                        float(check.rest.border_color2_opacity),
+                                                        steps).tolist()
+                for i in range(steps):
+                    def update(ii=i):
+                        from easydict import EasyDict
+                        tempcolor = EasyDict(
+                            {
+                                "back_color": back_colors[ii],
+                                "back_opacity": back_opacitys[ii],
+                                "border_color": border_colors[ii],
+                                "border_color_opacity": str(border_color_opacitys[ii]),
+                                "border_color2": border_colors2[ii],
+                                "border_color2_opacity": str(border_color2_opacitys[ii]),
+                                "border_width": 1,
+                                "text_color": text_colors[ii],
+                                "radius": 6,
+                            }
+                        )
+                        self._draw(None, tempcolor)
+                    self.after(i*animation_step_time, update)
+                self.after(steps*animation_step_time+10, lambda: self._draw(None, None))
             else:
-                self.attributes.checked = True
+                if self.attributes.checked:
+                    self.attributes.checked = False
+                else:
+                    self.attributes.checked = True
+                self._draw()

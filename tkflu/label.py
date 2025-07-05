@@ -67,14 +67,17 @@ class FluLabel(DDrawWidget, FluToolTipBase, FluGradient):
             from .designs.animation import get_animation_step_time
             animation_step_time = get_animation_step_time()
 
-        if hasattr(self, "tk"):
-            if self.attributes.text_color != m["text_color"]:
-                text_colors = self.generate_hex2hex(self.attributes.text_color, m["text_color"], steps=animation_steps)
-                for i in range(animation_steps):
-                    def update(ii=i):  # 使用默认参数立即捕获i的值
-                        self._draw(tempcolor=text_colors[ii])
+        if not animation_steps == 0 or not animation_step_time == 0:
+            if hasattr(self, "tk"):
+                if self.attributes.text_color != m["text_color"]:
+                    text_colors = self.generate_hex2hex(self.attributes.text_color, m["text_color"], steps=animation_steps)
+                    for i in range(animation_steps):
+                        def update(ii=i):  # 使用默认参数立即捕获i的值
+                            self._draw(tempcolor=text_colors[ii])
 
-                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                        self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
         self.dconfigure(
             text_color=m["text_color"]
         )
+        if hasattr(self, "tk"):
+            self._draw()
