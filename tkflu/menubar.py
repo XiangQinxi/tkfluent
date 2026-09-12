@@ -1,5 +1,7 @@
 from tkinter import Frame, Menu
+
 from tkdeft.object import DObject
+
 from .designs.gradient import FluGradient
 
 
@@ -18,12 +20,7 @@ class FluMenuBar(Frame, DObject, FluGradient):
         from easydict import EasyDict
 
         self.attributes = EasyDict(
-            {
-                "back_color": "#f3f3f3",
-                "border_color": "#e5e5e5",
-
-                "actions": {}
-            }
+            {"back_color": "#f3f3f3", "border_color": "#e5e5e5", "actions": {}}
         )
 
         self.theme(mode=mode)
@@ -31,16 +28,15 @@ class FluMenuBar(Frame, DObject, FluGradient):
     def show(self):
         self.pack(fill="x")
 
-    def add_command(self, custom_widget=None, width=40, **kwargs):
+    def add_command(self, custom_widget=None, width=None, label: str = "", **kwargs):
+        if width is None:
+            width = len(label) * 8
         if custom_widget:
             widget = custom_widget(self)
         else:
             from .button import FluButton
+
             widget = FluButton(self, width=width)
-        if "label" in kwargs:
-            label = kwargs.pop("label")
-        else:
-            label = ""
         if "style" in kwargs:
             style = kwargs.pop("style")
         else:
@@ -48,6 +44,7 @@ class FluMenuBar(Frame, DObject, FluGradient):
         if "command" in kwargs:
             command = kwargs.pop("command")
         else:
+
             def empty():
                 pass
 
@@ -69,16 +66,22 @@ class FluMenuBar(Frame, DObject, FluGradient):
 
     from .menu import FluMenu
 
-    def add_cascade(self, custom_widget=None, width=40, menu: FluMenu = None, **kwargs):
+    def add_cascade(
+        self,
+        custom_widget=None,
+        width=None,
+        label: str = "",
+        menu: FluMenu = None,
+        **kwargs,
+    ):
+        if width is None:
+            width = len(label) * 8
         if custom_widget:
             widget = custom_widget(self)
         else:
             from .button import FluButton
+
             widget = FluButton(self, width=width)
-        if "label" in kwargs:
-            label = kwargs.pop("label")
-        else:
-            label = ""
         if "style" in kwargs:
             style = kwargs.pop("style")
         else:
@@ -90,7 +93,11 @@ class FluMenuBar(Frame, DObject, FluGradient):
 
         def command():
             menu.focus_set()
-            menu.popup(widget.winfo_rootx(), widget.winfo_rooty() + widget.winfo_height())
+            menu.popup(
+                widget.winfo_rootx() - 5, widget.winfo_rooty() + widget.winfo_height()
+            )
+            height = len(menu.dcget("actions")) * 45
+            menu.window.geometry(f"100x{height}")
             menu.window.deiconify()
             menu.window.attributes("-topmost")
 
@@ -131,34 +138,61 @@ class FluMenuBar(Frame, DObject, FluGradient):
                     widget._draw()
                 widget.update()
 
-    def theme_myself(self, mode="light", animation_steps: int = None, animation_step_time: int = None):
+    def theme_myself(
+        self, mode="light", animation_steps: int = None, animation_step_time: int = None
+    ):
         if animation_steps is None:
             from .designs.animation import get_animation_steps
+
             animation_steps = get_animation_steps()
         if animation_step_time is None:
             from .designs.animation import get_animation_step_time
+
             animation_step_time = get_animation_step_time()
         from .designs.menubar import menubar
+
         m = menubar(mode)
         self.mode = mode
         if hasattr(self, "tk"):
             if not animation_steps == 0 or not animation_step_time == 0:
                 if mode.lower() == "dark":
-                    back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
-                    border_colors = self.generate_hex2hex(self.attributes.border_color, m["border_color"],
-                                                          steps=animation_steps)
+                    back_colors = self.generate_hex2hex(
+                        self.attributes.back_color,
+                        m["back_color"],
+                        steps=animation_steps,
+                    )
+                    border_colors = self.generate_hex2hex(
+                        self.attributes.border_color,
+                        m["border_color"],
+                        steps=animation_steps,
+                    )
                 else:
-                    back_colors = self.generate_hex2hex(self.attributes.back_color, m["back_color"], steps=animation_steps)
-                    border_colors = self.generate_hex2hex(self.attributes.border_color, m["border_color"],
-                                                          steps=animation_steps)
+                    back_colors = self.generate_hex2hex(
+                        self.attributes.back_color,
+                        m["back_color"],
+                        steps=animation_steps,
+                    )
+                    border_colors = self.generate_hex2hex(
+                        self.attributes.border_color,
+                        m["border_color"],
+                        steps=animation_steps,
+                    )
                 for i in range(animation_steps):
+
                     def update(ii=i):  # 使用默认参数立即捕获i的值
-                        self.dconfigure(back_color=back_colors[ii], border_color=border_colors[ii])
+                        self.dconfigure(
+                            back_color=back_colors[ii], border_color=border_colors[ii]
+                        )
                         self._draw()
 
-                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                    self.after(
+                        i * animation_step_time, update
+                    )  # 直接传递函数，不需要lambda
 
-                self.after(animation_steps * animation_step_time + 50, lambda: self.update_children())
+                self.after(
+                    animation_steps * animation_step_time + 50,
+                    lambda: self.update_children(),
+                )
             else:
                 self.dconfigure(back_color=m["back_color"])
                 self.dconfigure(border_color=m["border_color"])
@@ -167,7 +201,9 @@ class FluMenuBar(Frame, DObject, FluGradient):
     def _draw(self, event=None):
         self.config(background=self.attributes.back_color)
         if not hasattr(self, "border"):
-            self.border = Frame(self, height=1.2, background=self.attributes.border_color)
+            self.border = Frame(
+                self, height=1.2, background=self.attributes.border_color
+            )
         else:
             self.border.configure(background=self.attributes.border_color)
         self.border.pack(fill="x", expand="yes", side="bottom")

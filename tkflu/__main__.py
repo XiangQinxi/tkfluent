@@ -1,10 +1,13 @@
-from tkflu import *
 from tkinter import *
 from tkinter.font import *
 
+from tkflu import *
+
 blue_primary_color()
-set_animation_steps(10)
-set_animation_step_time(20)
+set_animation_steps(5)  # 减少动画步骤
+set_animation_step_time(20)  # 增加步长时间减少帧率
+set_renderer(1)
+
 
 def togglestate():
     if button1.dcget("state") == NORMAL:
@@ -21,15 +24,11 @@ def togglestate():
         text1.dconfigure(state=NORMAL)
         togglebutton1.dconfigure(state=NORMAL)
         slider1.dconfigure(state=NORMAL)
-    button1._draw()
-    button2._draw()
-    entry1._draw()
-    text1._draw()
-    togglebutton1._draw()
-    slider1._draw()
+    frame.update()  # 替换多个单独绘制为容器整体更新
+
 
 root = FluWindow()
-#root.wincustom(way=0)
+# root.wincustom(way=0)
 root.geometry("360x650")
 
 popupmenu = FluPopupMenu()
@@ -37,34 +36,25 @@ popupmenu = FluPopupMenu()
 thememanager = FluThemeManager()
 
 menubar = FluMenuBar(root)
-menubar.add_command(
-    label="FluMenu1", width=80, command=lambda: print("FluMenu1 -> Clicked")
-)
+menubar.add_command(label="FluMenu1", command=lambda: print("FluMenu1 -> Clicked"))
 
 menu1 = FluMenu()
-menu1.add_command(
-    label="FluMenu2-1", width=80, command=lambda: print("FluMenu2-1 -> Clicked")
-)
-menubar.add_cascade(
-    label="FluMenu2", width=80, menu=menu1
-)
+menu1.add_command(label="FluMenu2-1", command=lambda: print("FluMenu2-1 -> Clicked"))
+menubar.add_cascade(label="FluMenu2", menu=menu1)
 
 menu2 = FluMenu(height=93)
-menu2.add_command(
-    label="FluMenu3-1", width=80, command=lambda: print("FluMenu3-1 -> Clicked")
-)
+menu2.add_command(label="FluMenu3-1", command=lambda: print("FluMenu3-1 -> Clicked"))
 
-menu3 = FluMenu(height=46, width=10)
+menu3 = FluMenu(height=93)
 menu3.add_command(
-    label="FluMenu3-2-1", width=80, command=lambda: print("FluMenu3-2-1 -> Clicked")
+    label="FluMenu3-2-1", command=lambda: print("FluMenu3-2-1 -> Clicked")
+)
+menu3.add_command(
+    label="FluMenu3-2-2", command=lambda: print("FluMenu3-2-2 -> Clicked")
 )
 
-menu2.add_cascade(
-    label="FluMenu3-2", width=80, menu=menu3
-)
-menubar.add_cascade(
-    label="FluMenu3", width=80, menu=menu2
-)
+menu2.add_cascade(label="FluMenu3-2", menu=menu3)
+menubar.add_cascade(label="FluMenu3", menu=menu2)
 
 menubar.pack(fill="x")
 
@@ -93,17 +83,26 @@ button1 = FluButton(
 button1.pack(fill="x", padx=5, pady=5)
 
 button2 = FluButton(
-    frame, text="FluButton (Accent)", command=lambda: print("FluButton (Accent) -> Clicked"), style="accent"
+    frame,
+    text="FluButton (Accent)",
+    command=lambda: print("FluButton (Accent) -> Clicked"),
+    style="accent",
 )
 button2.pack(fill="x", padx=5, pady=5)
 
 togglebutton1 = FluToggleButton(
-    frame, text="FluToggleButton", command=lambda: print(f"FluToggleButton -> Toggled -> Checked: {togglebutton1.dcget('checked')}")
+    frame,
+    text="FluToggleButton",
+    command=lambda: print(
+        f"FluToggleButton -> Toggled -> Checked: {togglebutton1.dcget('checked')}"
+    ),
 )
 togglebutton1.pack(fill="x", padx=5, pady=5)
 
 togglebutton2 = FluToggleButton(
-    frame, text="Toggle Theme", command=lambda: toggle_theme(togglebutton2, thememanager)
+    frame,
+    text="Toggle Theme",
+    command=lambda: toggle_theme(togglebutton2, thememanager),
 )
 togglebutton2.pack(fill="x", padx=5, pady=5)
 
@@ -118,7 +117,14 @@ entry1.pack(fill="x", padx=5, pady=5)
 text1 = FluText(frame)
 text1.pack(fill="x", padx=5, pady=5)
 
-slider1 = FluSlider(frame, value=5, min=0, max=10, tick=False, changed=lambda: print(f"FluSlider -> Changed -> Value: {slider1.dcget('value')}"))
+slider1 = FluSlider(
+    frame,
+    value=5,
+    min=0,
+    max=10,
+    tick=False,
+    changed=lambda: print(f"FluSlider -> Changed -> Value: {slider1.dcget('value')}"),
+)
 slider1.pack(fill="x", padx=5, pady=5)
 
 """listbox1 = FluListBox(frame)
@@ -126,8 +132,8 @@ listbox1.dconfigure()
 listbox1.pack(fill="x", padx=5, pady=5)"""
 
 frame.pack(fill="both", expand="yes", side="right", padx=15, pady=15)
-#frame.update_idletasks()
+# frame.update_idletasks()
 
-#thememanager.mode("light")
+# thememanager.mode("light")
 
 root.mainloop()

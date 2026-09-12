@@ -1,10 +1,11 @@
 from tkinter import Tk, Toplevel
+
 from tkdeft.object import DObject
+
 from .bwm import BWm
 
 
 class FluWindow(Tk, BWm, DObject):
-
     """Fluent设计的主窗口"""
 
     def __init__(self, *args, className="tkdeft", mode="light", **kwargs):
@@ -27,12 +28,15 @@ class FluWindow(Tk, BWm, DObject):
         super().__init__(*args, className=className, **kwargs)
 
         # 设置窗口图标
-        from .icons import light
         from tkinter import PhotoImage
+
+        from .icons import light
+
         self.iconphoto(False, PhotoImage(file=light()))
 
         # 绑定事件处理函数
-        self.bind("<Configure>", self._event_configure, add="+")  # 窗口大小/位置改变事件
-        self.bind("<Escape>", self._event_key_esc, add="+")       # ESC键按下事件
+        self.bind(
+            "<Configure>", self._event_configure, add="+"
+        )  # 窗口大小/位置改变事件
+        self.bind("<Escape>", self._event_key_esc, add="+")  # ESC键按下事件
         self.protocol("WM_DELETE_WINDOW", self._event_delete_window)  # 窗口关闭事件
-

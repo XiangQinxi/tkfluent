@@ -1,7 +1,6 @@
-from tkinter import Tk
-
 from ctypes import POINTER, Structure, c_int
 from ctypes.wintypes import HWND, RECT, UINT
+from tkinter import Tk
 
 WM_NCCALCSIZE = 0x0083
 WS_EX_APPWINDOW = 0x00040000
@@ -40,9 +39,7 @@ class NCCALCSIZE_PARAMS(Structure):
 
 
 from ctypes import WINFUNCTYPE, c_char_p, c_uint64, windll
-
-
-from tkinter import Event, Widget, Tk, Frame
+from tkinter import Event, Frame, Tk, Widget
 
 
 class WindowDragArea(object):
@@ -78,6 +75,7 @@ class CustomWindow(object):
             self.window: Tk = window
         else:
             from tkinter import _default_root
+
             self.window: Tk = _default_root
 
         self.window.after(wait, self.setup)
@@ -91,7 +89,9 @@ class CustomWindow(object):
                 sz = NCCALCSIZE_PARAMS.from_address(lp)
                 sz.rgrc[0].top -= 6
 
-            return windll.user32.CallWindowProcW(*map(c_uint64, (globals()[old], hwnd, msg, wp, lp)))
+            return windll.user32.CallWindowProcW(
+                *map(c_uint64, (globals()[old], hwnd, msg, wp, lp))
+            )
 
         self.hwnd = windll.user32.GetParent(self.window.winfo_id())
 
@@ -120,8 +120,9 @@ class CustomTk(Tk):
         self.customwindow = CustomWindow(self, *args, **kwargs)
 
 
-if __name__ == '__main__':
-    from tkinter import Tk, Frame
+if __name__ == "__main__":
+    from tkinter import Frame, Tk
+
     root = Tk()
     root.title("Test")
 

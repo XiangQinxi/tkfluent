@@ -1,10 +1,11 @@
-from .popupmenu import FluPopupMenu
 from tkdeft.object import DObject
+
+from .popupmenu import FluPopupMenu
 from .tooltip import FluToolTipBase
 
 
 class FluMenu(FluPopupMenu, FluToolTipBase):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, height=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def _init(self, mode, style):
@@ -18,23 +19,21 @@ class FluMenu(FluPopupMenu, FluToolTipBase):
                 "border_color_opacity": None,
                 "border_width": None,
                 "radius": None,
-
-                "actions": {}
+                "actions": {},
             }
         )
 
         self.theme(mode=mode, style=style)
 
-    def add_command(self, custom_widget=None, width=40, **kwargs):
+    def add_command(self, custom_widget=None, width=None, label: str = "", **kwargs):
+        if width is None:
+            width = len(label) * 8
         if custom_widget:
             widget = custom_widget(self)
         else:
             from .button import FluButton
+
             widget = FluButton(self, width=width)
-        if "label" in kwargs:
-            label = kwargs.pop("label")
-        else:
-            label = ""
         if "style" in kwargs:
             style = kwargs.pop("style")
         else:
@@ -47,6 +46,7 @@ class FluMenu(FluPopupMenu, FluToolTipBase):
                 self.window.wm_withdraw()
 
         else:
+
             def c():
                 self.window.wm_withdraw()
 
@@ -66,16 +66,17 @@ class FluMenu(FluPopupMenu, FluToolTipBase):
         widget.pack(side="top", fill="x", padx=1, pady=(1, 0))
         self.dcget("actions")[id] = widget
 
-    def add_cascade(self, custom_widget=None, width=40, menu=None, **kwargs):
+    def add_cascade(
+        self, custom_widget=None, width=None, menu=None, label: str = "", **kwargs
+    ):
+        if width is None:
+            width = len(label) * 8
         if custom_widget:
             widget = custom_widget(self)
         else:
             from .button import FluButton
+
             widget = FluButton(self, width=width)
-        if "label" in kwargs:
-            label = kwargs.pop("label")
-        else:
-            label = ""
         if "style" in kwargs:
             style = kwargs.pop("style")
         else:
@@ -86,9 +87,15 @@ class FluMenu(FluPopupMenu, FluToolTipBase):
             id = widget._w
 
         def command(event=None):
-            #print(menu._w)
+            self.l1 = True
+            # print(menu._w)
 
-            menu.popup(widget.winfo_rootx()+widget.winfo_width()+self.winfo_width(), widget.winfo_rooty())
+            menu.popup(
+                widget.winfo_rootx() + widget.winfo_width(), widget.winfo_rooty() - 5
+            )
+            height = len(self.dcget("actions")) * 45
+            # print(height)
+            menu.window.geometry(f"100x{height}")
             menu.window.deiconify()
             menu.window.attributes("-topmost")
 

@@ -1,31 +1,53 @@
-from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
+from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
 
 from .designs.badge import badge
 
 
 class FluBadgeDraw(DSvgDraw):
-    def create_roundrect(self,
-                         x1, y1, x2, y2, temppath=None,
-                         fill="transparent", fill_opacity=1,
-                         outline="black", outline_opacity=1, width=1
-                         ):
+    def create_roundrect(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        temppath=None,
+        fill="transparent",
+        fill_opacity=1,
+        outline="black",
+        outline_opacity=1,
+        width=1,
+    ):
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), 20, 25,
-                id=".Badge", transform="translate(0.500000 0.500000)",
-                fill=fill, fill_opacity=fill_opacity,
-                stroke=outline, stroke_opacity=outline_opacity, stroke_width=width,
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                20,
+                25,
+                id=".Badge",
+                transform="translate(0.500000 0.500000)",
+                fill=fill,
+                fill_opacity=fill_opacity,
+                stroke=outline,
+                stroke_opacity=outline_opacity,
+                stroke_width=width,
             )
         )
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), 20, 25,
-                id=".Badge", transform="translate(0.500000 0.500000)",
-                fill="white", fill_opacity=0,
-                stroke=outline, stroke_opacity=outline_opacity, stroke_width=width,
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                20,
+                25,
+                id=".Badge",
+                transform="translate(0.500000 0.500000)",
+                fill="white",
+                fill_opacity=0,
+                stroke=outline,
+                stroke_opacity=outline_opacity,
+                stroke_width=width,
             )
         )
         drawing[1].save()
@@ -35,17 +57,38 @@ class FluBadgeDraw(DSvgDraw):
 class FluBadgeCanvas(DCanvas):
     draw = FluBadgeDraw
 
-    def create_round_rectangle(self,
-                               x1, y1, x2, y2, temppath=None,
-                               fill="transparent", fill_opacity=1,
-                               outline="black", outline_opacity=1, width=1
-                               ):
+    def create_round_rectangle(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        temppath=None,
+        temppath2=None,
+        fill="transparent",
+        fill_opacity=1,
+        outline="black",
+        outline_opacity=1,
+        width=1,
+    ):
         self._img = self.svgdraw.create_roundrect(
-            x1, y1, x2, y2, temppath=temppath,
-            fill=fill, fill_opacity=fill_opacity,
-            outline=outline, outline_opacity=outline_opacity, width=width
+            x1,
+            y1,
+            x2,
+            y2,
+            temppath=temppath,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline_opacity=outline_opacity,
+            width=width,
         )
-        self._tkimg = self.svgdraw.create_tksvg_image(self._img)
+
+        from .designs.renderer import get_renderer
+
+        self._tkimg = self.svgdraw.create_svg_image(
+            self._img, temppath2, way=get_renderer()
+        )
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
 
     create_roundrect = create_round_rectangle
@@ -56,15 +99,17 @@ from .tooltip import FluToolTipBase
 
 class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
 
-    def __init__(self, *args,
-                 text="",
-                 width=70,
-                 height=30,
-                 font=None,
-                 mode="light",
-                 style="standard",
-                 **kwargs):
-
+    def __init__(
+        self,
+        *args,
+        text="",
+        width=70,
+        height=30,
+        font=None,
+        mode="light",
+        style="standard",
+        **kwargs
+    ):
         """
 
         初始化类
@@ -90,6 +135,7 @@ class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
 
         from .defs import set_default_font
+
         set_default_font(font, self.attributes)
 
     def _init(self, mode, style):
@@ -100,20 +146,18 @@ class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
                 "text": "",
                 "command": None,
                 "font": None,
-
                 "back_color": None,
                 "back_opacity": None,
                 "border_color": None,
                 "border_color_opacity": None,
                 "border_width": None,
-                "text_color": None
+                "text_color": None,
             }
         )
 
         self.theme(mode, style)
 
     def _draw(self, event=None):
-
         """
         重新绘制组件
 
@@ -130,16 +174,34 @@ class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
         _border_color_opacity = self.attributes.border_color_opacity
         _border_width = self.attributes.border_width
         _text_color = self.attributes.text_color
+        from .designs.renderer import get_renderer
 
+        width = self.winfo_width()
+        height = self.winfo_height()
+        if get_renderer() == 1:
+            width -= 1
+            height -= 1
         self.element_border = self.create_round_rectangle(
-            0, 0, self.winfo_width(), self.winfo_height(), temppath=self.temppath,
-            fill=_back_color, fill_opacity=_back_opacity,
-            outline=_border_color, outline_opacity=_border_color_opacity, width=_border_width
+            0,
+            0,
+            width,
+            height,
+            temppath=self.temppath,
+            temppath2=self.temppath3,
+            fill=_back_color,
+            fill_opacity=_back_opacity,
+            outline=_border_color,
+            outline_opacity=_border_color_opacity,
+            width=_border_width,
         )
 
         self.element_text = self.create_text(
-            self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
-            fill=_text_color, text=self.attributes.text, font=self.attributes.font
+            self.winfo_width() / 2,
+            self.winfo_height() / 2,
+            anchor="center",
+            fill=_text_color,
+            text=self.attributes.text,
+            font=self.attributes.font,
         )
 
         self.after(10, lambda: self.update())

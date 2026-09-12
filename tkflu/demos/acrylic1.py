@@ -1,6 +1,6 @@
-from tkflu import *
 from pywinstyles import *
 
+from tkflu import *
 
 root = FluWindow()
 

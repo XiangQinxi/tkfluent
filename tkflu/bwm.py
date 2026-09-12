@@ -3,7 +3,6 @@ from .designs.gradient import FluGradient
 
 class BWm(FluGradient):
     def _draw(self, event=None):
-
         """
         重新绘制窗口及自定义的窗口组件
 
@@ -74,7 +73,6 @@ class BWm(FluGradient):
         self.destroy()
 
     def _event_configure(self, event=None):
-
         """
         触发 `<Configure>` 事件
 
@@ -86,6 +84,7 @@ class BWm(FluGradient):
 
     def _init(self, mode):
         from easydict import EasyDict
+
         self.attributes = EasyDict(
             {
                 "back_color": None,
@@ -93,15 +92,14 @@ class BWm(FluGradient):
                 "closebutton": {
                     "back_color": None,
                     "text_color": None,
-                    "text_hover_color": None
-                }
+                    "text_hover_color": None,
+                },
             }
         )
 
         self.theme(mode)
 
     def theme(self, mode: str):
-
         """
         同 `theme_myself`
 
@@ -112,7 +110,6 @@ class BWm(FluGradient):
         self.theme_myself(mode=mode)
 
     def theme_myself(self, mode: str):
-
         """
         修改该窗口的Fluent主题
 
@@ -124,6 +121,7 @@ class BWm(FluGradient):
         if mode.lower() == "dark":
             try:
                 import pywinstyles
+
                 pywinstyles.apply_style(self, "dark")
             except ModuleNotFoundError:
                 pass
@@ -131,31 +129,42 @@ class BWm(FluGradient):
         else:
             try:
                 import pywinstyles
+
                 pywinstyles.apply_style(self, "light")
             except ModuleNotFoundError:
                 pass
             self._light()
 
-    def _theme(self, mode, animation_steps: int = None, animation_step_time: int = None):
+    def _theme(
+        self, mode, animation_steps: int = None, animation_step_time: int = None
+    ):
         from .designs.window import window
+
         n = window(mode)
         """if self.attributes.back_color is not None:
             n["back_color"] = self.attributes.back_color"""
         if animation_steps is None:
             from .designs.animation import get_animation_steps
+
             animation_steps = get_animation_steps()
         if animation_step_time is None:
             from .designs.animation import get_animation_step_time
+
             animation_step_time = get_animation_step_time()
         if not animation_steps == 0 or not animation_step_time == 0:
             if self.dcget("back_color"):
-                back_colors = self.generate_hex2hex(self.dcget("back_color"), n["back_color"], steps=animation_steps)
+                back_colors = self.generate_hex2hex(
+                    self.dcget("back_color"), n["back_color"], steps=animation_steps
+                )
                 for i in range(animation_steps):
+
                     def update(ii=i):  # 使用默认参数立即捕获i的值
                         self.dconfigure(back_color=back_colors[ii])
                         self._draw()
 
-                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                    self.after(
+                        i * animation_step_time, update
+                    )  # 直接传递函数，不需要lambda
 
         self.dconfigure(
             back_color=n["back_color"],
@@ -163,8 +172,8 @@ class BWm(FluGradient):
             closebutton={
                 "back_color": n["closebutton"]["back_color"],
                 "text_color": n["closebutton"]["text_color"],
-                "text_hover_color": n["closebutton"]["text_hover_color"]
-            }
+                "text_hover_color": n["closebutton"]["text_hover_color"],
+            },
         )
 
     def _light(self):
@@ -174,7 +183,6 @@ class BWm(FluGradient):
         self._theme("dark")
 
     def wincustom(self, wait=200, way=1):
-
         """
         自定义窗口 仅限`Windows系统`
 
@@ -184,29 +192,44 @@ class BWm(FluGradient):
         """
 
         from sys import platform
+        from tkinter import Frame
+
         from .button import FluButton
         from .label import FluLabel
-        from tkinter import Frame
-        self.titlebar = Frame(self, width=180, height=35, background=self.attributes.back_color)
+
+        self.titlebar = Frame(
+            self, width=180, height=35, background=self.attributes.back_color
+        )
         self.titlelabel = FluLabel(self.titlebar, text=self.title(), width=50)
         self.titlelabel.pack(fill="y", side="left")
-        self.closebutton = FluButton(self.titlebar, text="", width=32, height=32, command=lambda: self._event_delete_window())
+        self.closebutton = FluButton(
+            self.titlebar,
+            text="",
+            width=32,
+            height=32,
+            command=lambda: self._event_delete_window(),
+        )
         self.closebutton.pack(fill="y", side="right")
         self.titlebar.pack(fill="x", side="top")
 
         if platform == "win32":
             if way == 0:
-                from .customwindow import CustomWindow
                 import warnings
-                warnings.warn("This is EXPERIMENTAL! Please consider way=1 in production.")
+
+                from .customwindow import CustomWindow
+
+                warnings.warn(
+                    "This is EXPERIMENTAL! Please consider way=1 in production."
+                )
                 self.customwindow = CustomWindow(self, wait=wait)
                 self.customwindow.bind_drag(self.titlebar)
                 self.customwindow.bind_drag(self.titlelabel)
             else:
                 self.overrideredirect(True)
                 try:
-                    from win32gui import GetParent, GetWindowLong, SetWindowLong
                     from win32con import GWL_EXSTYLE, WS_EX_APPWINDOW, WS_EX_TOOLWINDOW
+                    from win32gui import GetParent, GetWindowLong, SetWindowLong
+
                     hwnd = GetParent(self.winfo_id())
                     style = GetWindowLong(hwnd, GWL_EXSTYLE)
                     style = style & ~WS_EX_TOOLWINDOW
@@ -220,6 +243,7 @@ class BWm(FluGradient):
                 self.wm_attributes("-topmost", True)
 
                 from .customwindow2 import WindowDragArea
+
                 self.dragarea = WindowDragArea(self)
                 self.dragarea.bind(self.titlebar)
                 self.dragarea.bind(self.titlelabel)

@@ -1,4 +1,4 @@
-from tkinter import Event, Widget, Tk, Frame
+from tkinter import Event, Frame, Tk, Widget
 
 
 class WindowDragArea(object):
@@ -73,5 +73,3 @@ def tag_bind_widget_drag(widget, tag):
     _ = WidgetDragArea(widget)
     _.tag_bind(tag)
     return _
-
-

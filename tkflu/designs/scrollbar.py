@@ -14,7 +14,7 @@ def scrollbar(mode):
             "disabled": {
                 "thumb_color": "#515151",
                 "radius": 2,
-            }
+            },
         }
     else:  # light mode
         return {
@@ -30,5 +30,5 @@ def scrollbar(mode):
             "disabled": {
                 "thumb_color": "#9f9f9f",
                 "radius": 2,
-            }
+            },
         }

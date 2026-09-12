@@ -4,22 +4,22 @@ NO = FALSE = OFF = 0
 YES = TRUE = ON = 1
 
 # Modes
-LIGHT = 'light'
-DARK = 'dark'
+LIGHT = "light"
+DARK = "dark"
 MODE = Literal["light", "dark"]
 
 # States
-NORMAL = 'normal'
-DISABLED = 'disabled'
+NORMAL = "normal"
+DISABLED = "disabled"
 STATE = Literal["normal", "disabled"]
 
 # FluButton Styles
-STANDARD = 'standard'
-ACCENT = 'accent'
-MENU = 'menu'
+STANDARD = "standard"
+ACCENT = "accent"
+MENU = "menu"
 BUTTONSTYLE = Literal["standard", "accent", "menu"]
 
 # FluFrame Styles
-STANDARD = 'standard'
-POPUPMENU = 'popupmenu'
+STANDARD = "standard"
+POPUPMENU = "popupmenu"
 FRAMESTYLE = Literal["standard", "popupmenu"]

@@ -1,14 +1,14 @@
 from tkinter import Toplevel
+
 from tkdeft.object import DObject
+
 from .bwm import BWm
 
 
 class FluToplevel(Toplevel, BWm, DObject):
-
     """Fluent设计的子窗口"""
 
     def __init__(self, *args, mode="light", **kwargs):
-
         """
         初始化类
 
@@ -25,8 +25,10 @@ class FluToplevel(Toplevel, BWm, DObject):
         self.custom = False
 
         # 设置窗口图标
-        from .icons import light
         from tkinter import PhotoImage
+
+        from .icons import light
+
         self.iconphoto(False, PhotoImage(file=light()))
 
         self.bind("<Configure>", self._event_configure, add="+")

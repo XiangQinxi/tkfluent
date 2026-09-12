@@ -1,15 +1,24 @@
-from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
+from tkdeft.windows.draw import DSvgDraw
 
 from .designs.frame import frame
 
 
 class FluFrameDraw(DSvgDraw):
-    def create_roundrect(self,
-                         x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                         fill="transparent",  #fill_opacity=1,
-                         outline="black", outline_opacity=1, width=1
-                         ):
+    def create_roundrect(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        radius,
+        radiusy=None,
+        temppath=None,
+        fill="transparent",  # fill_opacity=1,
+        outline="black",
+        outline_opacity=1,
+        width=1,
+    ):
         if radiusy:
             _rx = radius
             _ry = radiusy
@@ -17,18 +26,31 @@ class FluFrameDraw(DSvgDraw):
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         filter1 = drawing[1].defs.add(
-            drawing[1].filter(id="filter", start=(0, 0), size=(x2 - x1, y2 - y1), filterUnits="userSpaceOnUse",
-                              color_interpolation_filters="sRGB")
+            drawing[1].filter(
+                id="filter",
+                start=(0, 0),
+                size=(x2 - x1, y2 - y1),
+                filterUnits="userSpaceOnUse",
+                color_interpolation_filters="sRGB",
+            )
         )
 
         filter1.feFlood(flood_opacity="0", result="BackgroundImageFix")
-        filter1.feColorMatrix("SourceAlpha", type="matrix", values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0",
-                              result="hardAlpha")
+        filter1.feColorMatrix(
+            "SourceAlpha",
+            type="matrix",
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0",
+            result="hardAlpha",
+        )
         filter1.feOffset(dx="0", dy="2")
         filter1.feGaussianBlur(stdDeviation="1.33333")
         filter1.feComposite(in2="hardAlpha", operator="out", k2="-1", k3="1")
-        filter1.feColorMatrix(type="matrix", values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.039 0")
-        filter1.feBlend(mode="normal", in2="BackgroundImageFix", result="effect_dropShadow_1")
+        filter1.feColorMatrix(
+            type="matrix", values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.039 0"
+        )
+        filter1.feBlend(
+            mode="normal", in2="BackgroundImageFix", result="effect_dropShadow_1"
+        )
         filter1.feBlend(mode="normal", in2="effect_dropShadow_1", result="shape")
 
         """if outline2:
@@ -69,10 +91,14 @@ class FluFrameDraw(DSvgDraw):
         )"""
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
-                fill=fill,  #fill_opacity=fill_opacity,
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                _rx,
+                _ry,
+                fill=fill,  # fill_opacity=fill_opacity,
                 stroke_width=width,
-                stroke=outline, stroke_opacity=outline_opacity
+                stroke=outline,
+                stroke_opacity=outline_opacity,
             )
         )
         drawing[1].save()
@@ -100,41 +126,66 @@ class FluFrameCanvas(DCanvas):
         self.frame.update()
         self.update()
 
-    def create_round_rectangle(self,
-                               x1, y1, x2, y2, r1, r2=None, temppath=None,
-                               fill="transparent",  #fill_opacity=1,
-                               outline="black", outline_opacity=1, width=1
-                               ):
+    def create_round_rectangle(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        r1,
+        r2=None,
+        temppath=None,
+        fill="transparent",  # fill_opacity=1,
+        outline="black",
+        outline_opacity=1,
+        width=1,
+    ):
         self._img = self.svgdraw.create_roundrect(
-            x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill,  #fill_opacity=fill_opacity,
-            outline=outline, outline_opacity=outline_opacity, width=width
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            temppath=temppath,
+            fill=fill,  # fill_opacity=fill_opacity,
+            outline=outline,
+            outline_opacity=outline_opacity,
+            width=width,
         )
-        self._tkimg = self.svgdraw.create_tksvg_image(self._img)
+        from .designs.renderer import get_renderer
+
+        self._tkimg = self.svgdraw.create_svg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
 
     create_roundrect = create_round_rectangle
 
 
 from tkinter import Frame
+
 from tkdeft.object import DObject
+
 from .designs.gradient import FluGradient
 
 
 class FluFrame(Frame, DObject, FluGradient):
-    def __init__(self,
-                 master=None,
-                 *args,
-                 width=300,
-                 height=150,
-                 mode="light",
-                 style="standard",
-                 **kwargs,
-                 ):
+    def __init__(
+        self,
+        master=None,
+        *args,
+        width=300,
+        height=150,
+        mode="light",
+        style="standard",
+        **kwargs,
+    ):
         from tempfile import mkstemp
+
         _, self.temppath = mkstemp(suffix=".svg", prefix="tkdeft.temp.")
 
-        self.canvas = FluFrameCanvas(master, *args, width=width, height=height, **kwargs)
+        self.canvas = FluFrameCanvas(
+            master, *args, width=width, height=height, **kwargs
+        )
         self.canvas.frame = self
 
         super().__init__(master=self.canvas)
@@ -154,7 +205,7 @@ class FluFrame(Frame, DObject, FluGradient):
         self.attributes = EasyDict(
             {
                 "back_color": None,
-                #"back_opacity": None,
+                # "back_opacity": None,
                 "border_color": None,
                 "border_color_opacity": None,
                 "border_width": None,
@@ -180,25 +231,34 @@ class FluFrame(Frame, DObject, FluGradient):
             else:
                 self._light()
 
-    def _theme(self, mode, style, animation_steps: int = None, animation_step_time: int = None):
+    def _theme(
+        self, mode, style, animation_steps: int = None, animation_step_time: int = None
+    ):
         n = frame(mode, style)
 
         if animation_steps is None:
             from .designs.animation import get_animation_steps
+
             animation_steps = get_animation_steps()
         if animation_step_time is None:
             from .designs.animation import get_animation_step_time
+
             animation_step_time = get_animation_step_time()
         if not animation_steps == 0 or not animation_step_time == 0:
             if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
-                back_colors = self.generate_hex2hex(self.attributes.back_color, n["back_color"], steps=animation_steps)
+                back_colors = self.generate_hex2hex(
+                    self.attributes.back_color, n["back_color"], steps=animation_steps
+                )
                 for i in range(animation_steps):
+
                     def update(ii=i):  # 使用默认参数立即捕获i的值
-                        print(back_colors[ii])
+                        # print(back_colors[ii])
                         self._draw(tempcolor=back_colors[ii])
                         self.update()
 
-                    self.after(i * animation_step_time, update)  # 直接传递函数，不需要lambda
+                    self.after(
+                        i * animation_step_time, update
+                    )  # 直接传递函数，不需要lambda
             self.after(animation_steps * animation_step_time + 10, lambda: self._draw())
         self.dconfigure(
             back_color=n["back_color"],
@@ -219,6 +279,7 @@ class FluFrame(Frame, DObject, FluGradient):
 
     def _dark(self):
         self._theme("dark", "standard")
+
     def _dark_popupmenu(self):
         self._theme("dark", "popupmenu")
 
@@ -299,25 +360,33 @@ class FluFrame(Frame, DObject, FluGradient):
             _back_color = self.attributes.back_color
         else:
             _back_color = tempcolor
-        #_back_opacity = self.attributes.back_opacity
+        # _back_opacity = self.attributes.back_opacity
         _border_color = self.attributes.border_color
         _border_color_opacity = self.attributes.border_color_opacity
         _border_width = self.attributes.border_width
         _radius = self.attributes.radius
 
         self.element1 = self.canvas.create_round_rectangle(
-            0, 0, self.canvas.winfo_width(), self.canvas.winfo_height(), _radius, temppath=self.temppath,
-            fill=_back_color,  #fill_opacity=_back_opacity,
-            outline=_border_color, outline_opacity=_border_color_opacity, width=_border_width
+            0,
+            0,
+            self.canvas.winfo_width(),
+            self.canvas.winfo_height(),
+            _radius,
+            temppath=self.temppath,
+            fill=_back_color,  # fill_opacity=_back_opacity,
+            outline=_border_color,
+            outline_opacity=_border_color_opacity,
+            width=_border_width,
         )
 
         self.config(background=_back_color)
 
         self.element2 = self.canvas.create_window(
-            self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2,
+            self.canvas.winfo_width() / 2,
+            self.canvas.winfo_height() / 2,
             window=self,
             width=self.canvas.winfo_width() - _border_width * 2 - _radius,
-            height=self.canvas.winfo_height() - _border_width * 2 - _radius
+            height=self.canvas.winfo_height() - _border_width * 2 - _radius,
         )
 
         self.update()

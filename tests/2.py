@@ -2,24 +2,40 @@ from tkdeft.windows.draw import DSvgDraw
 
 
 class CustomButtonDraw(DSvgDraw):
-    def create_roundrect(self,
-                         x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                         fill="transparent", outline="black", outline2="black", width=1
-                         ):
+    def create_roundrect(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        radius,
+        radiusy=None,
+        temppath=None,
+        fill="transparent",
+        outline="black",
+        outline2="black",
+        width=1,
+    ):
         if radiusy:
             _rx = radius
             _ry = radiusy
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border")
+        border = drawing[1].linearGradient(
+            start=(x1, y1), end=(x1, y2), id="DButton.Border"
+        )
         border.add_stop_color("0%", outline)
         border.add_stop_color("100%", outline2)
         drawing[1].defs.add(border)
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
-                fill=fill, stroke_width=width,
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                _rx,
+                _ry,
+                fill=fill,
+                stroke_width=width,
                 stroke=f"url(#{border.get_id()})",
             )
         )
@@ -33,13 +49,32 @@ from tkdeft.windows.canvas import DCanvas
 class CustomButtonCanvas(DCanvas):
     draw = CustomButtonDraw
 
-    def create_round_rectangle(self,
-                               x1, y1, x2, y2, r1, r2=None, temppath=None,
-                               fill="transparent", outline="black", outline2="black", width=1
-                               ):
+    def create_round_rectangle(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        r1,
+        r2=None,
+        temppath=None,
+        fill="transparent",
+        outline="black",
+        outline2="black",
+        width=1,
+    ):
         self._img = self.svgdraw.create_roundrect(
-            x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill, outline=outline, outline2=outline2, width=width
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            temppath=temppath,
+            fill=fill,
+            outline=outline,
+            outline2=outline2,
+            width=width,
         )
         self._tkimg = self.svgdraw.create_tksvg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
@@ -51,36 +86,41 @@ from tkdeft.windows.drawwidget import DDrawWidget
 
 
 class CustomButton(CustomButtonCanvas, DDrawWidget):
-    def __init__(self, *args,
-                 text="",
-                 width=120,
-                 height=32,
-                 command=None,
-                 font=None,
-                 mode="light",
-                 style="standard",
-                 **kwargs):
+    def __init__(
+        self,
+        *args,
+        text="",
+        width=120,
+        height=32,
+        command=None,
+        font=None,
+        mode="light",
+        style="standard",
+        **kwargs,
+    ):
         self._init(mode, style)
 
         super().__init__(*args, width=width, height=height, **kwargs)
 
         if command is None:
-            def empty(): pass
+
+            def empty():
+                pass
 
             command = empty
 
-        self.dconfigure(
-            text=text,
-            command=command
-        )
+        self.dconfigure(text=text, command=command)
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
         self.bind("<<Clicked>>", lambda event=None: self.attributes.command(), add="+")
 
-        self.bind("<Return>", lambda event=None: self.attributes.command(), add="+")  # 可以使用回车键模拟点击
+        self.bind(
+            "<Return>", lambda event=None: self.attributes.command(), add="+"
+        )  # 可以使用回车键模拟点击
 
         if font is None:
             from tkdeft.utility.fonts import SegoeFont
+
             self.attributes.font = SegoeFont()
 
     def _init(self, mode, style):
@@ -92,7 +132,6 @@ class CustomButton(CustomButtonCanvas, DDrawWidget):
                 "text": "",
                 "command": None,
                 "font": None,
-
                 "rest": {
                     "back_color": "#ffffff",
                     "border_color": "#f0f0f0",
@@ -116,7 +155,7 @@ class CustomButton(CustomButtonCanvas, DDrawWidget):
                     "border_width": 1,
                     "radius": 6,
                     "text_color": "#636363",
-                }
+                },
             }
         )
 
@@ -151,12 +190,24 @@ class CustomButton(CustomButtonCanvas, DDrawWidget):
             _text_color = self.attributes.rest.text_color
 
         self.element_border = self.create_round_rectangle(
-            0, 0, self.winfo_width(), self.winfo_height(), _radius, temppath=self.temppath,
-            fill=_back_color, outline=_border_color, outline2=_border_color2, width=_border_width
+            0,
+            0,
+            self.winfo_width(),
+            self.winfo_height(),
+            _radius,
+            temppath=self.temppath,
+            fill=_back_color,
+            outline=_border_color,
+            outline2=_border_color2,
+            width=_border_width,
         )
         self.element_text = self.create_text(
-            self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
-            fill=_text_color, text=self.attributes.text, font=self.attributes.font
+            self.winfo_width() / 2,
+            self.winfo_height() / 2,
+            anchor="center",
+            fill=_text_color,
+            text=self.attributes.text,
+            font=self.attributes.font,
         )
 
     def theme(self, mode=None, style=None):
@@ -187,17 +238,19 @@ class CustomButton(CustomButtonCanvas, DDrawWidget):
                 "border_width": 1,
                 "radius": 6,
                 "text_color": "#636363",
-            }
+            },
         )
 
     def invoke(self):
         self.attributes.command()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from tkinter import Tk
 
     root = Tk()
-    custombutton = CustomButton(text="CustomButton", command=lambda: print("我被点击了"))
+    custombutton = CustomButton(
+        text="CustomButton", command=lambda: print("我被点击了")
+    )
     custombutton.pack(fill="both", expand="yes", padx=5, pady=5)
     root.mainloop()

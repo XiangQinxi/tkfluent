@@ -6,8 +6,9 @@ def window(mode):
             "closebutton": {
                 "back_color": "#cf392d",
                 "text_color": "#000000",
-                "text_hover_color": "#ffffff"
-            }
+                "text_hover_color": "#ffffff",
+            },
+            "transparent_color": "grey",
         }
     else:
         return {
@@ -16,6 +17,7 @@ def window(mode):
             "closebutton": {
                 "back_color": "#c42b1c",
                 "text_color": "#ffffff",
-                "text_hover_color": "#000000"
-            }
+                "text_hover_color": "#000000",
+            },
+            "transparent_color": "grey",
         }

@@ -7,7 +7,13 @@ root = FluWindow()
 
 theme_manager = FluThemeManager(root)
 
-button = FluButton(root, text="Button", mode="light", style="standard", command=lambda: theme_manager.toggle())
+button = FluButton(
+    root,
+    text="Button",
+    mode="light",
+    style="standard",
+    command=lambda: theme_manager.toggle(),
+)
 button.pack(padx=20, pady=20, fill="both", expand="yes")
 
 label = FluLabel(root, text="Label", mode="light")

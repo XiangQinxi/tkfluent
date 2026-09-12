@@ -5,9 +5,7 @@ from tkdeft.windows.drawwidget import DDrawWidget
 
 class FluScrollBarDraw(DSvgDraw):
     def create_track(
-            self,
-            x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-            fill="transparent"
+        self, x1, y1, x2, y2, radius, radiusy=None, temppath=None, fill="transparent"
     ):
         if radiusy:
             _rx = radius
@@ -17,7 +15,10 @@ class FluScrollBarDraw(DSvgDraw):
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                _rx,
+                _ry,
                 fill=fill,
             )
         )
@@ -25,9 +26,7 @@ class FluScrollBarDraw(DSvgDraw):
         return drawing[0]
 
     def create_thumb(
-            self,
-            x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-            fill="transparent"
+        self, x1, y1, x2, y2, radius, radiusy=None, temppath=None, fill="transparent"
     ):
         if radiusy:
             _rx = radius
@@ -37,7 +36,10 @@ class FluScrollBarDraw(DSvgDraw):
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                _rx,
+                _ry,
                 fill=fill,
             )
         )
@@ -49,44 +51,42 @@ class FluScrollBarCanvas(DCanvas):
     draw = FluScrollBarDraw
 
     def create_track(
-            self,
-            x1, y1, x2, y2, r1, r2=None, temppath=None,
-            fill="transparent"
+        self, x1, y1, x2, y2, r1, r2=None, temppath=None, fill="transparent"
     ):
         self._img = self.svgdraw.create_track(
-            x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill
+            x1, y1, x2, y2, r1, r2, temppath=temppath, fill=fill
         )
-        self._tkimg = self.svgdraw.create_tksvg_image(self._img)
+        self._tkimg = self.svgdraw.create_svg_image(self._img)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
 
     def create_thumb(
-            self,
-            x1, y1, x2, y2, r1, r2=None, temppath=None,
-            fill="transparent"
+        self, x1, y1, x2, y2, r1, r2=None, temppath=None, fill="transparent"
     ):
         self._img2 = self.svgdraw.create_thumb(
-            x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill
+            x1, y1, x2, y2, r1, r2, temppath=temppath, fill=fill
         )
-        self._tkimg2 = self.svgdraw.create_tksvg_image(self._img2)
+        self._tkimg2 = self.svgdraw.create_svg_image(self._img2)
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg2)
 
 
-from .constants import MODE
-from typing import Union
 from tkinter import Event
+from typing import Union
+
+from .constants import MODE
 
 
 class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
-    def __init__(self, *args,
-                 width=None,
-                 height=None,
-                 command=None,
-                 state="normal",
-                 mode="light",
-                 orient= "vertical",
-                 **kwargs):
+    def __init__(
+        self,
+        *args,
+        width=None,
+        height=None,
+        command=None,
+        state="normal",
+        mode="light",
+        orient="vertical",
+        **kwargs
+    ):
         self._init(mode)
         if orient == "horizontal":
             if width is None:
@@ -99,19 +99,16 @@ class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
             if height is None:
                 height = 120
 
-
         super().__init__(*args, width=width, height=height, **kwargs)
 
         if command is None:
-            def empty(): pass
+
+            def empty():
+                pass
 
             command = empty
 
-        self.dconfigure(
-            command=command,
-            state=state,
-            orient=orient
-        )
+        self.dconfigure(command=command, state=state, orient=orient)
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
         self.bind("<<Clicked>>", lambda event=None: self.attributes.command(), add="+")
@@ -131,20 +128,19 @@ class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
                 "state": "normal",
                 "expanded": False,
                 "orient": "vertical",
-
                 "rest": {},
                 "expand": {},
-                "disabled": {}
+                "disabled": {},
             }
         )
 
         self.theme(mode=mode)
 
-
     def theme(self, mode: MODE = None):
         if mode:
             self.mode = mode
         from .designs.scrollbar import scrollbar
+
         m = scrollbar(mode)
         self.attributes.rest = m["rest"]
         self.attributes.expand = m["expand"]
@@ -179,10 +175,8 @@ class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
             thumb_y2 = 10 + self.end * track_height
 
             # 更新滑块坐标
-            if hasattr(self, 'element_thumb'):
-                self.coords(self.element_thumb,
-                            1, thumb_y1,
-                            width - 1, thumb_y2)
+            if hasattr(self, "element_thumb"):
+                self.coords(self.element_thumb, 1, thumb_y1, width - 1, thumb_y2)
         else:
             # 计算水平滑块位置 (轨道宽度 = 总宽度 - 20px 边距)
             track_width = width - 20
@@ -190,12 +184,12 @@ class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
             thumb_x2 = 10 + self.end * track_width
 
             # 更新滑块坐标
-            if hasattr(self, 'element_thumb'):
-                self.coords(self.element_thumb,
-                            thumb_x1, 1,
-                            thumb_x2, height - 1)
+            if hasattr(self, "element_thumb"):
+                self.coords(self.element_thumb, thumb_x1, 1, thumb_x2, height - 1)
 
-    def _draw(self, event: Union[Event, None] = None, tempcolor: Union[dict, None] = None):
+    def _draw(
+        self, event: Union[Event, None] = None, tempcolor: Union[dict, None] = None
+    ):
         """
 
         Parameters:
@@ -237,28 +231,53 @@ class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
         if expanded:
             if orient == "vertical":
                 self.element_track = self.create_track(
-                    0, 0, width, height, _radius, temppath=self.temppath,
+                    0,
+                    0,
+                    width,
+                    height,
+                    _radius,
+                    temppath=self.temppath,
                     fill=_track_color,
                 )
 
                 self.element_thumb = self.create_thumb(
-                    1, 10, width-1, height-10, _radius, temppath=self.temppath2,
+                    1,
+                    10,
+                    width - 1,
+                    height - 10,
+                    _radius,
+                    temppath=self.temppath2,
                     fill=_thumb_color,
                 )
             else:
                 self.element_track = self.create_track(
-                    0, 0, width, height, _radius, temppath=self.temppath,
+                    0,
+                    0,
+                    width,
+                    height,
+                    _radius,
+                    temppath=self.temppath,
                     fill=_track_color,
                 )
 
                 self.element_thumb = self.create_thumb(
-                    0, 0, width, height, _radius, temppath=self.temppath2,
+                    0,
+                    0,
+                    width,
+                    height,
+                    _radius,
+                    temppath=self.temppath2,
                     fill=_thumb_color,
                 )
         else:
             if orient == "vertical":
                 self.element_thumb = self.create_thumb(
-                    3, 10, width-1, height-10, _radius, temppath=self.temppath2,
+                    3,
+                    10,
+                    width - 1,
+                    height - 10,
+                    _radius,
+                    temppath=self.temppath2,
                     fill=_thumb_color,
                 )
 

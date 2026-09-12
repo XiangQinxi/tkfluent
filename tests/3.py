@@ -1,4 +1,5 @@
 from tkinter import *
+
 from tkflu import *
 
 root = FluWindow(mode="dark")

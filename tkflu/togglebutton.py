@@ -1,15 +1,27 @@
 from easydict import EasyDict
-from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.canvas import DCanvas
+from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
 
 
 class FluToggleButtonDraw(DSvgDraw):
-    def create_roundrect_with_text(self,
-                                   x1, y1, x2, y2, radius, radiusy=None, temppath=None,
-                                   fill="transparent", fill_opacity=1,
-                                   outline="black", outline2=None, outline_opacity=1, outline2_opacity=1, width=1,
-                                   ):
+    def create_roundrect_with_text(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        radius,
+        radiusy=None,
+        temppath=None,
+        fill="transparent",
+        fill_opacity=1,
+        outline="black",
+        outline2=None,
+        outline_opacity=1,
+        outline2_opacity=1,
+        width=1,
+    ):
         if radiusy:
             _rx = radius
             _ry = radiusy
@@ -17,8 +29,12 @@ class FluToggleButtonDraw(DSvgDraw):
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
         if outline2:
-            border = drawing[1].linearGradient(start=(x1, y1), end=(x1, y2), id="DButton.Border",
-                                               gradientUnits="userSpaceOnUse")
+            border = drawing[1].linearGradient(
+                start=(x1, y1),
+                end=(x1, y2),
+                id="DButton.Border",
+                gradientUnits="userSpaceOnUse",
+            )
             border.add_stop_color("0.9", outline, outline_opacity)
             border.add_stop_color("1", outline2, outline2_opacity)
             drawing[1].defs.add(border)
@@ -29,10 +45,16 @@ class FluToggleButtonDraw(DSvgDraw):
             stroke_opacity = outline_opacity
         drawing[1].add(
             drawing[1].rect(
-                (x1, y1), (x2 - x1, y2 - y1), _rx, _ry,
-                fill=fill, fill_opacity=fill_opacity,
-                stroke=stroke, stroke_width=width, stroke_opacity=stroke_opacity,
-                transform="translate(0.500000 0.500000)"
+                (x1, y1),
+                (x2 - x1, y2 - y1),
+                _rx,
+                _ry,
+                fill=fill,
+                fill_opacity=fill_opacity,
+                stroke=stroke,
+                stroke_width=width,
+                stroke_opacity=stroke_opacity,
+                transform="translate(0.500000 0.500000)",
             )
         )
         drawing[1].save()
@@ -42,44 +64,75 @@ class FluToggleButtonDraw(DSvgDraw):
 class FluToggleButtonCanvas(DCanvas):
     draw = FluToggleButtonDraw
 
-    def create_round_rectangle_with_text(self,
-                                         x1, y1, x2, y2, r1, r2=None, temppath=None,
-                                         fill="transparent", fill_opacity=1,
-                                         outline="black", outline2="black", outline_opacity=1, outline2_opacity=1,
-                                         width=1,
-                                         ):
+    def create_round_rectangle_with_text(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        r1,
+        r2=None,
+        temppath=None,
+        temppath2=None,
+        fill="transparent",
+        fill_opacity=1,
+        outline="black",
+        outline2="black",
+        outline_opacity=1,
+        outline2_opacity=1,
+        width=1,
+    ):
         self._img = self.svgdraw.create_roundrect_with_text(
-            x1, y1, x2, y2, r1, r2, temppath=temppath,
-            fill=fill, fill_opacity=fill_opacity,
-            outline=outline, outline2=outline2, outline_opacity=outline_opacity, outline2_opacity=outline2_opacity,
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            temppath=temppath,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline2=outline2,
+            outline_opacity=outline_opacity,
+            outline2_opacity=outline2_opacity,
             width=width,
         )
-        self._tkimg = self.svgdraw.create_tksvg_image(self._img)
+        from .designs.renderer import get_renderer
+
+        self._tkimg = self.svgdraw.create_svg_image(
+            self._img, temppath2, way=get_renderer()
+        )
         return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
 
     create_roundrect = create_round_rectangle_with_text
 
 
-from .tooltip import FluToolTipBase
 from .designs.gradient import FluGradient
+from .tooltip import FluToolTipBase
 
 
 class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
-    def __init__(self, *args,
-                 text="",
-                 width=120,
-                 height=32,
-                 command=None,
-                 font=None,
-                 mode="light",
-                 state="normal",
-                 **kwargs):
+    def __init__(
+        self,
+        *args,
+        text="",
+        width=120,
+        height=32,
+        command=None,
+        font=None,
+        mode="light",
+        state="normal",
+        **kwargs,
+    ):
         self._init(mode)
 
         super().__init__(*args, width=width, height=height, **kwargs)
 
         if command is None:
-            def empty(): pass
+
+            def empty():
+                pass
 
             command = empty
 
@@ -93,10 +146,15 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
         self.bind("<<Clicked>>", lambda event=None: self.invoke(), add="+")
 
-        self.bind("<Return>", lambda event=None: self.invoke(), add="+")  # 可以使用回车键模拟点击
-        self.bind("<Return>", lambda event=None: self.toggle(), add="+")  # 可以使用回车键模拟点击
+        self.bind(
+            "<Return>", lambda event=None: self.invoke(), add="+"
+        )  # 可以使用回车键模拟点击
+        self.bind(
+            "<Return>", lambda event=None: self.toggle(), add="+"
+        )  # 可以使用回车键模拟点击
 
         from .defs import set_default_font
+
         set_default_font(font, self.attributes)
 
     def _init(self, mode):
@@ -110,10 +168,8 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                 "font": None,
                 "state": "normal",
                 "checked": False,
-
                 "uncheck": {},
-
-                "check": {}
+                "check": {},
             }
         )
 
@@ -174,18 +230,40 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
             _radius = tempcolor.radius
             _text_color = tempcolor.text_color
 
+        from .designs.renderer import get_renderer
+
+        if get_renderer() == 1:
+            width -= 1
+            height -= 1
+
         self.element_border = self.create_round_rectangle_with_text(
-            0, 0, width, height, _radius, temppath=self.temppath,
-            fill=_back_color, fill_opacity=_back_opacity,
-            outline=_border_color, outline_opacity=_border_color_opacity, outline2=_border_color2,
+            0,
+            0,
+            width,
+            height,
+            _radius,
+            temppath=self.temppath,
+            temppath2=self.temppath3,
+            fill=_back_color,
+            fill_opacity=_back_opacity,
+            outline=_border_color,
+            outline_opacity=_border_color_opacity,
+            outline2=_border_color2,
             outline2_opacity=_border_color2_opacity,
             width=_border_width,
         )
 
         self.element_text = self.create_text(
-            self.winfo_width() / 2, self.winfo_height() / 2, anchor="center",
-            fill=_text_color, text=self.attributes.text, font=self.attributes.font
+            self.winfo_width() / 2,
+            self.winfo_height() / 2,
+            anchor="center",
+            fill=_text_color,
+            text=self.attributes.text,
+            font=self.attributes.font,
         )
+        from .render_manager import render_manager
+
+        render_manager.mark_dirty(self)
 
     def theme(self, mode="light"):
         self.mode = mode
@@ -196,6 +274,7 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
 
     def _light(self):
         from tkflu.designs.primary_color import get_primary_color
+
         self.dconfigure(
             uncheck={
                 "rest": {
@@ -287,12 +366,13 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                     "border_width": 0,
                     "radius": 6,
                     "text_color": "#f3f3f3",
-                }
-            }
+                },
+            },
         )
 
     def _dark(self):
         from tkflu.designs.primary_color import get_primary_color
+
         self.dconfigure(
             uncheck={
                 "rest": {
@@ -338,7 +418,7 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                     "border_width": 1,
                     "radius": 6,
                     "text_color": "#a2a2a2",
-                }
+                },
             },
             check={
                 "rest": {
@@ -384,8 +464,8 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                     "border_width": 1,
                     "radius": 6,
                     "text_color": "#a7a7a7",
-                }
-            }
+                },
+            },
         )
 
     def invoke(self):
@@ -396,9 +476,11 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
         if self.attributes.state == "normal":
             if animation_steps is None:
                 from .designs.animation import get_animation_steps
+
                 animation_steps = get_animation_steps()
             if animation_step_time is None:
                 from .designs.animation import get_animation_step_time
+
                 animation_step_time = get_animation_step_time()
             check = self.attributes.check
             uncheck = self.attributes.uncheck
@@ -406,12 +488,16 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                 steps = animation_steps
                 if uncheck.pressed.border_color2 is None:
                     uncheck.pressed.border_color2 = uncheck.pressed.border_color
-                if check.pressed.border_color2  is None:
+                if check.pressed.border_color2 is None:
                     check.pressed.border_color2 = check.pressed.border_color
                 if uncheck.pressed.border_color2_opacity is None:
-                    uncheck.pressed.border_color2_opacity = uncheck.pressed.border_color_opacity
+                    uncheck.pressed.border_color2_opacity = (
+                        uncheck.pressed.border_color_opacity
+                    )
                 if check.pressed.border_color2_opacity is None:
-                    check.pressed.border_color2_opacity = check.pressed.border_color_opacity
+                    check.pressed.border_color2_opacity = (
+                        check.pressed.border_color_opacity
+                    )
                 if self.attributes.checked:
                     self.attributes.checked = False
                     back_colors = self.generate_hex2hex(
@@ -427,12 +513,22 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                         check.pressed.text_color, uncheck.rest.text_color, steps
                     )
                     import numpy as np
+
                     back_opacitys = np.linspace(
-                        float(check.pressed.back_opacity), float(uncheck.rest.back_opacity), steps).tolist()
+                        float(check.pressed.back_opacity),
+                        float(uncheck.rest.back_opacity),
+                        steps,
+                    ).tolist()
                     border_color_opacitys = np.linspace(
-                        float(check.pressed.border_color_opacity), float(uncheck.rest.border_color_opacity), steps).tolist()
+                        float(check.pressed.border_color_opacity),
+                        float(uncheck.rest.border_color_opacity),
+                        steps,
+                    ).tolist()
                     border_color2_opacitys = np.linspace(
-                        float(check.pressed.border_color2_opacity), float(uncheck.rest.border_color2_opacity), steps).tolist()
+                        float(check.pressed.border_color2_opacity),
+                        float(uncheck.rest.border_color2_opacity),
+                        steps,
+                    ).tolist()
                 else:
                     self.attributes.checked = True
                     back_colors = self.generate_hex2hex(
@@ -448,16 +544,27 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                         uncheck.pressed.text_color, check.rest.text_color, steps
                     )
                     import numpy as np
-                    back_opacitys = np.linspace(float(uncheck.pressed.back_opacity), float(check.rest.back_opacity),
-                                                steps).tolist()
-                    border_color_opacitys = np.linspace(float(uncheck.pressed.border_color_opacity), float(check.rest.border_color_opacity),
-                                                steps).tolist()
-                    border_color2_opacitys = np.linspace(float(uncheck.pressed.border_color2_opacity),
-                                                        float(check.rest.border_color2_opacity),
-                                                        steps).tolist()
+
+                    back_opacitys = np.linspace(
+                        float(uncheck.pressed.back_opacity),
+                        float(check.rest.back_opacity),
+                        steps,
+                    ).tolist()
+                    border_color_opacitys = np.linspace(
+                        float(uncheck.pressed.border_color_opacity),
+                        float(check.rest.border_color_opacity),
+                        steps,
+                    ).tolist()
+                    border_color2_opacitys = np.linspace(
+                        float(uncheck.pressed.border_color2_opacity),
+                        float(check.rest.border_color2_opacity),
+                        steps,
+                    ).tolist()
                 for i in range(steps):
+
                     def update(ii=i):
                         from easydict import EasyDict
+
                         tempcolor = EasyDict(
                             {
                                 "back_color": back_colors[ii],
@@ -465,15 +572,20 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                                 "border_color": border_colors[ii],
                                 "border_color_opacity": str(border_color_opacitys[ii]),
                                 "border_color2": border_colors2[ii],
-                                "border_color2_opacity": str(border_color2_opacitys[ii]),
+                                "border_color2_opacity": str(
+                                    border_color2_opacitys[ii]
+                                ),
                                 "border_width": 1,
                                 "text_color": text_colors[ii],
                                 "radius": 6,
                             }
                         )
                         self._draw(None, tempcolor)
-                    self.after(i*animation_step_time, update)
-                self.after(steps*animation_step_time+10, lambda: self._draw(None, None))
+
+                    self.after(i * animation_step_time, update)
+                self.after(
+                    steps * animation_step_time + 10, lambda: self._draw(None, None)
+                )
             else:
                 if self.attributes.checked:
                     self.attributes.checked = False

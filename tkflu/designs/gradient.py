@@ -1,7 +1,7 @@
 class FluGradient:
     def hex_to_rgb(self, h: str):
-        h = h.lstrip('#')
-        return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+        h = h.lstrip("#")
+        return tuple(int(h[i : i + 2], 16) for i in (0, 2, 4))
 
     def rgb_to_hex(self, rgb):
         return f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
@@ -9,6 +9,7 @@ class FluGradient:
     def generate_rgb2hex(self, start_color, end_color, steps):
         """生成颜色渐变序列"""
         import numpy as np
+
         gradient = []
         for t in np.linspace(0, 1, steps):
             r = int(start_color[0] + (end_color[0] - start_color[0]) * t)
@@ -33,6 +34,7 @@ class FluGradient:
         rgb_start = self.hex_to_rgb(start_hex)
         rgb_end = self.hex_to_rgb(end_hex)
         import numpy as np
+
         gradient = []
         if steps is None:
             return None
@@ -45,11 +47,7 @@ class FluGradient:
             # 确保值在0-255范围内并转换为HEX
             gradient.append(
                 self.rgb_to_hex(
-                    (
-                        max(0, min(255, r)),
-                        max(0, min(255, g)),
-                        max(0, min(255, b))
-                    )
+                    (max(0, min(255, r)), max(0, min(255, g)), max(0, min(255, b)))
                 )
             )
 

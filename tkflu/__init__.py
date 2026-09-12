@@ -14,6 +14,7 @@ from .button import FluButton
 from .bwm import BWm
 from .constants import *
 from .defs import *
+from .designs import *
 from .entry import FluEntry
 from .frame import FluFrame
 from .icons import *
@@ -30,8 +31,6 @@ from .togglebutton import FluToggleButton
 from .tooltip import FluToolTip, FluToolTip2, FluToolTipBase
 from .toplevel import FluToplevel
 from .window import FluWindow
-
-from .designs import *
 
 FluChip = FluBadge
 FluPushButton = FluButton

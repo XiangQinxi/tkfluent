@@ -120,8 +120,8 @@ def button(mode: str, style: str, state: str):
                 }
             elif state == "hover":
                 return {
-                    "back_color": "#F9F9F9",
-                    "back_opacity": 0,
+                    "back_color": "#eaeaea",
+                    "back_opacity": "1",
                     "border_color": "#000000",
                     "border_color_opacity": "0",
                     "border_color2": None,
@@ -132,8 +132,8 @@ def button(mode: str, style: str, state: str):
                 }
             elif state == "pressed":
                 return {
-                    "back_color": "#F9F9F9",
-                    "back_opacity": "0.3",
+                    "back_color": "#ededed",
+                    "back_opacity": "1",
                     "border_color": "#000000",
                     "border_color_opacity": "0",
                     "border_color2": None,

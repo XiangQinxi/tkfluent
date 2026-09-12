@@ -1,11 +1,12 @@
 from tkflu import *
 
-
 root = FluWindow()
 
 thememanager = FluThemeManager(root, mode="light")
 
-button = FluButton(root, text="Click me", command=lambda: print("Clicked"), style="standard")
+button = FluButton(
+    root, text="Click me", command=lambda: print("Clicked"), style="standard"
+)
 button.pack()
 
 tooltip = FluToolTip(button, text="This is a tooltip")
