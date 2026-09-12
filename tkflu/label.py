@@ -1,3 +1,7 @@
+"""文本标签组件。
+
+``FluLabel`` 支持通过 ``tooltip()`` 挂一个 Fluent 风格的悬浮提示。"""
+
 from tkdeft.windows.drawwidget import DDrawWidget
 
 from .designs.gradient import FluGradient

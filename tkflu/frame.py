@@ -1,3 +1,13 @@
+"""面板/容器组件。
+
+``FluFrame`` 是一个带圆角背景与边框的容器。它内部由"画布 + 子 Frame"组成：
+
+* 画布负责画圆角矩形背景；
+* 子 Frame 承载你的内容。
+
+因此 ``FluFrame`` 把 ``pack`` / ``grid`` / ``place`` 都代理给了它内部的画布，
+你可以像用普通容器一样使用它。"""
+
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
 
@@ -89,21 +99,25 @@ class FluFrameDraw(DSvgDraw):
                 fill_opacity="1",
             )
         )"""
-        drawing[1].add(
-            drawing[1].rect(
-                (x1, y1),
-                (x2 - x1, y2 - y1),
-                _rx,
-                _ry,
-                fill=fill,  # fill_opacity=fill_opacity,
-                stroke_width=width,
-                stroke=outline,
-                stroke_opacity=outline_opacity,
-            )
+        # 几何内缩半个线宽，四边描边才完整。旧写法把矩形铺满 0..w / 0..h，
+        # 描边中心线正好压在画布边界上，四条边都只剩一半厚度。
+        from tkdeft.svg import add_roundrect
+
+        add_roundrect(
+            drawing[1],
+            x1,
+            y1,
+            x2,
+            y2,
+            _rx,
+            _ry,
+            fill=fill,  # fill_opacity=fill_opacity,
+            outline=outline,
+            outline_opacity=outline_opacity,
+            width=width,
         )
         drawing[1].save()
         return drawing[0]
-
 
 class FluFrameCanvas(DCanvas):
     draw = FluFrameDraw
@@ -140,6 +154,22 @@ class FluFrameCanvas(DCanvas):
         outline_opacity=1,
         width=1,
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_roundrect_raster(
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            fill=fill,
+            outline=outline,
+            outline_opacity=outline_opacity,
+            width=width,
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_roundrect(
             x1,
             y1,
@@ -153,10 +183,10 @@ class FluFrameCanvas(DCanvas):
             outline_opacity=outline_opacity,
             width=width,
         )
-        from .designs.renderer import get_renderer
-
         self._tkimg = self.svgdraw.create_svg_image(self._img)
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+        )
 
     create_roundrect = create_round_rectangle
 
@@ -179,14 +209,14 @@ class FluFrame(Frame, DObject, FluGradient):
         style="standard",
         **kwargs,
     ):
-        from tempfile import mkstemp
-
-        _, self.temppath = mkstemp(suffix=".svg", prefix="tkdeft.temp.")
-
         self.canvas = FluFrameCanvas(
             master, *args, width=width, height=height, **kwargs
         )
         self.canvas.frame = self
+
+        # 旧实现在这里 mkstemp() 了一个 .svg 临时文件，既泄漏 fd 又从不清理。
+        # 现在直接复用画布绘制对象自带的 scratch 文件（控件销毁时统一回收）。
+        self.temppath = self.canvas.svgdraw.scratch_path(".svg")
 
         super().__init__(master=self.canvas)
 
@@ -389,10 +419,16 @@ class FluFrame(Frame, DObject, FluGradient):
             height=self.canvas.winfo_height() - _border_width * 2 - _radius,
         )
 
-        self.update()
-
-        self.after(100, lambda: self.update())
-        self.after(100, lambda: self.config(background=_back_color))
+        # 只做 idle 级刷新（布局 + 重绘），刻意不使用 update()：
+        # update() 会处理**全部**待处理事件，其中包括 <Configure>，
+        # 于是可能在 _draw 内部再次触发 _draw，形成重入。
+        # 另外这里也刻意不再挂 after(100, ...) 延迟回调——它对最终外观没有
+        # 额外贡献（背景色已在上面同步设置，且任何尺寸变化都会经 <Configure>
+        # 重新走一遍 _draw），却会带来两个真实问题：
+        #   1. 连续 resize 时回调不断堆积，每个都强制刷新一次布局 → 卡顿；
+        #   2. 窗口关闭后残留回调仍会触发，控制台刷
+        #      "invalid command name ...<lambda>"。
+        self.update_idletasks()
 
     def _event_configure(self, event=None):
         self._draw(event)

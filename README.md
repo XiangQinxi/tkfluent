@@ -9,53 +9,175 @@
 ![Light.png](https://img.picui.cn/free/2025/06/22/6857e613bc150.png)
 ![Dark.png](https://img.picui.cn/free/2025/06/22/6857e613b7fc2.png)
 
+## 环境要求
+
+| 依赖 | 版本 | 说明 |
+| --- | --- | --- |
+| Python | `>=3.8` | |
+| `tkdeft` | **`>=0.2.0`** | 绘制引擎层 `tkdeft.engines` 从 0.2.0 开始提供 |
+| `tksvg` / `tkextrafont` / `svgwrite` | 见 `pyproject.toml` | 由 pip 自动安装 |
+| `pillow` | `>=10.2` | **不设上界**，10 / 11 / 12 均可用 |
+| `numpy` | 任意 | |
+
+> **⚠️ 本地开发时的常见坑**
+>
+> 如果两个仓库都在本机，IDE 会把项目根加进 `sys.path`，于是
+> `import tkflu` 用的是本地新代码，而 `tkdeft` 仍解析到 site-packages 里的
+> **旧版本**，导入时报：
+>
+> ```text
+> ModuleNotFoundError: No module named 'tkdeft.engines'
+> ```
+>
+> 解决办法：把两个仓库都装成可编辑模式（**先装被依赖的**）：
+>
+> ```bash
+> pip install -e ../tkdeft
+> pip install -e .
+> ```
+>
+> 确认环境是否正确：
+>
+> ```bash
+> python -c "import tkdeft; print(tkdeft.__version__, tkdeft.__file__)"
+> # 期望输出 0.2.0 以及你本地 tkdeft 仓库的路径
+> ```
+>
+> 可选的更快绘制引擎（不装也能用，会退回 tksvg / Pillow）：
+>
+> ```bash
+> cd ../tkdeft
+> pip install -e ".[skia]"       # skia-python
+> pip install -e ".[raster]"     # skia-python + pycairo
+> ```
+
 ## 文档
 请查阅[tkfluent文档网站](https://tkfluent.netlify.app/)。
 使用`mkdocs`和`mkdocs-material`构建，由`netlify`部署
+
+主要章节：
+
+| 章节 | 内容 |
+| --- | --- |
+| [Get Started](docs/docs/getstarted/download.md) | 安装、上手、第一个应用 |
+| [Guide 指南](docs/docs/guide/components.md) | [组件总览](docs/docs/guide/components.md)、[运行演示](docs/docs/guide/run-demo.md)、[主题与配色](docs/docs/guide/theme.md) |
+| [Tutorial 教程](docs/docs/tutorial/renderer.md) | [渲染引擎与性能](docs/docs/tutorial/renderer.md)、主题切换、提示气泡 |
+| [API 文档](docs/docs/api/index.md) | 由源码 docstring 自动生成（`mkdocstrings`） |
+
+### 本地构建文档
+
+```bash
+pip install -r docs/requirements.txt
+mkdocs serve -f docs/mkdocs.yml     # 本地预览
+mkdocs build --strict -f docs/mkdocs.yml
+```
+
+新增公开模块后，用 `python docs/gen_api_pages.py --write` 重新生成 API 页面，
+并把打印出来的 nav 片段同步到 `docs/mkdocs.yml`。
+
+## 快速看效果
+
+不需要写代码，直接运行内置的组件画廊：
+
+```bash
+python -m tkflu                 # 或者安装后：tkfluent-demo
+python -m tkflu -r auto         # 用最快的可用渲染引擎
+python -m tkflu --list-engines  # 看看哪些引擎可用
+python -m tkflu --check         # 无界面自检（CI 可用，成功返回 0）
+```
+
+画廊把全部组件摆在同一个窗口里（左栏内容型、右栏交互型、顶部菜单栏、
+底部状态栏显示当前引擎与缓存命中率），点任何组件都会打印事件日志。
+完整参数见 [运行演示](docs/docs/guide/run-demo.md)。
 
 ## 贡献者
 1. [真_人工智障](https://github.com/TotoWang-hhh)
 
 ## 依赖图
-```bash
-PS .\tkfluent> poetry show --tree                                                                                                                                                                                        
-easydict 1.13 Access dict values as attributes (works recursively).
-numpy 1.24.4 Fundamental package for array computing in Python
-pillow 10.4.0 Python Imaging Library (Fork)
-svgwrite 1.4.3 A Python library to create SVG drawings.
-tkdeft 0.0.9 使用tkinter+tksvg开发的现代化界面库
-├── easydict >=1.13,<2.0
-├── pillow >=10.2.0,<11.0.0
-├── svgwrite >=1.4.3,<2.0.0
+
+直接依赖（`poetry show --tree`，会随版本变化，以 `pyproject.toml` 为准）：
+
+```text
+easydict        ^1.13    属性式字典，组件用它存状态
+numpy           *        渐变插值、栅格引擎的像素运算
+pillow          >=10.2   位图处理与 PhotoImage 转换
+svgwrite        ^1.4.3   生成 SVG（SVG 引擎路径）
+tkdeft          0.2.0    绘制引擎层 / 画布 / 交互控件基类
+├── easydict    >=1.13
+├── pillow      >=10.2
+├── numpy       *
+├── svgwrite    >=1.4.3,<2.0.0
 ├── tkextrafont >=0.6.3,<0.7.0
 │   └── scikit-build *
-│       ├── distro *
-│       ├── packaging *
-│       ├── setuptools >=42.0.0
-│       ├── tomli *
-│       └── wheel >=0.32.0
-└── tksvg >=0.7.4,<0.8.0
+└── tksvg       >=0.7.4,<0.8.0
     └── scikit-build *
-        ├── distro *
-        ├── packaging *
-        ├── setuptools >=42.0.0
-        ├── tomli *
-        └── wheel >=0.32.0
-tkextrafont 0.6.3 Fonts loader for Tkinter
-└── scikit-build *
-    ├── distro *
-    ├── packaging *
-    ├── setuptools >=42.0.0
-    ├── tomli *
-    └── wheel >=0.32.0
-tksvg 0.7.4 SVG support for PhotoImage in Tk 8.6
-└── scikit-build *
-    ├── distro *
-    ├── packaging *
-    ├── setuptools >=42.0.0
-    ├── tomli *
-    └── wheel >=0.32.0
 ```
+
+完整依赖树（含间接依赖）可以自己跑一遍：
+
+```bash
+poetry show --tree
+```
+
+## 渲染引擎与性能
+
+`tkfluent` 的绘制后端现在是**可切换**的，底层由
+[`tkdeft.engines`](https://pypi.org/project/tkdeft) 提供。
+
+```python
+from tkflu.designs.renderer import set_renderer, list_renderers
+
+print(list_renderers())
+# [(0, 'tksvg', True), (1, 'wand', True), (2, 'skia', True), (3, 'pillow', True), (4, 'cairo', True)]
+
+set_renderer("skia")   # 也接受编号：set_renderer(2)
+```
+
+| 编号 | 引擎 | 类型 | 额外依赖 |
+| --- | --- | --- | --- |
+| `0` | `tksvg` | SVG，**默认，行为与旧版完全一致** | 无 |
+| `1` | `wand` | SVG → PNG | `Wand` |
+| `2` | `skia` | 进程内栅格，速度与画质最好 | `pip install tkfluent[skia]` |
+| `3` | `pillow` | 进程内栅格，**永远可用** | 无 |
+| `4` | `cairo` | 进程内栅格 | `pip install tkfluent[cairo]` |
+
+旧写法依然有效：
+
+```python
+from tkflu.designs.renderer import set_renderer
+set_renderer(0)   # 之前的 0/1 语义不变
+```
+
+> **为什么不直接默认换成 skia？**
+> 栅格引擎在抗锯齿细节上与 tksvg 有亚像素级差异，为了让老项目升级后
+> 界面**一个像素都不变**，默认仍是 `tksvg`。想要性能就显式切到 `2` 或 `3`。
+
+### 实测提升（本机）
+
+| 场景 | `tksvg`（默认） | `skia`（编号 2） | 提升 |
+| --- | --- | --- | --- |
+| 按钮重绘 | 5.95 ms | 0.15 ms | **39×** |
+| 按钮 hover 往返 | 13.65 ms | 0.26 ms | **52×** |
+| 20 个按钮批量重绘 | 139.9 ms | 2.93 ms | **48×** |
+| 圆角矩形（参数相同，命中缓存） | 10.80 ms | 0.02 ms | **480×** |
+
+即使完全不动渲染引擎，这一版对 `tkdeft` 基础设施的修复（临时文件/fd 泄漏、
+图片被 GC 导致画面空白、无效的重复重绘）本身也能带来约 **2–3×** 的改善。
+
+复现：`python benchmarks/run_all.py`（在 `tkdeft` 仓库里）
+
+### 这一版修掉的组件层缺陷
+
+| 问题 | 影响 |
+| --- | --- |
+| `FluSlider._draw` 用 `if renderer == 0 / elif == 1` 且**没有 else** | 新增渲染器编号时轨道与把手不会被创建，构造即 `AttributeError` |
+| `FluFrame._draw` 每次重绘都挂两个 `after(100)` 且从不取消 | 拖动窗口时回调堆积卡顿；关窗后控制台刷 `invalid command name` |
+| `FluFrame._draw` 调用了 `self.update()` | 会处理全部事件（含 `<Configure>`），在 `_draw` 内部重入 |
+| `FluBadge._draw` 每次重绘都挂 `after(10, lambda: self.update())` | 同类回调泄漏 |
+| `icons.py` 每次调用都 `mkstemp()` 且不关闭 fd | 每开一个窗口泄漏一个句柄 + 一个残留文件 |
+| `window.py` / `toplevel.py` 的 `PhotoImage` 未指定 `master` | 多 Tk 解释器场景下 `iconphoto` 报 `not a photo image` |
+| 圆角矩形几何用 `translate(0.5,0.5)` | **按钮的下边框和右边框被完全裁掉** |
+| `RenderManager` 调用不存在的 `winfo_zorder` | 开启 `optimized_rendering` 后每次渲染都抛异常 |
 
 ## 协议
 本项目采用`GPL-3.0`协议

@@ -94,18 +94,66 @@ nav:
       - getstarted/download.md
       - getstarted/easytouse.md
       - getstarted/the_1st_app.md
+  - Guide 指南:
+      - guide/components.md
+      - guide/run-demo.md
+      - guide/theme.md
   - Tutorial 教程:
       - tutorial/change_theme_color.md
       - tutorial/change_theme_mode.md
+      - tutorial/renderer.md
       - tutorial/tooltip.md
   - API 文档:
       - api/index.md
       - api/tkflu.md
-      - api/tkflu.badge.md
-      - api/tkflu.button.md
-      - api/tkflu.entry.md
-      - api/tkflu.frame.md
-      - api/tkflu.label.md
+      - 组件 Widgets:
+          - api/tkflu.badge.md
+          - api/tkflu.button.md
+          - api/tkflu.togglebutton.md
+          - api/tkflu.entry.md
+          - api/tkflu.text.md
+          - api/tkflu.label.md
+          - api/tkflu.frame.md
+          - api/tkflu.image.md
+          - api/tkflu.listbox.md
+          - api/tkflu.scrollbar.md
+          - api/tkflu.slider.md
+          - api/tkflu.menu.md
+          - api/tkflu.menubar.md
+          - api/tkflu.popupmenu.md
+          - api/tkflu.popupwindow.md
+          - api/tkflu.tooltip.md
+      - 窗口 Windows:
+          - api/tkflu.window.md
+          - api/tkflu.toplevel.md
+          - api/tkflu.bwm.md
+          - api/tkflu.customwindow.md
+          - api/tkflu.customwindow2.md
+      - 基础设施 Core:
+          - api/tkflu.constants.md
+          - api/tkflu.defs.md
+          - api/tkflu.thememanager.md
+          - api/tkflu.icons.md
+          - api/tkflu.render_manager.md
+          - api/tkflu.designs.renderer.md
+      - 设计规范 Designs:
+          - api/tkflu.designs.md
+          - api/tkflu.designs.button.md
+          - api/tkflu.designs.badge.md
+          - api/tkflu.designs.entry.md
+          - api/tkflu.designs.text.md
+          - api/tkflu.designs.frame.md
+          - api/tkflu.designs.label.md
+          - api/tkflu.designs.menubar.md
+          - api/tkflu.designs.scrollbar.md
+          - api/tkflu.designs.slider.md
+          - api/tkflu.designs.tooltip.md
+          - api/tkflu.designs.window.md
+          - api/tkflu.designs.gradient.md
+          - api/tkflu.designs.primary_color.md
+          - api/tkflu.designs.animation.md
+          - api/tkflu.designs.design.md
+          - api/tkflu.designs.fonts.md
   - Blog 博客:
       - blog/index.md
   - Aunthor`s Blog 作者博客: https://xiangqinxi.github.io

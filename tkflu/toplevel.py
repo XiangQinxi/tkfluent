@@ -1,3 +1,8 @@
+"""子窗口。
+
+``FluToplevel`` 是 :class:`~tkflu.window.FluWindow` 的子窗口版本，
+共享同一套主题与图标设置。"""
+
 from tkinter import Toplevel
 
 from tkdeft.object import DObject
@@ -24,16 +29,22 @@ class FluToplevel(Toplevel, BWm, DObject):
 
         self.custom = False
 
-        # 设置窗口图标
-        from tkinter import PhotoImage
+        # 设置窗口图标：直接用内嵌 base64 建图，不落盘（见 .icons 模块说明）
+        from .icons import icon_photoimage
 
-        from .icons import light
-
-        self.iconphoto(False, PhotoImage(file=light()))
+        self._icon_photo = icon_photoimage("light", master=self)
+        self.iconphoto(False, self._icon_photo)
 
         self.bind("<Configure>", self._event_configure, add="+")
         self.bind("<Escape>", self._event_key_esc, add="+")
         self.protocol("WM_DELETE_WINDOW", self._event_delete_window)
+
+    def destroy(self):
+        """关闭子窗口前先回收待执行的 ``after`` 回调（详见 :mod:`tkflu._after`）。"""
+        from ._after import cancel_all_after
+
+        cancel_all_after(self)
+        super().destroy()
 
     def theme(self, mode: str):
         super().theme(mode)

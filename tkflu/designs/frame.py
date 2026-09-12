@@ -1,3 +1,5 @@
+"""面板的设计规范。"""
+
 def frame(mode, style):
     mode = mode.lower()
     style = style.lower()

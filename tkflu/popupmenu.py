@@ -1,3 +1,8 @@
+"""弹出菜单窗口。
+
+``FluPopupMenu`` 是 :class:`~tkflu.menu.FluMenu` 的基类，
+以一个无边框置顶窗口的形式呈现菜单内容。"""
+
 from .frame import FluFrame
 from .popupwindow import FluPopupWindow
 

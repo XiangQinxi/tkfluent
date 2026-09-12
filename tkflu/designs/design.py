@@ -1,3 +1,8 @@
+"""面向对象风格的设计规范入口。
+
+``FluDesign`` 把各 ``designs.*`` 模块里的函数包装成方法，
+方便需要按实例组织样式的场景。"""
+
 class FluDesign(object):
     def __init__(self):
         pass

@@ -1,3 +1,8 @@
+"""便捷函数集合。
+
+包含主题切换辅助函数与主色调预设（红/橙/黄/绿/蓝/紫）。
+这些名字会经由 ``from tkflu import *`` 直接暴露。"""
+
 def toggle_theme(toggle_button, thememanager):
     if toggle_button.dcget("checked"):
         thememanager.mode("dark")

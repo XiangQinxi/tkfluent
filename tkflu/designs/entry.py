@@ -1,3 +1,5 @@
+"""输入框的设计规范。"""
+
 from .primary_color import get_primary_color
 
 

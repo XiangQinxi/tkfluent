@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.1.6"
+version = "0.2.0"
 description = "Fluent(SunValley) Design for Tkinter. Modern GUI"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
@@ -36,10 +36,28 @@ python = "^3.8"
 tksvg = "^0.7.4"
 tkextrafont = "^0.6.3"
 svgwrite = "^1.4.3"
-pillow = "^10.2.0"
-tkdeft = "0.1.2"
+# 与 tkdeft 保持一致，不设上界（Pillow 10 / 11 / 12 实测均可用）
+pillow = ">=10.2"
+tkdeft = "0.2.0"
 easydict = "^1.13"
 numpy = "*"
+
+# 可选的进程内栅格绘制引擎（渲染器 2 / 4）。不装也能用：
+# 渲染器 0（tksvg，默认）与 3（Pillow）不需要任何额外依赖。
+skia-python = { version = "^138.0", optional = true }
+pycairo = { version = "^1.29", optional = true }
+
+[tool.poetry.scripts]
+# 安装后可用的命令：
+#   tkfluent-demo                 启动组件画廊
+#   tkfluent-demo -r skia         指定渲染引擎
+#   tkfluent-demo --check         无界面自检（CI 可用）
+tkfluent-demo = "tkflu.__main__:main"
+
+[tool.poetry.extras]
+skia = ["skia-python"]
+cairo = ["pycairo"]
+raster = ["skia-python", "pycairo"]
 
 [build-system]
 requires = ["poetry-core"]

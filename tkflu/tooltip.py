@@ -1,3 +1,16 @@
+"""悬浮提示。
+
+提供三种实现：
+
+* :class:`FluToolTip`  —— 默认实现，跟随鼠标位置；
+* :class:`FluToolTip2` —— 另一种定位策略（``way=1``）；
+* :class:`FluToolTipBase` —— 混入基类，组件通过继承它获得 ``tooltip()`` 方法。
+
+.. code-block:: python
+
+    label = FluLabel(root, text="把鼠标放上来")
+    label.tooltip(text="我是提示")"""
+
 import sys
 from tkinter import Event, Widget
 

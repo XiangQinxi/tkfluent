@@ -1,3 +1,3 @@
-# tkflu.frame
+# tkflu.frame · FluFrame 面板
 
-::: tkflu.frame 
+::: tkflu.frame

@@ -1,3 +1,8 @@
+"""实验性的自定义标题栏（``way=0``）。
+
+通过 Win32 API 接管非客户区绘制，实现更贴近 WinUI 的无边框窗口。
+**实验特性**，生产环境建议使用 ``way=1``（见 :meth:`tkflu.bwm.BWm.wincustom`）。"""
+
 from ctypes import POINTER, Structure, c_int
 from ctypes.wintypes import HWND, RECT, UINT
 from tkinter import Tk

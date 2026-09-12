@@ -1,3 +1,5 @@
+"""窗口的设计规范。"""
+
 def window(mode):
     if mode.lower() == "light":
         return {

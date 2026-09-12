@@ -1,3 +1,14 @@
+"""按钮组件。
+
+``FluButton`` 是 tkfluent 最基础的交互组件，支持三种样式：
+
+* ``standard`` —— 默认样式，浅色描边；
+* ``accent``   —— 强调色填充（跟随 ``set_primary_color``）；
+* ``menu``     —— 无边框的菜单项样式。
+
+四种状态（``rest`` / ``hover`` / ``pressed`` / ``disabled``）的配色定义在
+:mod:`tkflu.designs.button` 里。"""
+
 from typing import Union
 
 from tkdeft.windows.canvas import DCanvas
@@ -53,38 +64,25 @@ class FluButtonDraw(DSvgDraw):
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        if outline2:
-            border = drawing[1].linearGradient(
-                start=(x1, y1),
-                end=(x1, y2),
-                id="DButton.Border",
-                gradientUnits="userSpaceOnUse",
-            )  # 渐变色配置
-            border.add_stop_color(
-                "0.9", outline, outline_opacity
-            )  # 第一个渐变色的位置、第一个渐变色、第一个渐变色的透明度
-            border.add_stop_color(
-                "1", outline2, outline2_opacity
-            )  # 第二个渐变色的位置、第二个渐变色、第二个渐变色的透明度
-            drawing[1].defs.add(border)
-            stroke = f"url(#{border.get_id()})"
-            stroke_opacity = 1
-        else:
-            stroke = outline
-            stroke_opacity = outline_opacity
-        drawing[1].add(
-            drawing[1].rect(
-                (x1, y1),
-                (x2 - x1, y2 - y1),
-                _rx,
-                _ry,
-                fill=fill,
-                fill_opacity=fill_opacity,
-                stroke=stroke,
-                stroke_width=width,
-                stroke_opacity=stroke_opacity,
-                transform="translate(0.500000 0.500000)",
-            )
+        # 几何内缩半个线宽，保证四条边的描边都完整落在画布内
+        # （旧写法用 translate(0.5,0.5) 把下边框和右边框整个推到了画布外）
+        from tkdeft.svg import add_roundrect
+
+        add_roundrect(
+            drawing[1],
+            x1,
+            y1,
+            x2,
+            y2,
+            _rx,
+            _ry,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline2=outline2,
+            outline_opacity=outline_opacity,
+            outline2_opacity=outline2_opacity,
+            width=width,
         )
         drawing[1].save()
         return drawing[0]
@@ -135,6 +133,28 @@ class FluButtonCanvas(DCanvas):
 
         Returns: svg图片保存地址
         """
+        # 快速路径：当前引擎是 skia / pillow / cairo 时，直接拿进程内渲染的位图，
+        # 不生成 SVG、不落盘；相同规格的图片会被缓存并在多个按钮间共享。
+        item = self.create_roundrect_raster(
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            *args,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline2=outline2,
+            outline_opacity=outline_opacity,
+            outline2_opacity=outline2_opacity,
+            width=width,
+            **kwargs,
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_roundrect(
             x1,
             y1,
@@ -157,9 +177,14 @@ class FluButtonCanvas(DCanvas):
             path=self._img, path2=temppath2, way=get_renderer()
         )  # 用tksvg读取svg图片
         # print(self._img)
-        return self.create_image(
-            x1, y1, anchor="nw", image=self._tkimg, *args, **kwargs
-        )  # 在画布上创建个以svg图片为图片的元件
+        # 在画布上创建个以 svg 图片为图片的元件；
+        # _keep_photo 负责持有 PhotoImage 引用，防止被 GC 后画面变空白
+        return self._keep_photo(
+            self.create_image(
+                x1, y1, anchor="nw", image=self._tkimg, *args, **kwargs
+            ),
+            self._tkimg,
+        )
 
     create_roundrect = create_round_rectangle  # 缩写
 
@@ -351,9 +376,10 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             )
         self.tag_raise(self.element_text, self.element_border)
 
-        from .render_manager import render_manager
-
-        render_manager.mark_dirty(self)
+        # 注意：这里曾经调用 render_manager.mark_dirty(self)。
+        # _draw 本身就是"把控件画出来"，再把自己标记为脏只会让集中式调度器
+        # 在下一轮把同一个控件重画一遍（开着 optimized_rendering 时是纯粹的
+        # 双倍开销）。真正的重绘请求应当由事件处理函数发出。
 
     def theme(self, mode: MODE = None, style: BUTTONSTYLE = None):
         if mode:

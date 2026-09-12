@@ -1,3 +1,10 @@
+"""列表组件（当前为占位实现）。
+
+.. warning::
+   ``FluListBox`` 目前只是一个"长得像按钮的圆角矩形"，
+   **还没有真正的列表数据/选择能力**，暂不建议用于生产。
+   保留它是为了固定 API 形状，后续会补齐虚拟滚动与多选。"""
+
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
@@ -24,22 +31,24 @@ class FluListBoxDraw(DSvgDraw):
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        border = drawing[1].linearGradient(
-            start=(x1, y1), end=(x1, y2), id="DListBox.Border"
-        )
-        border.add_stop_color("0%", outline)
-        border.add_stop_color("100%", outline2)
-        drawing[1].defs.add(border)
-        drawing[1].add(
-            drawing[1].rect(
-                (x1, y1),
-                (x2 - x1, y2 - y1),
-                _rx,
-                _ry,
-                fill=fill,
-                stroke_width=width,
-                stroke=f"url(#{border.get_id()})",
-            )
+        # 描边为 0%→100% 的竖直渐变；几何内缩半个线宽，四边描边才完整
+        from tkdeft.svg import add_roundrect
+
+        add_roundrect(
+            drawing[1],
+            x1,
+            y1,
+            x2,
+            y2,
+            _rx,
+            _ry,
+            fill=fill,
+            outline=outline,
+            outline2=outline2,
+            width=width,
+            gradient_id="DListBox.Border",
+            gradient_stop1=0.0,
+            gradient_stop2=1.0,
         )
         drawing[1].save()
         return drawing[0]
@@ -62,6 +71,25 @@ class FluListBoxCanvas(DCanvas):
         outline2="black",
         width=1,
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）。
+        # listbox 的描边是 0%→100% 的竖直渐变，与 button 的 0.9→1.0 不同。
+        item = self.create_roundrect_raster(
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            fill=fill,
+            outline=outline,
+            outline2=outline2,
+            width=width,
+            gradient_stop1=0.0,
+            gradient_stop2=1.0,
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_roundrect(
             x1,
             y1,
@@ -76,7 +104,9 @@ class FluListBoxCanvas(DCanvas):
             width=width,
         )
         self._tkimg = self.svgdraw.create_svg_image(self._img)
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+        )
 
     create_roundrect = create_round_rectangle
 

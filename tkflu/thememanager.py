@@ -1,3 +1,15 @@
+"""主题管理器。
+
+``FluThemeManager`` 遍历窗口内的组件并统一切换浅色/深色主题，
+是"一键换肤"的入口。
+
+.. code-block:: python
+
+    thememanager = FluThemeManager(window=root, mode="light")
+
+    thememanager.mode("dark")   # 切到深色
+    thememanager.toggle()       # 在浅色/深色之间切换"""
+
 from typing import Union
 
 from .toplevel import FluToplevel

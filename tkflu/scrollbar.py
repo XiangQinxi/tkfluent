@@ -1,3 +1,8 @@
+"""滚动条组件。
+
+``FluScrollBar`` 画出 Fluent 风格的滚动条外观（轨道 + 滑块），
+通过 ``command`` 回调与目标控件联动。"""
+
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
@@ -53,20 +58,38 @@ class FluScrollBarCanvas(DCanvas):
     def create_track(
         self, x1, y1, x2, y2, r1, r2=None, temppath=None, fill="transparent"
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_roundrect_raster(
+            x1, y1, x2, y2, r1, r2, fill=fill, outline=None, width=0
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_track(
             x1, y1, x2, y2, r1, r2, temppath=temppath, fill=fill
         )
         self._tkimg = self.svgdraw.create_svg_image(self._img)
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+        )
 
     def create_thumb(
         self, x1, y1, x2, y2, r1, r2=None, temppath=None, fill="transparent"
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_roundrect_raster(
+            x1, y1, x2, y2, r1, r2, fill=fill, outline=None, width=0
+        )
+        if item is not None:
+            return item
+
         self._img2 = self.svgdraw.create_thumb(
             x1, y1, x2, y2, r1, r2, temppath=temppath, fill=fill
         )
         self._tkimg2 = self.svgdraw.create_svg_image(self._img2)
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg2)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg2), self._tkimg2
+        )
 
 
 from tkinter import Event

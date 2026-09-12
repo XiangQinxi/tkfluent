@@ -1,3 +1,13 @@
+"""滑块组件。
+
+``FluSlider`` 由两部分绘制而成：
+
+* **轨道**（track）—— 左侧已选中的进度 + 右侧未选中的底轨；
+* **把手**（thumb）—— 圆形滑块，带渐变伪阴影。
+
+两者都由 :class:`~tkflu.slider.FluSliderDraw` 生成，
+支持横向/纵向、刻度吸附与 ``changed`` 回调。"""
+
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
@@ -122,6 +132,22 @@ class FluSliderCanvas(DCanvas):
         rail_fill="transparent",
         rail_opacity=1,
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_track_raster(
+            x1,
+            y1,
+            width,
+            height,
+            width2,
+            radius=radius,
+            track_fill=track_fill,
+            track_opacity=track_opacity,
+            rail_fill=rail_fill,
+            rail_opacity=rail_opacity,
+        )
+        if item is not None:
+            return item
+
         self._img2 = self.svgdraw.create_track(
             width,
             height,
@@ -139,7 +165,9 @@ class FluSliderCanvas(DCanvas):
             self._img2, temppath2, way=get_renderer()
         )
         # print(self._img2)
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg2)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg2), self._tkimg2
+        )
 
     def create_thumb(
         self,
@@ -160,6 +188,26 @@ class FluSliderCanvas(DCanvas):
         inner_fill="transparent",
         inner_fill_opacity=1,
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_thumb_raster(
+            x1,
+            y1,
+            width,
+            height,
+            r1,
+            r2,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline_opacity=outline_opacity,
+            outline2=outline2,
+            outline2_opacity=outline2_opacity,
+            inner_fill=inner_fill,
+            inner_fill_opacity=inner_fill_opacity,
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_thumb(
             width,
             height,
@@ -180,7 +228,9 @@ class FluSliderCanvas(DCanvas):
         self._tkimg = self.svgdraw.create_svg_image(
             self._img, temppath2, way=get_renderer()
         )
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+        )
 
 
 class FluSlider(FluSliderCanvas, DDrawWidget):
@@ -363,7 +413,11 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
             thumb_left = min(thumb_left, self.winfo_width() - thumb_width)
             from .designs.renderer import get_renderer
 
-            if get_renderer() == 0:
+            if get_renderer() != 1:
+                # 默认几何（tksvg 以及 skia / pillow / cairo 等栅格引擎）
+                # 注意：这里必须是 != 1 而不是 == 0，否则新增的栅格引擎编号
+                # 会落进"两个分支都不匹配"的空档，导致轨道与把手根本不被创建，
+                # 随后 tag_bind 直接抛 AttributeError。
                 # 创建轨道时，width2 参数应为选中部分的宽度（滑块中心位置）
                 self.element_track = self.create_track(
                     _thumb_width / 4,

@@ -1,3 +1,5 @@
+"""提示气泡的设计规范。"""
+
 def tooltip(mode):
     if mode.lower() == "light":
         return {

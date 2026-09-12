@@ -1,3 +1,12 @@
+"""下拉菜单。
+
+``FluMenu`` 继承自 :class:`~tkflu.popupmenu.FluPopupMenu`，
+用 :class:`~tkflu.button.FluButton`（``style="menu"``）逐项拼出菜单内容，
+因此菜单项天然具备主题切换与悬停动画。
+
+用 :meth:`~tkflu.menu.FluMenu.add_command` 添加普通项，
+:meth:`~tkflu.menu.FluMenu.add_cascade` 添加子菜单。"""
+
 from tkdeft.object import DObject
 
 from .popupmenu import FluPopupMenu

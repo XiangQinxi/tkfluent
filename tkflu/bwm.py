@@ -1,3 +1,9 @@
+"""窗口外观管理（Border/Window Manager 混入）。
+
+``BWm`` 负责窗口级的背景色、主题切换、自定义标题栏与关闭行为，
+由 :class:`~tkflu.window.FluWindow` 与 :class:`~tkflu.toplevel.FluToplevel`
+共同继承。"""
+
 from .designs.gradient import FluGradient
 
 

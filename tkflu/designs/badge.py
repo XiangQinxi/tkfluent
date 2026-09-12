@@ -1,3 +1,5 @@
+"""徽标的设计规范（配色/透明度）。"""
+
 from .primary_color import get_primary_color
 
 

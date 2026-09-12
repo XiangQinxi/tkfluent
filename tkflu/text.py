@@ -1,3 +1,8 @@
+"""多行文本框组件。
+
+``FluText`` 与 :class:`~tkflu.entry.FluEntry` 类似，
+把原生 ``tkinter.Text`` 嵌进圆角画布中以获得 Fluent 外观。"""
+
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
@@ -100,6 +105,27 @@ class FluTextCanvas(DCanvas):
         outline2_opacity=1,
         width=1,
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_roundrect_raster(
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline2=outline2,
+            outline_opacity=outline_opacity,
+            outline2_opacity=outline2_opacity,
+            width=width,
+            gradient_stop1=stop1,
+            gradient_stop2=stop2,
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_roundrect(
             x1,
             y1,
@@ -123,7 +149,9 @@ class FluTextCanvas(DCanvas):
         self._tkimg = self.svgdraw.create_svg_image(
             self._img, temppath2, way=get_renderer()
         )
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+        )
 
     create_roundrect = create_round_rectangle
 

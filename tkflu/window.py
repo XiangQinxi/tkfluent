@@ -1,3 +1,16 @@
+"""主窗口。
+
+``FluWindow`` 继承自 ``tkinter.Tk``，是应用的根窗口。
+它负责应用图标、窗口级主题、以及 ESC / 关闭按钮等默认行为。
+
+.. code-block:: python
+
+    import tkflu
+
+    root = tkflu.FluWindow(mode="light")
+    tkflu.FluButton(root, text="你好").pack()
+    root.mainloop()"""
+
 from tkinter import Tk, Toplevel
 
 from tkdeft.object import DObject
@@ -27,12 +40,13 @@ class FluWindow(Tk, BWm, DObject):
         # 调用父类tkinter.TK的初始化方法
         super().__init__(*args, className=className, **kwargs)
 
-        # 设置窗口图标
-        from tkinter import PhotoImage
+        # 设置窗口图标：直接用内嵌 base64 建图，完全不落盘、不泄漏临时文件。
+        # 必须显式传 master=self——不传时 tkinter 会把图片挂到默认根窗口的
+        # 解释器上，多 Tk 解释器场景下 iconphoto 会报 "not a photo image"。
+        from .icons import icon_photoimage
 
-        from .icons import light
-
-        self.iconphoto(False, PhotoImage(file=light()))
+        self._icon_photo = icon_photoimage("light", master=self)
+        self.iconphoto(False, self._icon_photo)
 
         # 绑定事件处理函数
         self.bind(
@@ -40,3 +54,15 @@ class FluWindow(Tk, BWm, DObject):
         )  # 窗口大小/位置改变事件
         self.bind("<Escape>", self._event_key_esc, add="+")  # ESC键按下事件
         self.protocol("WM_DELETE_WINDOW", self._event_delete_window)  # 窗口关闭事件
+
+    def destroy(self):
+        """关闭窗口前先回收待执行的 ``after`` 回调。
+
+        ``tkinter`` 的 ``after`` 注册在 Tcl 解释器上，控件销毁时不会被取消，
+        残留回调会在窗口关闭后触发并刷 ``invalid command name ...``。
+        详见 :mod:`tkflu._after`。
+        """
+        from ._after import cancel_all_after
+
+        cancel_all_after(self)
+        super().destroy()

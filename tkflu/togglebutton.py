@@ -1,3 +1,8 @@
+"""开关组件。
+
+``FluToggleButton`` 在按钮的基础上维护 ``checked`` 状态，
+点击后触发 ``command``。常用于"切换主题""启用某项功能"等场景。"""
+
 from easydict import EasyDict
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
@@ -28,34 +33,25 @@ class FluToggleButtonDraw(DSvgDraw):
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        if outline2:
-            border = drawing[1].linearGradient(
-                start=(x1, y1),
-                end=(x1, y2),
-                id="DButton.Border",
-                gradientUnits="userSpaceOnUse",
-            )
-            border.add_stop_color("0.9", outline, outline_opacity)
-            border.add_stop_color("1", outline2, outline2_opacity)
-            drawing[1].defs.add(border)
-            stroke = f"url(#{border.get_id()})"
-            stroke_opacity = 1
-        else:
-            stroke = outline
-            stroke_opacity = outline_opacity
-        drawing[1].add(
-            drawing[1].rect(
-                (x1, y1),
-                (x2 - x1, y2 - y1),
-                _rx,
-                _ry,
-                fill=fill,
-                fill_opacity=fill_opacity,
-                stroke=stroke,
-                stroke_width=width,
-                stroke_opacity=stroke_opacity,
-                transform="translate(0.500000 0.500000)",
-            )
+        # 几何内缩半个线宽，四边描边才完整（旧写法用 translate(0.5,0.5)
+        # 把下边框和右边框整个推到画布外）
+        from tkdeft.svg import add_roundrect
+
+        add_roundrect(
+            drawing[1],
+            x1,
+            y1,
+            x2,
+            y2,
+            _rx,
+            _ry,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline2=outline2,
+            outline_opacity=outline_opacity,
+            outline2_opacity=outline2_opacity,
+            width=width,
         )
         drawing[1].save()
         return drawing[0]
@@ -82,6 +78,25 @@ class FluToggleButtonCanvas(DCanvas):
         outline2_opacity=1,
         width=1,
     ):
+        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+        item = self.create_roundrect_raster(
+            x1,
+            y1,
+            x2,
+            y2,
+            r1,
+            r2,
+            fill=fill,
+            fill_opacity=fill_opacity,
+            outline=outline,
+            outline2=outline2,
+            outline_opacity=outline_opacity,
+            outline2_opacity=outline2_opacity,
+            width=width,
+        )
+        if item is not None:
+            return item
+
         self._img = self.svgdraw.create_roundrect_with_text(
             x1,
             y1,
@@ -103,7 +118,9 @@ class FluToggleButtonCanvas(DCanvas):
         self._tkimg = self.svgdraw.create_svg_image(
             self._img, temppath2, way=get_renderer()
         )
-        return self.create_image(x1, y1, anchor="nw", image=self._tkimg)
+        return self._keep_photo(
+            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+        )
 
     create_roundrect = create_round_rectangle_with_text
 
@@ -261,9 +278,7 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
             text=self.attributes.text,
             font=self.attributes.font,
         )
-        from .render_manager import render_manager
-
-        render_manager.mark_dirty(self)
+        # 同 FluButton：_draw 里再 mark_dirty 自己只会造成重复重绘，已移除。
 
     def theme(self, mode="light"):
         self.mode = mode

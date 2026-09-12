@@ -1,3 +1,13 @@
+"""主色调（强调色）配置。
+
+强调色按钮、开关等组件都从这里取色，用 ``set_primary_color`` 全局替换。
+
+.. code-block:: python
+
+    from tkflu import purple_primary_color
+
+    purple_primary_color()      # 换成紫色"""
+
 from os import environ
 
 

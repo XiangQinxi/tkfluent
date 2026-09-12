@@ -1,3 +1,8 @@
+"""字体加载。
+
+内嵌 Segoe UI 与 Segoe Fluent Icons 字体文件，
+优先用 ``tkextrafont`` 加载以保证跨平台一致；失败时回退到系统字体。"""
+
 from os.path import abspath, dirname, join
 
 path = abspath(dirname(__file__))

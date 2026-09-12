@@ -1,3 +1,8 @@
+"""颜色渐变工具。
+
+``FluGradient`` 提供 HEX/RGB 互转与两色之间的插值，
+用于主题切换的过渡动画。"""
+
 class FluGradient:
     def hex_to_rgb(self, h: str):
         h = h.lstrip("#")

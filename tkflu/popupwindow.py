@@ -1,3 +1,8 @@
+"""通用弹出窗口。
+
+``FluPopupWindow`` 提供淡入淡出、置顶、自动关闭等行为的无边框窗口，
+是提示气泡、右键菜单等组件的基础。"""
+
 from tkinter import Toplevel
 
 

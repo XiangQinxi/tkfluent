@@ -1,3 +1,8 @@
+"""菜单栏。
+
+``FluMenuBar`` 横向排布若干菜单项，配合 :class:`~tkflu.menu.FluMenu`
+构成完整的菜单体系。子菜单通过弹出窗口实现，鼠标悬停即展开。"""
+
 from tkinter import Frame, Menu
 
 from tkdeft.object import DObject

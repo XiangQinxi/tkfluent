@@ -1,3 +1,5 @@
+"""滚动条的设计规范。"""
+
 def scrollbar(mode):
     """滚动栏设计配置"""
     if mode.lower() == "dark":

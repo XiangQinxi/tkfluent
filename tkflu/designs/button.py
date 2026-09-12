@@ -1,3 +1,8 @@
+"""按钮的设计规范。
+
+:func:`button` 按 ``(mode, style, state)`` 三元组返回一份配色字典，
+共 2 主题 × 3 样式 × 4 状态 = 24 种组合。"""
+
 from .primary_color import get_primary_color
 
 

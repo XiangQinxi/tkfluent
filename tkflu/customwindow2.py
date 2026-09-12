@@ -1,3 +1,7 @@
+"""自定义标题栏的拖拽区域实现（``way=1``）。
+
+提供窗口与控件的拖动/双击最大化等交互。"""
+
 from tkinter import Event, Frame, Tk, Widget
 
 

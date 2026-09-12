@@ -1,3 +1,5 @@
+"""菜单栏的设计规范。"""
+
 def menubar(mode):
     mode = mode.lower()
     if mode == "light":

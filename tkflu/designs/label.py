@@ -1,3 +1,5 @@
+"""标签的设计规范。"""
+
 def label(mode: str):
     mode = mode.lower()
     if mode == "light":

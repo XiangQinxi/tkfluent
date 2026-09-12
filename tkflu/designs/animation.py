@@ -1,3 +1,16 @@
+"""动画参数。
+
+控制主题切换等过渡动画的帧数与帧间隔。
+
+.. code-block:: python
+
+    from tkflu import set_animation_steps, set_animation_step_time
+
+    set_animation_steps(5)        # 5 帧
+    set_animation_step_time(20)   # 每帧 20ms
+
+两者都设为 0 即关闭动画（默认就是关闭）。"""
+
 from os import environ
 
 

@@ -1,3 +1,7 @@
+"""滑块的设计规范。
+
+包含轨道、把手在不同状态下的尺寸、半径与配色。"""
+
 from .primary_color import get_primary_color
 
 
