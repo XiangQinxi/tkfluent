@@ -397,6 +397,14 @@ class FluSlider(FluSliderCanvas, DDrawWidget):
         )
 
     def pos(self, event):
+        """按鼠标位置更新滑块的值（并重绘）。
+
+        :param event: 鼠标事件；**缺失时直接返回**——``_event_on_button1()``
+            这类钩子的签名是 ``event=None``，程序化调用（例如 ``python -m tkflu
+            --check`` 的自检）不会带事件，这里不能去读 ``event.x``。
+        """
+        if event is None:
+            return
         if self.attributes.state == "normal":
             # print(event.x, event.y)
             # if self.enter and self.button1:

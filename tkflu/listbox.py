@@ -240,10 +240,24 @@ class FluListBox(FluListBoxCanvas, DDrawWidget):
         )
 
     def theme(self, mode="light", style=None):
-        self.mode = mode
+        """切换主题（并可顺带改样式）。
+
+        :param mode: ``"light"`` / ``"dark"``
+        :param style: ``"standard"`` / ``"accent"``；省略表示沿用构造时的样式
+
+        .. warning::
+           分支判断必须用 ``self.style``，**不能**用这个参数：
+           一键换肤时 :class:`~tkflu.thememanager.FluThemeManager` 只会传
+           ``mode``，参数 ``style`` 是 ``None``，拿它去 ``.lower()``
+           会直接抛 ``AttributeError``（点击"切换主题"崩掉就是这个原因）。
+        """
+        if mode:
+            self.mode = mode
         if style:
             self.style = style
-        if mode.lower() == "dark":
+        # style 参数可能为空，回退到构造时的样式（再兜底成 standard）
+        style = getattr(self, "style", None) or "standard"
+        if str(self.mode).lower() == "dark":
             if style.lower() == "accent":
                 self._dark_accent()
             else:

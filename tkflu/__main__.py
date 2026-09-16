@@ -583,16 +583,17 @@ def _list_engines_quiet() -> None:
         _safe_print(f"  {'✓' if ok else '✗'} {name}", stream=sys.stderr)
 
 
-#: 自检时对每个组件尝试调用的钩子（没有该属性的组件会自动跳过）
+#: 自检时对每个组件尝试调用的钩子：``(显示名, 方法名, 关键字参数)``。
+#: 方法不存在时跳过（属正常），但**方法内部**抛出的异常一律算失败。
 _CHECK_STEPS = (
-    ("重绘", lambda w: w._draw()),
-    ("浅色主题", lambda w: w.theme(mode="light")),
-    ("深色主题", lambda w: w.theme(mode="dark")),
-    ("鼠标进入", lambda w: w._event_enter()),
-    ("鼠标离开", lambda w: w._event_leave()),
-    ("按下", lambda w: w._event_on_button1()),
-    ("抬起", lambda w: w._event_off_button1()),
-    ("尺寸变化", lambda w: w._event_configure()),
+    ("重绘", "_draw", {}),
+    ("浅色主题", "theme", {"mode": "light"}),
+    ("深色主题", "theme", {"mode": "dark"}),
+    ("鼠标进入", "_event_enter", {}),
+    ("鼠标离开", "_event_leave", {}),
+    ("按下", "_event_on_button1", {}),
+    ("抬起", "_event_off_button1", {}),
+    ("尺寸变化", "_event_configure", {}),
 )
 
 
@@ -601,6 +602,13 @@ def _run_check(root, log: _EventLog, widgets: Dict) -> int:
 
     这是给 CI 用的——它能在无人值守环境下抓出"构造签名不匹配、
     某个引擎下绘制报错"这类问题，而不需要真的看界面。
+
+    .. note::
+       "组件没有这个钩子"和"钩子内部抛了 AttributeError"必须区分开。
+       旧实现用 ``except AttributeError: continue`` 来跳过没有钩子的组件，
+       于是 :meth:`FluListBox.theme` 里的 ``None.lower()`` 被当成了
+       "这个组件没有 theme" 而静静放过——自检全绿，界面一点就崩。
+       现在改成先 :func:`getattr` 判断钩子是否存在，再调用。
     """
     import tkinter as tk
 
@@ -621,17 +629,32 @@ def _run_check(root, log: _EventLog, widgets: Dict) -> int:
     }
     checked = 0
     for name, widget in components.items():
-        for step_name, step in _CHECK_STEPS:
-            try:
-                step(widget)
-            except AttributeError:
+        for step_name, method_name, kwargs in _CHECK_STEPS:
+            step = getattr(widget, method_name, None)
+            if not callable(step):
                 continue  # 该组件没有这个钩子，属正常
+            try:
+                step(**kwargs)
             except tk.TclError as exc:
                 failures.append(f"{name} @ {step_name}：TclError: {exc}")
             except Exception as exc:
                 failures.append(f"{name} @ {step_name}：{type(exc).__name__}: {exc}")
         checked += 1
     log(f"自检：跑完 {checked} 个组件的 {len(_CHECK_STEPS)} 类钩子")
+
+    # 再走一遍"一键换肤"的真实路径：thememanager → 窗口/面板递归 → 各组件 theme()。
+    # 上面虽然逐组件调过 theme()，但那条路径才会验证窗口与面板的递归关系——
+    # 画廊里点"切换主题"崩掉（listbox 的 None.lower()）就是在这条路径上。
+    manager = widgets.get("__theme_manager__")
+    if manager is not None:
+        for theme_mode in ("dark", "light"):
+            try:
+                manager.mode(theme_mode)
+            except Exception as exc:
+                failures.append(
+                    f"一键换肤 → {theme_mode}：{type(exc).__name__}: {exc}"
+                )
+        log("自检：一键换肤（深色/浅色）跑通")
 
     try:
         stats = cache_stats()
