@@ -17,4 +17,19 @@ from .design import FluDesign
 from .fonts import *
 from .gradient import FluGradient
 from .primary_color import FluPrimaryColor, get_primary_color, set_primary_color
-from .renderer import FluRenderer, get_renderer, set_renderer
+# 渲染引擎这几个查询接口一并转出：``set_renderer`` / ``get_renderer`` 早就在包根了，
+# 只有"按名字查询"的那几个没跟上——文档里 `tkflu.get_renderer_name()` 这种自然写法
+# 会 AttributeError。它们都是 tkdeft.engines 的薄转发，见 renderer.py。
+from .renderer import (
+    FluRenderer,
+    describe_engines,
+    engine_index,
+    get_engine_name,
+    get_renderer,
+    get_renderer_name,
+    list_engines,
+    list_renderers,
+    renderer_description,
+    set_renderer,
+)
+

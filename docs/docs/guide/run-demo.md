@@ -3,6 +3,16 @@
 tkfluent 自带一个把**所有组件摆在同一个窗口里**的画廊，用来快速看效果、
 对比渲染引擎、或者验证环境是否装好。
 
+<figure markdown>
+  ![画廊（浅色）](../assets/gallery-light.png)
+  <figcaption>浅色主题下的画廊</figcaption>
+</figure>
+
+<figure markdown>
+  ![画廊（深色）](../assets/gallery-dark.png)
+  <figcaption>深色主题下的画廊（<code>-m dark</code>）——同一套组件，只是配色字典不同</figcaption>
+</figure>
+
 ## 启动
 
 ```bash

@@ -5,6 +5,13 @@ tkfluent 的主题体现在三个层次：**窗口级深浅模式**、**全局�
 
 ## 一、深浅模式
 
+同一个界面在两套配色下的样子（`FluThemeManager` 切换，绘制层不改一行）：
+
+<figure markdown>
+  ![浅色 / 深色对比](../assets/theme-compare.png)
+  <figcaption>左：<code>mode='light'</code>；右：<code>mode='dark'</code></figcaption>
+</figure>
+
 ### 单个组件
 
 每个组件在构造时接受 `mode`：

@@ -14,3 +14,25 @@
   --md-accent-fg-color:                      #76b9ed;
   --md-accent-bg-color:                     #76b9ed;
 }
+
+/* ---- 插图：居中、带边框与图注 ---- */
+.md-typeset figure {
+  margin: 1.6em auto;
+  text-align: center;
+}
+
+.md-typeset figure img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.md-typeset figcaption {
+  margin-top: 0.6em;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}

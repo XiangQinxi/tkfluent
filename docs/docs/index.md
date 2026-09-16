@@ -14,6 +14,11 @@ title: TkFluent 文档主页
 
     [点击查阅 *tkdeft* 文档](https://tkdeft.netlify.app/){ .md-button .md-button--primary }
 
+<figure markdown>
+  ![组件画廊](assets/gallery-light.png)
+  <figcaption>把全部组件摆在一起的画廊：<code>python -m tkflu</code>（浅色主题）</figcaption>
+</figure>
+
 ## 先看这里
 
 <div class="grid cards" markdown>
@@ -30,9 +35,17 @@ title: TkFluent 文档主页
 
     ---
 
-    有哪些组件、各自的关键参数
+    有哪些组件、各自的关键参数与外观
 
     [:octicons-arrow-right-24: 组件总览](guide/components.md)
+
+-   :material-sitemap: **它是怎么搭起来的**
+
+    ---
+
+    分层、组件内部结构、事件与主题的走向
+
+    [:octicons-arrow-right-24: 架构说明](guide/architecture.md)
 
 -   :material-play-circle: **运行演示**
 
@@ -50,7 +63,23 @@ title: TkFluent 文档主页
 
     [:octicons-arrow-right-24: 渲染引擎](tutorial/renderer.md)
 
+-   :material-lifebuoy: **出问题了**
+
+    ---
+
+    14 条真实踩过的坑，按症状查
+
+    [:octicons-arrow-right-24: 常见问题](guide/faq.md)
+
 </div>
+
+## 所有组件一眼看完
+
+<figure markdown>
+  ![组件图鉴](assets/widgets-light.png)
+  <figcaption>组件图鉴（浅色）：每一格都是从真实运行的组件上截下来的，
+  完整版与深色版见 <a href="guide/components.md">组件总览</a></figcaption>
+</figure>
 
 ## 支持的组件
 
@@ -107,7 +136,20 @@ root.mainloop()
 
 | 章节 | 内容 |
 | --- | --- |
-| [Get Started](getstarted/download.md) | 安装、上手、第一个应用 |
-| [Guide 指南](guide/components.md) | 组件总览、运行演示、主题与配色 |
+| [Get Started 开始](getstarted/download.md) | 安装、上手、第一个应用 |
+| [Guide 指南](guide/components.md) | 组件总览、**架构说明**、主题与配色、运行演示、**常见问题排查** |
 | [Tutorial 教程](tutorial/renderer.md) | 渲染引擎、主题切换、提示气泡 |
 | [API 文档](api/index.md) | 由源码 docstring 自动生成 |
+| [更新日志](blog/index.md) | 每个版本新增/修复了什么（也在这里发开发记录） |
+
+## 版本与状态
+
+| | |
+| --- | --- |
+| 当前版本 | `0.3.0`（与底层 [tkdeft](https://tkdeft.netlify.app/) 同步发版） |
+| 底层依赖 | `tkdeft >= 0.2.0`（渲染引擎层） |
+| 无界面自检 | `python -m tkflu --check`（退出码 0 = 通过，CI 可用） |
+| 变更记录 | [更新日志](blog/index.md) |
+
+完整的版本变更（新增了什么、修掉了什么、升级要注意什么）都在
+[更新日志](blog/index.md)里，按时间倒序排列。

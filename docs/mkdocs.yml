@@ -3,6 +3,13 @@ copyright: Copyright &copy; 2024 XiangQinxi
 site_url: https://tkfluent.netlify.app/
 repo_url: https://github.com/XiangQinxi/tkfluent
 
+# 断链/断锚点默认只是 INFO（--strict 也不会失败）。中文标题的锚点会被 slugify 成
+# #_1 这类，所以需要被链接的小节请显式写 `## 标题 { #id }`（本仓库已统一）。
+validation:
+  links:
+    anchors: warn
+    absolute_links: warn
+
 plugins:
   - mkdocstrings:
       handlers:
@@ -81,10 +88,11 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+      # 注意：这里**刻意不配 mermaid**。Material 的 mermaid 支持是运行时从
+      # unpkg CDN 拉脚本的，而本站启用了 offline 插件——离线打开时图会消失。
+      # 流程图统一放在 docs/diagrams/*.mmd，由 gen_figures.py 预渲染成
+      # docs/assets/*.png，页面只引用图片（见 docs/README.md）。
+      custom_fences: []
 
 nav:
   - Home 主页:
@@ -96,8 +104,10 @@ nav:
       - getstarted/the_1st_app.md
   - Guide 指南:
       - guide/components.md
-      - guide/run-demo.md
+      - guide/architecture.md
       - guide/theme.md
+      - guide/run-demo.md
+      - guide/faq.md
   - Tutorial 教程:
       - tutorial/change_theme_color.md
       - tutorial/change_theme_mode.md
@@ -154,7 +164,7 @@ nav:
           - api/tkflu.designs.animation.md
           - api/tkflu.designs.design.md
           - api/tkflu.designs.fonts.md
-  - Blog 博客:
+  - Blog 更新日志:
       - blog/index.md
   - Aunthor`s Blog 作者博客: https://xiangqinxi.github.io
   - tkAdwite: https://tkadwite.netlify.app/

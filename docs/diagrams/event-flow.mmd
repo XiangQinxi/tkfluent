@@ -1,0 +1,9 @@
+flowchart LR
+    A["&lt;Enter&gt; / &lt;Leave&gt;"] --> S["enter 状态位"]
+    B["&lt;Button-1&gt; / &lt;ButtonRelease-1&gt;"] --> T["button1 状态位"]
+    C["&lt;FocusIn&gt; / &lt;FocusOut&gt;"] --> U["isfocus 状态位"]
+    S --> D["组件的 _draw()"]
+    T --> D
+    U --> D
+    D --> E["按状态挑配色字典"]
+    E --> F["重绘图元（圆角矩形 + 文字）"]

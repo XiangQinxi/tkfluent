@@ -61,6 +61,9 @@ for row in describe_engines():     # 编号 / 类型 / 依赖 / 是否可用 / �
     print(row)
 ```
 
+这些名字同时也从**包根**转出了一份，所以 `tkflu.get_renderer_name()`、
+`tkflu.list_renderers()` 一样能用（`set_renderer` / `get_renderer` 本来就在包根）。
+
 命令行里也能看到同一份信息：
 
 ```bash

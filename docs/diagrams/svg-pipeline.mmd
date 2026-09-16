@@ -1,0 +1,5 @@
+flowchart LR
+    A["svgwrite 生成 SVG 图片"] --> B["保存到临时文件夹"]
+    B --> C["tksvg.SvgImage 读取该 SVG"]
+    C --> D["Canvas.create_image 显示图片"]
+    D --> E["Canvas.create_text 叠加文字"]

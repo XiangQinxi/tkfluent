@@ -8,6 +8,20 @@ import tkflu
 from tkflu import FluWindow, FluButton, FluFrame
 ```
 
+## 长什么样
+
+图鉴里的每一格都是从**真实运行**的组件上截下来的（不是设计稿）：
+
+<figure markdown>
+  ![组件图鉴（浅色）](../assets/widgets-light.png)
+  <figcaption>浅色主题下的组件图鉴</figcaption>
+</figure>
+
+<figure markdown>
+  ![组件图鉴（深色）](../assets/widgets-dark.png)
+  <figcaption>同一批组件切到深色主题：绘制层不用改，只是配色字典变了</figcaption>
+</figure>
+
 ## 一览表
 
 | 组件 | 用途 | 关键参数 |
@@ -60,6 +74,14 @@ root.mainloop()
 ```
 
 ## 按钮的三种样式
+
+`FluButton` 的样式与状态组合起来共 12 种外观（`mode` 再翻一倍）。下图是
+**同一批真实按钮**分别被设成 `rest` / `hover` / `pressed` / `disabled` 后重绘的结果：
+
+<figure markdown>
+  ![按钮状态矩阵](../assets/button-states.png)
+  <figcaption>4 状态 × 3 样式，浅色与深色各一组（放大 2 倍）。悬停与按压只是透明度不同，这是 Fluent 的设计</figcaption>
+</figure>
 
 ```python
 import tkflu

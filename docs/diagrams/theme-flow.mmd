@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant U as 用户
+    participant B as 组件（按钮 / 开关）
+    participant M as FluThemeManager
+    participant W as FluWindow / FluFrame
+    participant C as 子组件
+
+    U->>B: 点击"切换主题"
+    B->>M: mode("dark")
+    M->>W: window.theme(mode="dark")
+    W->>W: 自身重绘
+    M->>C: 遍历直接子组件 → theme(mode="dark")
+    C->>C: 换配色字典 → _draw()
+    C-->>W: 嵌套容器再由 update_children() 向下传播

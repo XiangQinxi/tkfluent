@@ -1,0 +1,8 @@
+flowchart TB
+    A["你的应用代码"] --> B["tkfluent 组件层<br/>FluButton · FluSlider · FluFrame …"]
+    B --> C["tkdeft 绘制层<br/>DCanvas：统一入口 + 图片保活"]
+    C --> D1["栅格引擎<br/>skia / pillow / cairo"]
+    C --> D2["SVG 路径<br/>svgwrite → tksvg / Wand"]
+    D1 --> E["PhotoImage → 画布显示"]
+    D2 --> E
+    B -.->|配色| F["tkflu.designs"]

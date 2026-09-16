@@ -1,0 +1,14 @@
+flowchart LR
+    subgraph pure["纯画布组件（FluButton / FluBadge / FluLabel …）"]
+        A1["Flu*Canvas（DCanvas）<br/>画圆角矩形"] --> A2["create_text<br/>叠文字"]
+    end
+    subgraph hybrid["画布 + 内嵌控件（FluFrame / FluEntry / FluText）"]
+        B1["Flu*Canvas（DCanvas）<br/>画背景"] --> B2["create_window<br/>嵌入原生 Frame / Entry / Text"]
+    end
+    subgraph mixins["所有组件共享的混入"]
+        C1["DDrawWidget<br/>enter / button1 / isfocus"]
+        C2["DObject<br/>attributes + dconfigure / dcget"]
+        C3["FluToolTipBase<br/>.tooltip()"]
+    end
+    mixins -.-> pure
+    mixins -.-> hybrid
