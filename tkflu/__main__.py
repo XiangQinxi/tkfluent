@@ -523,19 +523,20 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
 # 入口
 # ---------------------------------------------------------------------------
 def _list_engines() -> int:
-    """打印引擎清单（顺序与 ``renderer`` 编号一致）。"""
-    from tkdeft.engines import RENDERER_INDEX, get_engine_name, list_engines
+    """打印引擎清单（顺序与 ``renderer`` 编号一致）。
 
-    available = list_engines()
-    current = get_engine_name()
+    数据直接来自 :func:`tkdeft.engines.describe_engines`：每一项都带编号、
+    类型、依赖与一句话说明，tkfluent 这边不再维护第二份表格。
+    """
+    from tkdeft.engines import describe_engines
+
     _safe_print("可用渲染引擎：")
-    for index in sorted(RENDERER_INDEX):
-        name = RENDERER_INDEX[index]
-        if name not in available:
-            continue
-        mark = "  ← 当前" if name == current else ""
-        state = "可用" if available[name] else "缺少依赖"
-        _safe_print(f"  {index}  {name:8s} {state}{mark}")
+    for row in describe_engines():
+        state = "可用" if row["available"] else f"缺少依赖 {'/'.join(row['requires'])}"
+        mark = "  ← 当前" if row["current"] else ""
+        _safe_print(f"  {row['index']}  {row['name']:8s} {state}{mark}")
+        if row.get("description"):
+            _safe_print(f"       {row['description']}")
     _safe_print("\n用 -r/--renderer 指定，例如：python -m tkflu -r skia")
     return 0
 

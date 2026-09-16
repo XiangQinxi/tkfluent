@@ -11,47 +11,21 @@ from .designs.badge import badge
 
 
 class FluBadgeDraw(DSvgDraw):
-    def create_roundrect(
-        self,
-        x1,
-        y1,
-        x2,
-        y2,
-        temppath=None,
-        fill="transparent",
-        fill_opacity=1,
-        outline="black",
-        outline_opacity=1,
-        width=1,
-    ):
-        drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        # badge 固定用 rx=20 / ry=25 的胶囊形圆角；几何由 add_roundrect 内缩半个
-        # 线宽，四边描边才完整（旧写法用 translate(0.5,0.5) 会丢掉下/右边框）。
-        # 这里同时去掉了原先重复添加的第二个矩形：它 fill="white" 且
-        # fill_opacity=0，描边与第一个完全重合，是纯粹的无效绘制。
-        from tkdeft.svg import add_roundrect
+    """徽标的 SVG 绘制后端。
 
-        add_roundrect(
-            drawing[1],
-            x1,
-            y1,
-            x2,
-            y2,
-            20,
-            25,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline_opacity=outline_opacity,
-            width=width,
-            id=".Badge",
-        )
-        drawing[1].save()
-        return drawing[0]
+    badge 的形状（rx=20 / ry=25 的胶囊形）由 :class:`FluBadgeCanvas` 决定，
+    这里不再重复实现圆角矩形——通用实现来自
+    :meth:`tkdeft.windows.draw.DSvgDraw.create_roundrect`：几何会自动内缩
+    半个线宽，四边描边才完整（旧写法用 ``translate(0.5,0.5)`` 会丢掉下/右边框）。
+    """
 
 
 class FluBadgeCanvas(DCanvas):
     draw = FluBadgeDraw
+
+    #: badge 固定使用的胶囊形圆角（x / y 两个方向）
+    RADIUS_X = 20
+    RADIUS_Y = 25
 
     def create_round_rectangle(
         self,
@@ -61,53 +35,42 @@ class FluBadgeCanvas(DCanvas):
         y2,
         temppath=None,
         temppath2=None,
-        fill="transparent",
-        fill_opacity=1,
-        outline="black",
-        outline_opacity=1,
-        width=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）。
-        # badge 的 SVG 实现固定用 rx=20 / ry=25 的胶囊形圆角，这里保持一致。
-        item = self.create_roundrect_raster(
-            x1,
-            y1,
-            x2,
-            y2,
-            20,
-            25,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline_opacity=outline_opacity,
-            width=width,
-        )
-        if item is not None:
-            return item
+        **kwargs,
+    ) -> int:
+        """画徽标背景（固定胶囊形圆角）。
 
-        self._img = self.svgdraw.create_roundrect(
+        :param x1: 左上角 x
+        :param y1: 左上角 y
+        :param x2: 右下角 x
+        :param y2: 右下角 y
+        :param temppath: SVG 兜底路径用的临时文件
+        :param temppath2: Wand 引擎的 PNG 输出路径
+        :param kwargs: ``fill`` / ``fill_opacity`` / ``outline`` /
+            ``outline_opacity`` / ``width`` 等，透传给
+            :meth:`tkdeft.windows.canvas.DCanvas.draw_roundrect`
+        :returns: 画布上的 item id
+
+        与旧实现相比，这里不再手写"先试栅格快速路径、失败再回退 SVG"：
+        那套判定已经收敛到 tkdeft 的 ``draw_roundrect`` 里。
+        """
+        return self.draw_roundrect(
             x1,
             y1,
             x2,
             y2,
+            self.RADIUS_X,
+            self.RADIUS_Y,
             temppath=temppath,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline_opacity=outline_opacity,
-            width=width,
-        )
-
-        from .designs.renderer import get_renderer
-
-        self._tkimg = self.svgdraw.create_svg_image(
-            self._img, temppath2, way=get_renderer()
-        )
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+            temppath2=temppath2,
+            **kwargs,
         )
 
     create_roundrect = create_round_rectangle
+
+    def draw_roundrect_svg(self, *args, **kwargs) -> int:
+        """SVG 兜底：给矩形补上 ``id=".Badge"``（与设计稿导出的 SVG 一致）。"""
+        kwargs.setdefault("id", ".Badge")
+        return super().draw_roundrect_svg(*args, **kwargs)
 
 
 from .tooltip import FluToolTipBase

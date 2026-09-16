@@ -104,29 +104,20 @@ class FluTextCanvas(DCanvas):
         outline_opacity=1,
         outline2_opacity=1,
         width=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
-        item = self.create_roundrect_raster(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-            gradient_stop1=stop1,
-            gradient_stop2=stop2,
-        )
-        if item is not None:
-            return item
+    ) -> int:
+        """画文本框的圆角背景。
 
-        self._img = self.svgdraw.create_roundrect(
+        :param stop1: 描边渐变的第一个 stop（文本框用的是很短的 0.93→0.94）
+        :param stop2: 描边渐变的第二个 stop
+        :param r1: 圆角半径（x 方向）
+        :param r2: 圆角半径（y 方向）
+        :returns: 画布上的 item id
+
+        实现转调 :meth:`tkdeft.windows.canvas.DCanvas.draw_roundrect`：
+        ``stop1`` / ``stop2`` 是历史写法，tkdeft 那边统一叫
+        ``gradient_stop1`` / ``gradient_stop2``，这里做一次翻译。
+        """
+        return self.draw_roundrect(
             x1,
             y1,
             x2,
@@ -134,26 +125,49 @@ class FluTextCanvas(DCanvas):
             r1,
             r2,
             temppath=temppath,
-            fill=fill,
-            fill_opacity=fill_opacity,
+            temppath2=temppath2,
             stop1=stop1,
             stop2=stop2,
+            fill=fill,
+            fill_opacity=fill_opacity,
             outline=outline,
             outline2=outline2,
             outline_opacity=outline_opacity,
             outline2_opacity=outline2_opacity,
             width=width,
         )
-        from .designs.renderer import get_renderer
-
-        self._tkimg = self.svgdraw.create_svg_image(
-            self._img, temppath2, way=get_renderer()
-        )
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
-        )
 
     create_roundrect = create_round_rectangle
+
+    def draw_roundrect_svg(
+        self,
+        x1,
+        y1,
+        x2,
+        y2,
+        radius,
+        radiusy=None,
+        *,
+        temppath=None,
+        temppath2=None,
+        gradient_stop1="0.93",
+        gradient_stop2="0.94",
+        **kwargs,
+    ) -> int:
+        """SVG 兜底：文本框的描边是设计稿规定的 0.93→0.94 短渐变。"""
+        self._img = self.svgdraw.create_roundrect(
+            x1,
+            y1,
+            x2,
+            y2,
+            radius,
+            radiusy,
+            temppath=temppath,
+            stop1=gradient_stop1,
+            stop2=gradient_stop2,
+            **kwargs,
+        )
+        return self.draw_svg_item(self._img, temppath2, x1, y1)
 
 
 from .tooltip import FluToolTipBase

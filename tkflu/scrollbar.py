@@ -9,9 +9,15 @@ from tkdeft.windows.drawwidget import DDrawWidget
 
 
 class FluScrollBarDraw(DSvgDraw):
+    """滚动条的 SVG 绘制后端（槽与滑块都是无描边的圆角矩形）。"""
+
     def create_track(
         self, x1, y1, x2, y2, radius, radiusy=None, temppath=None, fill="transparent"
     ):
+        """滚动条的"槽"：一个不描边的圆角矩形。
+
+        :returns: 生成好的 SVG 文件路径
+        """
         if radiusy:
             _rx = radius
             _ry = radiusy
@@ -33,6 +39,10 @@ class FluScrollBarDraw(DSvgDraw):
     def create_thumb(
         self, x1, y1, x2, y2, radius, radiusy=None, temppath=None, fill="transparent"
     ):
+        """滚动条的滑块：同样是一个不描边的圆角矩形。
+
+        :returns: 生成好的 SVG 文件路径
+        """
         if radiusy:
             _rx = radius
             _ry = radiusy
@@ -57,39 +67,43 @@ class FluScrollBarCanvas(DCanvas):
 
     def create_track(
         self, x1, y1, x2, y2, r1, r2=None, temppath=None, fill="transparent"
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+    ) -> int:
+        """画滚动条的槽。
+
+        :returns: 画布上的 item id
+
+        两条路径：
+
+        * 栅格引擎（skia / pillow / cairo）→ :meth:`tkdeft.windows.canvas.DCanvas.create_roundrect_raster`，
+          进程内直接出位图并缓存；
+        * 其余引擎 → :class:`FluScrollBarDraw` 的 SVG 实现，再由
+          :meth:`tkdeft.windows.canvas.DCanvas.draw_svg_item` 变成画布图片。
+        """
         item = self.create_roundrect_raster(
             x1, y1, x2, y2, r1, r2, fill=fill, outline=None, width=0
         )
         if item is not None:
             return item
 
-        self._img = self.svgdraw.create_track(
+        path = self.svgdraw.create_track(
             x1, y1, x2, y2, r1, r2, temppath=temppath, fill=fill
         )
-        self._tkimg = self.svgdraw.create_svg_image(self._img)
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
-        )
+        return self.draw_svg_item(path, None, x1, y1)
 
     def create_thumb(
         self, x1, y1, x2, y2, r1, r2=None, temppath=None, fill="transparent"
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
+    ) -> int:
+        """画滚动条的滑块（路径与 :meth:`create_track` 相同）。"""
         item = self.create_roundrect_raster(
             x1, y1, x2, y2, r1, r2, fill=fill, outline=None, width=0
         )
         if item is not None:
             return item
 
-        self._img2 = self.svgdraw.create_thumb(
+        path = self.svgdraw.create_thumb(
             x1, y1, x2, y2, r1, r2, temppath=temppath, fill=fill
         )
-        self._tkimg2 = self.svgdraw.create_svg_image(self._img2)
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg2), self._tkimg2
-        )
+        return self.draw_svg_item(path, None, x1, y1)
 
 
 from tkinter import Event

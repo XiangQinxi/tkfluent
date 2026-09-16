@@ -1,0 +1,8 @@
+# Python 缓存与构建产物
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 工具缓存
+.pytest_cache/
+.ruff_cache/

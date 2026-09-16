@@ -46,4 +46,11 @@ FluPanel = FluFrame
 FluMainWindow = FluWindow
 FluSubWindow = FluToplevel
 
+#: 库版本号。需要与 pyproject.toml 里的 version 保持一致。
+__version__ = "0.3.0"
+
+#: 本库需要的 tkdeft 最低版本（绘制引擎层从 0.2.0 起提供）。
+#: 运行时校验见 :mod:`tkflu.designs.renderer`。
+MIN_TKDEFT_VERSION = (0, 2, 0)
+
 # 

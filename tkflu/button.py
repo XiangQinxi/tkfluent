@@ -19,174 +19,27 @@ from .designs.button import button
 
 
 class FluButtonDraw(DSvgDraw):
-    def create_roundrect(
-        self,
-        x1: Union[int, float],
-        y1: Union[int, float],
-        x2: Union[int, float],
-        y2: Union[int, float],
-        radius: Union[int, float],
-        radiusy: Union[int, float] = None,
-        temppath: Union[str, None] = None,
-        fill: Union[str, tuple] = "transparent",
-        fill_opacity: Union[int, float] = 1,
-        outline: Union[str, tuple] = "black",
-        outline2: Union[str, tuple] = None,
-        outline_opacity: Union[int, float] = 1,
-        outline2_opacity: Union[int, float] = 1,
-        width: Union[int, float] = 1,
-    ) -> str:
-        """
-        用于生成svg圆角矩形图片，图片默认将会保存至临时文件夹。
+    """按钮的 SVG 绘制后端。
 
-        Parameters:
-          x1: 第一个x轴的坐标
-          y1: 第一个y轴的坐标
-          x2: 第二个x轴的坐标，与x1连起来
-          y2: 第二个y轴的坐标，与y1连起来
-          radius: 圆角大小
-          radiusy: 圆角大小（y轴方向），如果不设置，将默认为参数radius的值
-          temppath: 临时文件地址，如果你不知道，就别设置
-          fill: 背景颜色
-          fill_opacity: 背景透明度
-          outline: 边框颜色
-          outline2: 边框颜色2（渐变），如果取了这个值，边框将会变为渐变，从左到右，outline为第一个渐变色,outline2为第二个渐变色
-          outline_opacity: 边框透明度
-          outline2_opacity: 第二个边框渐变颜色的透明度，如果outline没有设置，则这个值不会被用到
-          width: 边框宽度
-
-        Returns:
-         svg图片保存地址
-        """
-        if radiusy:
-            _rx = radius
-            _ry = radiusy
-        else:
-            _rx, _ry = radius, radius
-        drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        # 几何内缩半个线宽，保证四条边的描边都完整落在画布内
-        # （旧写法用 translate(0.5,0.5) 把下边框和右边框整个推到了画布外）
-        from tkdeft.svg import add_roundrect
-
-        add_roundrect(
-            drawing[1],
-            x1,
-            y1,
-            x2,
-            y2,
-            _rx,
-            _ry,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-        )
-        drawing[1].save()
-        return drawing[0]
+    图元直接用 :class:`tkdeft.windows.draw.DSvgDraw` 的通用实现
+    （``create_roundrect``：几何内缩半个线宽，四边描边都完整），
+    因此这里不再重复写一遍。保留这个子类，是给"想给按钮换一套图元"的人
+    留的扩展点。
+    """
 
 
 class FluButtonCanvas(DCanvas):
+    """按钮的画布。
+
+    ``create_round_rectangle`` / ``create_roundrect`` 直接继承
+    :class:`tkdeft.windows.canvas.DCanvas`：它会调用
+    :meth:`~tkdeft.windows.canvas.DCanvas.draw_roundrect`，
+    当前引擎是 skia / pillow / cairo 时走进程内位图快速路径（不生成 SVG、
+    不落盘，相同规格的图片还会被多个按钮共享），否则自动回退到 SVG 路径。
+    组件层因此不再需要维护"先试快速路径、失败再回退"的样板代码。
+    """
 
     draw = FluButtonDraw  # 设置svg绘图引擎
-
-    def create_round_rectangle(
-        self,
-        x1: Union[int, float],
-        y1: Union[int, float],
-        x2: Union[int, float],
-        y2: Union[int, float],
-        r1: Union[int, float],
-        r2: Union[int, float] = None,
-        temppath: Union[str, None] = None,
-        temppath2: Union[str, None] = None,
-        fill: Union[str, tuple] = "transparent",
-        fill_opacity: Union[int, float] = 1,
-        outline: Union[str, tuple] = "black",
-        outline2: Union[str, tuple] = "black",
-        outline_opacity: Union[int, float] = 1,
-        outline2_opacity: Union[int, float] = 1,
-        width: Union[int, float] = 1,
-        *args,
-        **kwargs,
-    ) -> int:
-        """
-        在画布上创建个圆角矩形
-
-        Parameters:
-          x1: 第一个x轴的坐标
-          y1: 第一个y轴的坐标
-          x2: 第二个x轴的坐标，与x1连起来
-          y2: 第二个y轴的坐标，与y1连起来
-          r1: 圆角大小
-          r2: 圆角大小（y轴方向），如果不设置，将默认为参数r1的值
-          temppath: 临时文件地址，如果你不知道，就别设置
-          fill: 背景颜色
-          fill_opacity: 背景透明度
-          outline: 边框颜色
-          outline2: 边框颜色2（渐变），如果取了这个值，边框将会变为渐变，从左到右，outline为第一个渐变色,outline2为第二个渐变色
-          outline_opacity: 边框透明度
-          outline2_opacity: 第二个边框渐变颜色的透明度，如果outline没有设置，则这个值不会被用到
-          width: 边框宽度
-
-        Returns: svg图片保存地址
-        """
-        # 快速路径：当前引擎是 skia / pillow / cairo 时，直接拿进程内渲染的位图，
-        # 不生成 SVG、不落盘；相同规格的图片会被缓存并在多个按钮间共享。
-        item = self.create_roundrect_raster(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            *args,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-            **kwargs,
-        )
-        if item is not None:
-            return item
-
-        self._img = self.svgdraw.create_roundrect(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            temppath=temppath,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-        )  # 创建个svg圆角矩形图片
-        from .designs.renderer import get_renderer
-
-        self._tkimg = self.svgdraw.create_svg_image(
-            path=self._img, path2=temppath2, way=get_renderer()
-        )  # 用tksvg读取svg图片
-        # print(self._img)
-        # 在画布上创建个以 svg 图片为图片的元件；
-        # _keep_photo 负责持有 PhotoImage 引用，防止被 GC 后画面变空白
-        return self._keep_photo(
-            self.create_image(
-                x1, y1, anchor="nw", image=self._tkimg, *args, **kwargs
-            ),
-            self._tkimg,
-        )
-
-    create_roundrect = create_round_rectangle  # 缩写
 
 
 from tkinter import Event

@@ -39,6 +39,60 @@ r.renderer()           # 读取当前编号
     `set_renderer(2)` 在没装 `skia-python` 时会抛 `ValueError`。
     这是有意为之——静默退回就会让你以为性能已经改善，实际还在走慢路径。
 
+## 查询引擎信息
+
+`tkflu.designs.renderer` 是 [`tkdeft.engines`](https://pypi.org/project/tkdeft)
+的适配层，除了切换引擎，还把 tkdeft 的查询接口原样转了出来：
+
+```python
+from tkflu.designs.renderer import (
+    describe_engines, engine_index, get_engine_name,
+    list_engines, list_renderers, renderer_description,
+)
+
+list_renderers()
+# [(0, 'tksvg', True), (1, 'wand', True), (2, 'skia', True), (3, 'pillow', True), (4, 'cairo', True)]
+
+get_engine_name()                  # -> "skia"
+engine_index("skia")               # -> 2
+renderer_description("skia")       # -> "skia-python 进程内栅格化（无磁盘 I/O，抗锯齿质量高）"
+
+for row in describe_engines():     # 编号 / 类型 / 依赖 / 是否可用 / 是否当前
+    print(row)
+```
+
+命令行里也能看到同一份信息：
+
+```bash
+python -m tkflu --list-engines
+```
+
+## 组件是怎么落到引擎上的
+
+组件本身**不关心**当前是哪个引擎。`FluButtonCanvas` 之类的画布类把绘制
+交给 `tkdeft` 的统一入口
+[`DCanvas.draw_roundrect()`](https://pypi.org/project/tkdeft)：
+
+```python
+# tkflu/button.py（节选）——组件层只留一行
+self.element_border = self.create_round_rectangle(
+    0, 0, width, height, _radius,
+    temppath=self.temppath, temppath2=self.temppath3,
+    fill=_back_color, outline=_border_color, width=_border_width,
+)
+```
+
+`create_round_rectangle` / `create_track` / `create_thumb` 最终都调用
+`tkdeft.windows.canvas.DCanvas.draw_*`：当前引擎是栅格引擎时走**进程内位图
+快速路径**（不生成 SVG、不落盘，相同规格还会命中缓存），否则自动回退到
+SVG 实现（`draw_roundrect_svg` 等钩子）。
+
+所以：
+
+* 想把某个组件强制渲染成 SVG（做对照），把它的画布 `raster_enabled` 置 `False` 即可；
+* 想给某类图元换一套 SVG 实现，覆盖 `draw_roundrect_svg` / `draw_track_svg` /
+  `draw_thumb_svg` 即可，不需要再写"先试快速路径、失败再回退"的样板代码。
+
 ## 为什么默认还是 tksvg？
 
 栅格引擎（skia / pillow / cairo）与 tksvg 在抗锯齿细节上存在亚像素级差异。

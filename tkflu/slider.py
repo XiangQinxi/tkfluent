@@ -16,102 +16,16 @@ from .designs.slider import slider
 
 
 class FluSliderDraw(DSvgDraw):
-    def create_track(
-        self,
-        width,
-        height,
-        width2,
-        temppath=None,
-        radius=3,  # 滑块进度条圆角大小
-        track_fill="transparent",
-        track_opacity=1,  # 滑块进度条的选中部分矩形的背景颜色、高度、透明度
-        rail_fill="transparent",
-        rail_opacity=1,  #
-    ):
-        drawing = self.create_drawing(width, height, temppath=temppath, fill_opacity=0)
+    """滑块的 SVG 绘制后端。
 
-        drawing[1].add(
-            drawing[1].rect(
-                (0, 0),
-                (width2, height),
-                rx=radius,
-                fill=track_fill,
-                fill_opacity=track_opacity,
-                fill_rule="evenodd",
-            )
-        )  # 滑块进度左边的选中区域 (只左部分)
+    两种图元都由 tkdeft 提供，不再在这里重复实现：
 
-        drawing[1].add(
-            drawing[1].rect(
-                (width2, 0),
-                (width - width2, height),
-                rx=radius,
-                fill=rail_fill,
-                fill_opacity=rail_opacity,
-            )
-        )  # 滑块进度未选中区域 (占全部)
+    * 进度条槽 → :meth:`tkdeft.windows.draw.DSvgDraw.create_track`
+    * 圆形把手 → :meth:`tkdeft.windows.draw.DSvgDraw.create_thumb`
+      （外圈是 0.500208→0.954545 的竖直渐变伪阴影 + 外填充 + 内填充）
 
-        drawing[1].save()
-        return drawing[0]
-
-    def create_thumb(
-        self,
-        width,
-        height,
-        r1,  # 滑块外圆半径
-        r2,  # 滑块内圆半径
-        temppath=None,
-        fill="transparent",
-        fill_opacity=1,  # 滑块外圆的背景颜色、透明度
-        outline="transparent",
-        outline_opacity=1,  # 滑块伪阴影的渐变色中的第一个渐变颜色、透明度
-        outline2="transparent",
-        outline2_opacity=1,  # 滑块伪阴影的渐变色中的第二个渐变颜色、透明度
-        inner_fill="transparent",
-        inner_fill_opacity=1,  # 滑块内圆的背景颜色、透明度
-    ):
-        drawing = self.create_drawing(width, height, temppath=temppath, fill_opacity=0)
-
-        border = drawing[1].linearGradient(
-            start=(r1, 1),
-            end=(r1, r1 * 2 - 1),
-            id="DButton.Border",
-            gradientUnits="userSpaceOnUse",
-        )
-        border.add_stop_color(0.500208, outline, outline_opacity)
-        border.add_stop_color(0.954545, outline2, outline2_opacity)
-        drawing[1].defs.add(border)
-        stroke = f"url(#{border.get_id()})"
-
-        drawing[1].add(
-            drawing[1].circle(
-                (width / 2, height / 2),
-                r1,
-                fill=stroke,
-                fill_opacity=1,
-                fill_rule="evenodd",
-            )
-        )  # 圆形滑块的伪阴影边框
-        drawing[1].add(
-            drawing[1].circle(
-                (width / 2, height / 2),
-                r1 - 1,
-                fill=fill,
-                fill_opacity=fill_opacity,
-                fill_rule="nonzero",
-            )
-        )  # 圆形滑块的外填充
-        drawing[1].add(
-            drawing[1].circle(
-                (width / 2, height / 2),
-                r2,
-                fill=inner_fill,
-                fill_opacity=inner_fill_opacity,
-                fill_rule="nonzero",
-            )
-        )  # 圆形滑块的内填充
-        drawing[1].save()
-        return drawing[0]
+    保留这个子类，是给"想给滑块换一套图元"的人留的扩展点。
+    """
 
 
 class FluSliderCanvas(DCanvas):
@@ -131,42 +45,39 @@ class FluSliderCanvas(DCanvas):
         track_opacity=1,
         rail_fill="transparent",
         rail_opacity=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
-        item = self.create_track_raster(
+    ) -> int:
+        """画滑块/滚动条的进度条槽。
+
+        :param x1: 左上角 x
+        :param y1: 左上角 y
+        :param width: 位图宽度
+        :param height: 位图高度
+        :param width2: 左半段（已选中部分）的宽度
+        :param temppath: SVG 兜底路径用的临时文件
+        :param temppath2: Wand 引擎的 PNG 输出路径
+        :param radius: 圆角半径
+        :param track_fill: 已选中部分的颜色
+        :param track_opacity: 已选中部分的透明度
+        :param rail_fill: 未选中底轨的颜色
+        :param rail_opacity: 未选中底轨的透明度
+        :returns: 画布上的 item id
+
+        转调 :meth:`tkdeft.windows.canvas.DCanvas.draw_track`：
+        栅格引擎走进程内位图快速路径，否则自动回退到 SVG。
+        """
+        return self.draw_track(
             x1,
             y1,
             width,
             height,
             width2,
-            radius=radius,
-            track_fill=track_fill,
-            track_opacity=track_opacity,
-            rail_fill=rail_fill,
-            rail_opacity=rail_opacity,
-        )
-        if item is not None:
-            return item
-
-        self._img2 = self.svgdraw.create_track(
-            width,
-            height,
-            width2,
             temppath=temppath,
+            temppath2=temppath2,
             radius=radius,
             track_fill=track_fill,
             track_opacity=track_opacity,
             rail_fill=rail_fill,
             rail_opacity=rail_opacity,
-        )
-        from .designs.renderer import get_renderer
-
-        self._tkimg2 = self.svgdraw.create_svg_image(
-            self._img2, temppath2, way=get_renderer()
-        )
-        # print(self._img2)
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg2), self._tkimg2
         )
 
     def create_thumb(
@@ -187,33 +98,29 @@ class FluSliderCanvas(DCanvas):
         outline2_opacity=1,
         inner_fill="transparent",
         inner_fill_opacity=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
-        item = self.create_thumb_raster(
+    ) -> int:
+        """画滑块的圆形把手。
+
+        :param r1: 外圆半径（伪阴影那一圈）
+        :param r2: 内圆半径
+        :param fill: 外填充色
+        :param outline: 伪阴影渐变的第一个颜色
+        :param outline2: 伪阴影渐变的第二个颜色
+        :param inner_fill: 内圆填充色
+        :returns: 画布上的 item id
+
+        转调 :meth:`tkdeft.windows.canvas.DCanvas.draw_thumb`：
+        栅格引擎走进程内位图快速路径，否则自动回退到 SVG。
+        """
+        return self.draw_thumb(
             x1,
             y1,
             width,
             height,
             r1,
             r2,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline_opacity=outline_opacity,
-            outline2=outline2,
-            outline2_opacity=outline2_opacity,
-            inner_fill=inner_fill,
-            inner_fill_opacity=inner_fill_opacity,
-        )
-        if item is not None:
-            return item
-
-        self._img = self.svgdraw.create_thumb(
-            width,
-            height,
-            r1,
-            r2,
             temppath=temppath,
+            temppath2=temppath2,
             fill=fill,
             fill_opacity=fill_opacity,
             outline=outline,
@@ -222,14 +129,6 @@ class FluSliderCanvas(DCanvas):
             outline2_opacity=outline2_opacity,
             inner_fill=inner_fill,
             inner_fill_opacity=inner_fill_opacity,
-        )
-        from .designs.renderer import get_renderer
-
-        self._tkimg = self.svgdraw.create_svg_image(
-            self._img, temppath2, way=get_renderer()
-        )
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
         )
 
 

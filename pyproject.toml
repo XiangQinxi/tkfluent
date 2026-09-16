@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.2.0"
+version = "0.3.0"
 description = "Fluent(SunValley) Design for Tkinter. Modern GUI"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
@@ -38,7 +38,10 @@ tkextrafont = "^0.6.3"
 svgwrite = "^1.4.3"
 # 与 tkdeft 保持一致，不设上界（Pillow 10 / 11 / 12 实测均可用）
 pillow = ">=10.2"
-tkdeft = "0.2.0"
+# 绘制引擎层（tkdeft.engines）从 0.2.0 起提供，之后的版本都是加法改动；
+# 这里写 >= 而不是钉死某个版本，避免把用户已经装好的 tkdeft 降级
+# （运行时还有一次 MIN_TKDEFT_VERSION 校验，见 tkflu/designs/renderer.py）。
+tkdeft = ">=0.2.0"
 easydict = "^1.13"
 numpy = "*"
 

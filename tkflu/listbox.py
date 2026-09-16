@@ -24,14 +24,26 @@ class FluListBoxDraw(DSvgDraw):
         outline="black",
         outline2="black",
         width=1,
+        gradient_stop1=0.0,
+        gradient_stop2=1.0,
+        **extra,
     ):
+        """列表背景的 SVG 图元。
+
+        :param gradient_stop1: 渐变描边起点（列表用 0%→100%，不同于 button 的 0.9→1.0）
+        :param gradient_stop2: 渐变描边终点
+        :param extra: 其余关键字透传给 svgwrite 的 ``rect()``
+        :returns: 生成好的 SVG 文件路径
+
+        渐变的 id 固定为 ``DListBox.Border``；几何由
+        :func:`tkdeft.svg.add_roundrect` 内缩半个线宽，四边描边才完整。
+        """
         if radiusy:
             _rx = radius
             _ry = radiusy
         else:
             _rx, _ry = radius, radius
         drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        # 描边为 0%→100% 的竖直渐变；几何内缩半个线宽，四边描边才完整
         from tkdeft.svg import add_roundrect
 
         add_roundrect(
@@ -47,8 +59,9 @@ class FluListBoxDraw(DSvgDraw):
             outline2=outline2,
             width=width,
             gradient_id="DListBox.Border",
-            gradient_stop1=0.0,
-            gradient_stop2=1.0,
+            gradient_stop1=gradient_stop1,
+            gradient_stop2=gradient_stop2,
+            **extra,
         )
         drawing[1].save()
         return drawing[0]
@@ -70,27 +83,19 @@ class FluListBoxCanvas(DCanvas):
         outline="black",
         outline2="black",
         width=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）。
-        # listbox 的描边是 0%→100% 的竖直渐变，与 button 的 0.9→1.0 不同。
-        item = self.create_roundrect_raster(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            fill=fill,
-            outline=outline,
-            outline2=outline2,
-            width=width,
-            gradient_stop1=0.0,
-            gradient_stop2=1.0,
-        )
-        if item is not None:
-            return item
+    ) -> int:
+        """画列表的圆角背景。
 
-        self._img = self.svgdraw.create_roundrect(
+        :param r1: 圆角半径（x 方向）
+        :param r2: 圆角半径（y 方向）
+        :returns: 画布上的 item id
+
+        列表的描边是 0%→100% 的竖直渐变（button 是 0.9→1.0），
+        所以这里显式把两个 stop 传给
+        :meth:`tkdeft.windows.canvas.DCanvas.draw_roundrect`。
+        快速路径的判定与回退都在 tkdeft 里，组件层不再重复。
+        """
+        return self.draw_roundrect(
             x1,
             y1,
             x2,
@@ -98,14 +103,12 @@ class FluListBoxCanvas(DCanvas):
             r1,
             r2,
             temppath=temppath,
+            gradient_stop1=0.0,
+            gradient_stop2=1.0,
             fill=fill,
             outline=outline,
             outline2=outline2,
             width=width,
-        )
-        self._tkimg = self.svgdraw.create_svg_image(self._img)
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
         )
 
     create_roundrect = create_round_rectangle

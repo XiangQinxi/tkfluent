@@ -120,6 +120,16 @@ class FluFrameDraw(DSvgDraw):
         return drawing[0]
 
 class FluFrameCanvas(DCanvas):
+    """面板的画布。
+
+    ``create_round_rectangle`` / ``create_roundrect`` 直接继承
+    :class:`tkdeft.windows.canvas.DCanvas`——它内部会调用
+    :meth:`~tkdeft.windows.canvas.DCanvas.draw_roundrect`，
+    当前引擎是栅格引擎时走进程内位图快速路径，否则回退到
+    :meth:`~tkdeft.windows.canvas.DCanvas.draw_roundrect_svg`
+    （图元来自 :class:`FluFrameDraw`）。
+    """
+
     draw = FluFrameDraw
     frame = None
 
@@ -139,56 +149,6 @@ class FluFrameCanvas(DCanvas):
             self.frame._draw()
         self.frame.update()
         self.update()
-
-    def create_round_rectangle(
-        self,
-        x1,
-        y1,
-        x2,
-        y2,
-        r1,
-        r2=None,
-        temppath=None,
-        fill="transparent",  # fill_opacity=1,
-        outline="black",
-        outline_opacity=1,
-        width=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
-        item = self.create_roundrect_raster(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            fill=fill,
-            outline=outline,
-            outline_opacity=outline_opacity,
-            width=width,
-        )
-        if item is not None:
-            return item
-
-        self._img = self.svgdraw.create_roundrect(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            temppath=temppath,
-            fill=fill,  # fill_opacity=fill_opacity,
-            outline=outline,
-            outline_opacity=outline_opacity,
-            width=width,
-        )
-        self._tkimg = self.svgdraw.create_svg_image(self._img)
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
-        )
-
-    create_roundrect = create_round_rectangle
 
 
 from tkinter import Frame

@@ -10,51 +10,11 @@ from tkdeft.windows.drawwidget import DDrawWidget
 
 
 class FluToggleButtonDraw(DSvgDraw):
-    def create_roundrect_with_text(
-        self,
-        x1,
-        y1,
-        x2,
-        y2,
-        radius,
-        radiusy=None,
-        temppath=None,
-        fill="transparent",
-        fill_opacity=1,
-        outline="black",
-        outline2=None,
-        outline_opacity=1,
-        outline2_opacity=1,
-        width=1,
-    ):
-        if radiusy:
-            _rx = radius
-            _ry = radiusy
-        else:
-            _rx, _ry = radius, radius
-        drawing = self.create_drawing(x2 - x1, y2 - y1, temppath=temppath)
-        # 几何内缩半个线宽，四边描边才完整（旧写法用 translate(0.5,0.5)
-        # 把下边框和右边框整个推到画布外）
-        from tkdeft.svg import add_roundrect
+    """开关按钮的 SVG 绘制后端。
 
-        add_roundrect(
-            drawing[1],
-            x1,
-            y1,
-            x2,
-            y2,
-            _rx,
-            _ry,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-        )
-        drawing[1].save()
-        return drawing[0]
+    图元直接用 :meth:`tkdeft.windows.draw.DSvgDraw.create_roundrect`
+    （几何内缩半个线宽，四边描边完整），不再重复实现一遍。
+    """
 
 
 class FluToggleButtonCanvas(DCanvas):
@@ -70,34 +30,28 @@ class FluToggleButtonCanvas(DCanvas):
         r2=None,
         temppath=None,
         temppath2=None,
-        fill="transparent",
-        fill_opacity=1,
-        outline="black",
-        outline2="black",
-        outline_opacity=1,
-        outline2_opacity=1,
-        width=1,
-    ):
-        # 快速路径：栅格引擎直接出位图（见 tkdeft.engines）
-        item = self.create_roundrect_raster(
-            x1,
-            y1,
-            x2,
-            y2,
-            r1,
-            r2,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-        )
-        if item is not None:
-            return item
+        **kwargs,
+    ) -> int:
+        """画开关按钮的圆角背景。
 
-        self._img = self.svgdraw.create_roundrect_with_text(
+        :param x1: 左上角 x
+        :param y1: 左上角 y
+        :param x2: 右下角 x
+        :param y2: 右下角 y
+        :param r1: 圆角半径（x 方向）
+        :param r2: 圆角半径（y 方向）；为空时取 ``r1``
+        :param temppath: SVG 兜底路径用的临时文件
+        :param temppath2: Wand 引擎的 PNG 输出路径
+        :param kwargs: ``fill`` / ``fill_opacity`` / ``outline`` / ``outline2`` /
+            ``outline_opacity`` / ``outline2_opacity`` / ``width``
+        :returns: 画布上的 item id
+
+        名字里的 ``_with_text`` 是历史遗留——文字其实是 ``create_text``
+        叠加上去的。实现等价于
+        :meth:`tkdeft.windows.canvas.DCanvas.draw_roundrect`
+        （栅格引擎走位图快速路径，否则自动回退 SVG）。
+        """
+        return self.draw_roundrect(
             x1,
             y1,
             x2,
@@ -105,21 +59,8 @@ class FluToggleButtonCanvas(DCanvas):
             r1,
             r2,
             temppath=temppath,
-            fill=fill,
-            fill_opacity=fill_opacity,
-            outline=outline,
-            outline2=outline2,
-            outline_opacity=outline_opacity,
-            outline2_opacity=outline2_opacity,
-            width=width,
-        )
-        from .designs.renderer import get_renderer
-
-        self._tkimg = self.svgdraw.create_svg_image(
-            self._img, temppath2, way=get_renderer()
-        )
-        return self._keep_photo(
-            self.create_image(x1, y1, anchor="nw", image=self._tkimg), self._tkimg
+            temppath2=temppath2,
+            **kwargs,
         )
 
     create_roundrect = create_round_rectangle_with_text
