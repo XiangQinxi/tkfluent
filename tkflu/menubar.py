@@ -14,11 +14,42 @@ class FluMenuBar(Frame, DObject, FluGradient):
     def __init__(self, *args, mode="light", height=40, **kwargs):
         self._init(mode)
 
+        #: 记下配置高度，菜单项据此算出自身高度（见 _item_height）
+        self._configured_height = height
+
         super().__init__(*args, height=height, **kwargs)
 
         self._draw(None)
 
         self.bind("<Configure>", self._event_configure, add="+")
+
+    def _item_height(self) -> int:
+        """菜单项按钮的高度。
+
+        历史实现沿用 ``FluButton`` 的默认高度 32，再配 ``pady=5``，
+        合计需要 42px；而菜单栏默认只有 40px，底部还有一条 1.2px 的分隔线。
+        结果按钮被垂直压扁，文字跟着变形。
+
+        这里按菜单栏的实际高度，留出上下各 4px 与分隔线的余量。
+        """
+        total = getattr(self, "_configured_height", 40) or 40
+        try:
+            total = int(self.cget("height")) or total
+        except Exception:
+            pass
+        return max(18, int(total) - 10)
+
+    def _item_width(self, label: str, width=None) -> int:
+        """菜单项的宽度。
+
+        ``len(label) * 8`` 对中文会严重偏窄（"文件" 只算出 16 像素），
+        改用 :func:`~tkflu.defs.measure_label_width` 做真实度量。
+        """
+        if width is not None:
+            return width
+        from .defs import measure_label_width
+
+        return measure_label_width(self, label)
 
     def _init(self, mode):
 
@@ -34,14 +65,13 @@ class FluMenuBar(Frame, DObject, FluGradient):
         self.pack(fill="x")
 
     def add_command(self, custom_widget=None, width=None, label: str = "", **kwargs):
-        if width is None:
-            width = len(label) * 8
+        width = self._item_width(label, width)
         if custom_widget:
             widget = custom_widget(self)
         else:
             from .button import FluButton
 
-            widget = FluButton(self, width=width)
+            widget = FluButton(self, width=width, height=self._item_height())
         if "style" in kwargs:
             style = kwargs.pop("style")
         else:
@@ -66,7 +96,7 @@ class FluMenuBar(Frame, DObject, FluGradient):
         if hasattr(widget, "theme"):
             widget.theme(style=style)
 
-        widget.pack(side="left", padx=5, pady=5)
+        widget.pack(side="left", padx=4, pady=4)
         self.dcget("actions")[id] = widget
 
     from .menu import FluMenu
@@ -79,14 +109,13 @@ class FluMenuBar(Frame, DObject, FluGradient):
         menu: FluMenu = None,
         **kwargs,
     ):
-        if width is None:
-            width = len(label) * 8
+        width = self._item_width(label, width)
         if custom_widget:
             widget = custom_widget(self)
         else:
             from .button import FluButton
 
-            widget = FluButton(self, width=width)
+            widget = FluButton(self, width=width, height=self._item_height())
         if "style" in kwargs:
             style = kwargs.pop("style")
         else:
@@ -101,8 +130,9 @@ class FluMenuBar(Frame, DObject, FluGradient):
             menu.popup(
                 widget.winfo_rootx() - 5, widget.winfo_rooty() + widget.winfo_height()
             )
-            height = len(menu.dcget("actions")) * 45
-            menu.window.geometry(f"100x{height}")
+            # 弹窗尺寸按内容算，不再写死 100px 宽（中文菜单项会被截断）
+            menu_width, menu_height = menu.preferred_size()
+            menu.window.geometry(f"{menu_width}x{menu_height}")
             menu.window.deiconify()
             menu.window.attributes("-topmost")
 
@@ -114,7 +144,7 @@ class FluMenuBar(Frame, DObject, FluGradient):
         if hasattr(widget, "theme"):
             widget.theme(style=style)
 
-        widget.pack(side="left", padx=5, pady=5)
+        widget.pack(side="left", padx=4, pady=4)
         self.dcget("actions")[id] = widget
 
     def action(self, id):

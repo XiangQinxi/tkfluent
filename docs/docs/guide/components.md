@@ -104,6 +104,29 @@ label = tkflu.FluLabel(root, text="把鼠标放上来")
 label.tooltip(text="我是提示")
 ```
 
+## 标签的宽度自适应
+
+`FluLabel` 是一块固定尺寸的画布，文本在中间居中绘制。文本一旦比画布宽，
+**左右两侧都会被裁掉**。
+
+从 `0.2.0` 起，**不传 `width`** 时标签会按文本自动撑开（只增不减，
+避免文字变化时抖动）：
+
+```python
+# 自动宽度：文字多长，标签就多宽，不会被裁
+tkflu.FluLabel(root, text="FluLabel（悬停看提示）")
+
+# 显式指定宽度：行为与旧版一致，超出仍然会裁
+tkflu.FluLabel(root, text="...", width=120)
+```
+
+需要动态改文字时同理，改完调一次 `_draw()` 让它重新量宽：
+
+```python
+label.dconfigure(text="一段更长的文字")
+label._draw()
+```
+
 ## 容器怎么用
 
 `FluFrame` 内部是"画布 + 子 Frame"的结构，但它把 `pack` / `grid` / `place`

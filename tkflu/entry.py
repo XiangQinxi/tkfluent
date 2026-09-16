@@ -174,9 +174,20 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
     ):
         self._init(mode)
 
+        #: 内嵌的原生 Entry。
+        #: 真正的实例在 super().__init__() **之后** 才创建——那时 self 已经是
+        #: 一个可用的画布，才能把它当作 master。父类构造里的首次 _draw 会因为
+        #: 它是 None 而跳过内嵌控件，随后我们补一次 _draw。
+        self.entry = None
+
+        super().__init__(*args, width=width, height=height, cursor=cursor, **kwargs)
+
         from tkinter import Entry
 
-        self.entry = Entry(textvariable=textvariable, border=0, cursor=cursor)
+        # master=self 很关键：不传的话 Entry 会挂到**默认根窗口**上，而不是
+        # 这个控件内部。那样在 Toplevel / 多 Tk 解释器场景下 create_window
+        # 嵌不进去，而且控件销毁后这个 Entry 不会被回收。
+        self.entry = Entry(self, textvariable=textvariable, border=0, cursor=cursor)
 
         self.entry.bind("<Enter>", self._event_enter, add="+")
         self.entry.bind("<Leave>", self._event_leave, add="+")
@@ -184,8 +195,6 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
         self.entry.bind("<ButtonRelease-1>", self._event_off_button1, add="+")
         self.entry.bind("<FocusIn>", self._event_focus_in, add="+")
         self.entry.bind("<FocusOut>", self._event_focus_out, add="+")
-
-        super().__init__(*args, width=width, height=height, cursor=cursor, **kwargs)
 
         self.bind("<Button-1>", lambda e: self.entry.focus_set())
 
@@ -196,6 +205,9 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
         from .defs import set_default_font
 
         set_default_font(font, self.attributes)
+
+        # Entry 建好之后再画一次，把它嵌进画布
+        self._draw()
 
     def _init(self, mode):
         from easydict import EasyDict
@@ -221,7 +233,11 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
 
         self.delete("all")
 
-        self.entry.configure(font=self.attributes.font)
+        # 构造过程中（super().__init__ 里的首次 _draw）Entry 还没建好，
+        # 这时只画背景，等 Entry 创建完成后再补一次 _draw。
+        entry = self.entry
+        if entry is not None:
+            entry.configure(font=self.attributes.font)
 
         state = self.dcget("state")
 
@@ -235,10 +251,12 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
                     _dict = self.attributes.hover
                 else:
                     _dict = self.attributes.rest
-            self.entry.configure(state="normal")
+            if entry is not None:
+                entry.configure(state="normal")
         else:
             _dict = self.attributes.disabled
-            self.entry.configure(state="disabled")
+            if entry is not None:
+                entry.configure(state="disabled")
 
         _stop1 = _dict.stop1
         _stop2 = _dict.stop2
@@ -254,13 +272,14 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
         _underline_fill = _dict.underline_fill
         _underline_width = _dict.underline_width
 
-        self.entry.configure(
-            background=_back_color,
-            insertbackground=_text_color,
-            foreground=_text_color,
-            disabledbackground=_back_color,
-            disabledforeground=_text_color,
-        )
+        if entry is not None:
+            entry.configure(
+                background=_back_color,
+                insertbackground=_text_color,
+                foreground=_text_color,
+                disabledbackground=_back_color,
+                disabledforeground=_text_color,
+            )
         from .designs.renderer import get_renderer
 
         if get_renderer() == 1:
@@ -295,16 +314,17 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
                 fill=_underline_fill,
             )
 
-        self.element_text = self.create_window(
-            _radius / 2 + _border_width,
-            _radius / 2 + _border_width,
-            window=self.entry,
-            anchor="nw",
-            width=self.winfo_width() - _border_width * 2 - _radius,
-            height=self.winfo_height() - _border_width * 2 - _radius,
-        )
+        if entry is not None:
+            self.element_text = self.create_window(
+                _radius / 2 + _border_width,
+                _radius / 2 + _border_width,
+                window=entry,
+                anchor="nw",
+                width=self.winfo_width() - _border_width * 2 - _radius,
+                height=self.winfo_height() - _border_width * 2 - _radius,
+            )
 
-        self.tag_raise(self.element_text)
+            self.tag_raise(self.element_text)
 
     def _event_focus_in(self, event=None):
         self.isfocus = True

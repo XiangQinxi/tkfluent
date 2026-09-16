@@ -48,13 +48,15 @@ class FluImage(FluFrame):
         style: str = "standard",
         **kwargs,
     ):
-        super().__init__(
-            master, *args, width=width, height=height, mode=mode, style=style, **kwargs
-        )
-
+        # 必须在 super().__init__() 之前初始化：FluFrame 的构造函数里就会
+        # 调用 self._draw()，而我们的 _draw 覆盖版会去读 _image_ref。
         #: 必须由 Python 侧持有引用，否则 PhotoImage 被回收后图片会消失
         self._image_ref = None
         self.element_image = None
+
+        super().__init__(
+            master, *args, width=width, height=height, mode=mode, style=style, **kwargs
+        )
 
         if image is not None:
             self.image(image)
@@ -78,15 +80,38 @@ class FluImage(FluFrame):
         self._image_ref = photo
 
         size = (photo.width(), photo.height())
-        if self.element_image is not None:
-            self.canvas.delete(self.element_image)
-        self.element_image = self.canvas.create_image(
-            size[0] / 2, size[1] / 2, anchor="center", image=photo
-        )
-        # canvas 的图片引用同样需要 Python 侧保活
-        self.canvas._keep_photo(self.element_image, photo)
-
         self.config(width=size[0], height=size[1])
         self.canvas.config(width=size[0], height=size[1])
+
+        # 交给 _draw 统一绘制：不能在这里直接 create_image，
+        # 因为 FluFrame._draw 开头会 canvas.delete("all") 把元素全部清掉。
         self._draw()
         return photo
+
+    def _draw(self, event=None, tempcolor=None):
+        """先画圆角背景（父类），再把图片叠上去。
+
+        覆盖父类是必需的：父类开头会 ``canvas.delete("all")``，
+        如果图片元素是在别处创建的，任何一次重绘都会把它连带删掉——
+        这正是"FluImage 看起来是个空盒子"的原因。
+        """
+        super()._draw(event, tempcolor)
+        self._draw_image()
+
+    def _draw_image(self):
+        """在当前画布中央绘制图片（重绘时会被重新调用）。"""
+        photo = getattr(self, "_image_ref", None)
+        if photo is None:
+            return
+
+        width = self.canvas.winfo_width()
+        height = self.canvas.winfo_height()
+        if width <= 1 or height <= 1:
+            # 布局尚未完成，退回到图片自身的尺寸，避免画到 (0, 0)
+            width, height = photo.width(), photo.height()
+
+        self.element_image = self.canvas.create_image(
+            width / 2, height / 2, anchor="center", image=photo
+        )
+        # canvas 的图片引用同样需要 Python 侧保活，否则被回收后画面会空白
+        self.canvas._keep_photo(self.element_image, photo)

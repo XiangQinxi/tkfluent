@@ -173,9 +173,19 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
     ):
         self._init(mode)
 
+        #: 内嵌的原生 Text。
+        #: 真正的实例在 super().__init__() **之后** 才创建——那时 self 已经是
+        #: 一个可用的画布，才能把它当作 master。父类构造里的首次 _draw 会因为
+        #: 它是 None 而跳过内嵌控件，随后我们补一次 _draw。
+        self.text = None
+
+        super().__init__(*args, width=width, height=height, cursor=cursor, **kwargs)
+
         from tkinter import Text
 
-        self.text = Text(border=0, width=width, height=height, cursor=cursor)
+        # master=self 很关键：不传的话 Text 会挂到**默认根窗口**上，而不是
+        # 这个控件内部（原因同 FluEntry）。
+        self.text = Text(self, border=0, cursor=cursor)
 
         self.text.bind("<Enter>", self._event_enter, add="+")
         self.text.bind("<Leave>", self._event_leave, add="+")
@@ -183,8 +193,6 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
         self.text.bind("<ButtonRelease-1>", self._event_off_button1, add="+")
         self.text.bind("<FocusIn>", self._event_focus_in, add="+")
         self.text.bind("<FocusOut>", self._event_focus_out, add="+")
-
-        super().__init__(*args, width=width, height=height, cursor=cursor, **kwargs)
 
         self.bind("<Button-1>", lambda e: self.text.focus_set(), add="+")
 
@@ -195,6 +203,9 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
         from .defs import set_default_font
 
         set_default_font(font, self.attributes)
+
+        # Text 建好之后再画一次，把它嵌进画布
+        self._draw()
 
     def _init(self, mode):
         from easydict import EasyDict
@@ -218,7 +229,11 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
         width = self.winfo_width()
         height = self.winfo_height()
 
-        self.text.configure(font=self.attributes.font)
+        # 构造过程中（super().__init__ 里的首次 _draw）Text 还没建好，
+        # 这时只画背景，等 Text 创建完成后再补一次 _draw。
+        text_widget = self.text
+        if text_widget is not None:
+            text_widget.configure(font=self.attributes.font)
 
         self.delete("all")
 
@@ -234,10 +249,12 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
                     _dict = self.attributes.hover
                 else:
                     _dict = self.attributes.rest
-            self.text.configure(state="normal")
+            if text_widget is not None:
+                text_widget.configure(state="normal")
         else:
             _dict = self.attributes.disabled
-            self.text.configure(state="disabled")
+            if text_widget is not None:
+                text_widget.configure(state="disabled")
 
         _stop1 = _dict.stop1
         _stop2 = _dict.stop2
@@ -253,13 +270,14 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
         _underline_fill = _dict.underline_fill
         _underline_width = _dict.underline_width
 
-        self.text.configure(
-            background=_back_color,
-            insertbackground=_text_color,
-            foreground=_text_color,
-            width=self.winfo_width() - _border_width * 2 - _radius,
-            height=self.winfo_height() - _border_width * 2 - _radius,
-        )
+        if text_widget is not None:
+            text_widget.configure(
+                background=_back_color,
+                insertbackground=_text_color,
+                foreground=_text_color,
+                width=self.winfo_width() - _border_width * 2 - _radius,
+                height=self.winfo_height() - _border_width * 2 - _radius,
+            )
 
         if hasattr(self, "element_border"):
             self.delete(self.element_border)
@@ -315,15 +333,16 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
             self.coords(self.element_text, self.winfo_width() / 2, self.winfo_height() / 2,
                         self.winfo_width() - _border_width * 2 - _radius, self.winfo_height() - _border_width * 2 - _radius)
         """
-        if hasattr(self, "element_text"):
-            self.delete(self.element_text)
-        self.element_text = self.create_window(
-            self.winfo_width() / 2,
-            self.winfo_height() / 2,
-            window=self.text,
-            width=self.winfo_width() - _border_width * 2 - _radius,
-            height=self.winfo_height() - _border_width * 2 - _radius,
-        )
+        if text_widget is not None:
+            if hasattr(self, "element_text"):
+                self.delete(self.element_text)
+            self.element_text = self.create_window(
+                self.winfo_width() / 2,
+                self.winfo_height() / 2,
+                window=text_widget,
+                width=self.winfo_width() - _border_width * 2 - _radius,
+                height=self.winfo_height() - _border_width * 2 - _radius,
+            )
         if hasattr(self, "element_line"):
             self.delete(self.element_line)
         if _underline_fill:
@@ -335,7 +354,8 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
                 width=_underline_width,
                 fill=_underline_fill,
             )
-        self.tag_raise(self.element_text, self.element_border)
+        if hasattr(self, "element_text"):
+            self.tag_raise(self.element_text, self.element_border)
         # self.tag_raise(self.element_line, self.element_text)
 
         # self.tag_raise(self.element_text)

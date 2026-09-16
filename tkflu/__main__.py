@@ -122,9 +122,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--geometry",
-        default="640x600",
+        default="640x680",
         metavar="WxH",
-        help="窗口尺寸，例如 720x640（默认 640x600）",
+        help="窗口尺寸，例如 720x720（默认 640x680，够放下全部组件）",
     )
     parser.add_argument(
         "--animation-steps",
@@ -315,17 +315,18 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     menubar.pack(fill="x", side="top")
 
     # ---- 主体：左右两栏 ---------------------------------------------------
-    main = track("frame", tkflu.FluFrame(root, width=600, height=470, mode=mode))
+    main = track("frame", tkflu.FluFrame(root, width=600, height=420, mode=mode))
     main.pack(fill="both", expand=True, side="top", padx=12, pady=(10, 0))
 
-    left = tkflu.FluFrame(main, width=270, height=430, mode=mode)
+    left = tkflu.FluFrame(main, width=270, height=400, mode=mode)
     left.pack(side="left", fill="both", expand=True, padx=(10, 5), pady=10)
 
-    right = tkflu.FluFrame(main, width=270, height=430, mode=mode)
+    right = tkflu.FluFrame(main, width=270, height=400, mode=mode)
     right.pack(side="right", fill="both", expand=True, padx=(5, 10), pady=10)
 
     def section(parent, text):
-        label = tkflu.FluLabel(parent, text=text, mode=mode)
+        # 不传 width：FluLabel 会按文本自适应宽度，标题自然左对齐
+        label = tkflu.FluLabel(parent, text=text, height=22, mode=mode)
         label.pack(anchor="w", padx=6, pady=(8, 2))
         return label
 
@@ -424,24 +425,43 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     )
     slider.pack(fill="x", padx=6, pady=4)
 
-    scrollbar = track("scrollbar", tkflu.FluScrollBar(right, mode=mode))
-    scrollbar.pack(anchor="w", padx=6, pady=2)
+    scrollbar = track(
+        "scrollbar",
+        # 竖直滚动条默认 6x120，在画廊里非常占高度；横向版更紧凑也更直观
+        tkflu.FluScrollBar(right, width=200, height=6, orient="horizontal", mode=mode),
+    )
+    scrollbar.pack(anchor="w", padx=6, pady=6)
 
-    # ---- 底部：事件日志 + 状态栏 ------------------------------------------
-    bottom = tkflu.FluFrame(root, width=600, height=96, mode=mode)
+    # ---- 底部：事件日志 + 状态栏 + 操作按钮 --------------------------------
+    #
+    # 布局要点：FluFrame 内部是"画布 + 内嵌 Frame"，内嵌 Frame 的高度是
+    # 画布高度再减去 边框*2 + 圆角半径。而 FluLabel 的默认高度是 32px。
+    # 早先的写法把两个默认高度的标签（64px）和三个按钮塞进 96px 的面板里，
+    # 内容区只剩 ~86px，按钮被压到几乎不可见。
+    # 现在：面板加高、标签显式指定较小高度、按钮放进独立的一行容器。
+    bottom = tkflu.FluFrame(root, width=600, height=150, mode=mode)
     bottom.pack(fill="x", side="bottom", padx=12, pady=(6, 10))
 
     log_label = track(
         "log_label",
-        tkflu.FluLabel(bottom, text="最近事件：—", mode=mode),
+        # 不传 width：文本变化时 FluLabel 会自动撑开，不会被裁
+        tkflu.FluLabel(bottom, text="最近事件：—", height=22, mode=mode),
     )
-    log_label.pack(anchor="w", padx=10, pady=(8, 2))
+    log_label.pack(anchor="w", padx=10, pady=(10, 2))
 
     status = track(
         "status",
-        tkflu.FluLabel(bottom, text="", mode=mode),
+        tkflu.FluLabel(bottom, text="", height=22, mode=mode),
     )
-    status.pack(anchor="w", padx=10, pady=(0, 8))
+    status.pack(anchor="w", padx=10, pady=(0, 6))
+
+    # 三个按钮放在同属一个 FluFrame 的独立一行里。
+    # 用普通 Frame 承载是为了避免再多套一层画布；背景色取面板自身配色，
+    # 否则会露出一块与面板不一致的默认灰。
+    from .designs.frame import frame as frame_design
+
+    button_row = tk.Frame(bottom, background=frame_design(mode, "standard")["back_color"])
+    button_row.pack(anchor="w", padx=6, pady=(0, 12))
 
     # ---- 主题切换（需要 thememanager）-------------------------------------
     thememanager = tkflu.FluThemeManager(window=root, mode=mode)
@@ -450,11 +470,11 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     theme_toggle = track(
         "theme_toggle",
         tkflu.FluToggleButton(
-            bottom, text="切换主题", width=110, mode=mode,
+            button_row, text="切换主题", width=110, mode=mode,
             command=lambda: tkflu.toggle_theme(theme_toggle, thememanager),
         ),
     )
-    theme_toggle.pack(side="left", padx=10, pady=(0, 8))
+    theme_toggle.pack(side="left", padx=4)
 
     def toggle_state():
         target_state = (
@@ -467,10 +487,10 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     state_toggle = track(
         "state_toggle",
         tkflu.FluToggleButton(
-            bottom, text="切换可用状态", width=130, mode=mode, command=toggle_state
+            button_row, text="切换可用状态", width=130, mode=mode, command=toggle_state
         ),
     )
-    state_toggle.pack(side="left", padx=10, pady=(0, 8))
+    state_toggle.pack(side="left", padx=4)
 
     def refresh_status():
         from tkdeft.engines import cache_stats, get_engine_name
@@ -487,10 +507,10 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     status_button = track(
         "status_button",
         tkflu.FluButton(
-            bottom, text="刷新状态", width=100, mode=mode, command=refresh_status
+            button_row, text="刷新状态", width=100, mode=mode, command=refresh_status
         ),
     )
-    status_button.pack(side="left", padx=10, pady=(0, 8))
+    status_button.pack(side="left", padx=4)
     refresh_status()
 
     widgets["__log__"] = emit
@@ -670,7 +690,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         root.geometry(args.geometry)
     except Exception:
         print(f"警告：--geometry {args.geometry!r} 无效，改用默认尺寸", file=sys.stderr)
-        root.geometry("640x600")
+        root.geometry("640x680")
 
     if args.custom_titlebar is not None:
         try:
