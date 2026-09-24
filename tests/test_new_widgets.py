@@ -376,7 +376,8 @@ class TestListBox:
             x = 40
 
         event = Event()
-        event.y = 1 + 32 * 2 + 5
+        # 行高跟着组件的常量走，别再写死 32（设计稿对齐后是 40）
+        event.y = 1 + box.ITEM_HEIGHT * 2 + 5
         assert box._row_at(event.y) == 2
         box._event_on_button1(event)
         assert box.selection() == (2,)

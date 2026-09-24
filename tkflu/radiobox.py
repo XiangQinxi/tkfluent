@@ -51,7 +51,13 @@ from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
 
 from .constants import MODE, STATE
-from .designs.radiobox import RING_WIDTH
+from .designs.control import (
+    FOCUS_INNER_WIDTH,
+    FOCUS_MARGIN,
+    FOCUS_OUTER_WIDTH,
+    FOCUS_RADIUS,
+)
+from .designs.radiobox import DOT_SIZE, RING_WIDTH
 from .designs.radiobox import radiobox as radiobox_design
 
 __all__ = ["FluRadioBox", "FluRadioBoxCanvas", "FluRadioBoxDraw"]
@@ -135,8 +141,8 @@ class FluRadioBox(FluRadioBoxCanvas, DDrawWidget, FluToolTipBase):
     BOX = 20
     #: 圆环与文字之间的间距
     GAP = 8
-    #: 控件左右两侧的内边距
-    PADDING = 6
+    #: 控件左/右内边距（与 FluCheckBox 一致：Figma 里都是"控件左边缘 + 4"）
+    PADDING = 4
 
     def __init__(
         self,
@@ -257,8 +263,11 @@ class FluRadioBox(FluRadioBoxCanvas, DDrawWidget, FluToolTipBase):
                 "text_color": "#1b1b1b",
                 "dot_color": None,
                 "dot_ratio": 0.5,
+                "dot_size": DOT_SIZE,
                 "focus_color": "#000000",
                 "focus_opacity": 0.0,
+                "focus_inner_color": "#ffffff",
+                "focus_inner_opacity": 1.0,
             }
         )
 
@@ -427,7 +436,7 @@ class FluRadioBox(FluRadioBoxCanvas, DDrawWidget, FluToolTipBase):
         radius = self.BOX / 2.0
 
         if self.isfocus and self.attributes.focus_opacity:
-            self._draw_focus_ring(box_x, box_y, radius)
+            self._draw_focus_ring(box_x, box_y, radius, width, height)
 
         self.element_ring = self.draw_roundrect(
             box_x,
@@ -448,32 +457,71 @@ class FluRadioBox(FluRadioBoxCanvas, DDrawWidget, FluToolTipBase):
         self._draw_label(box_x, height)
         self._fit_to_text()
 
-    def _draw_focus_ring(self, box_x, box_y, radius):
-        """在圆环外侧画一圈焦点环。"""
-        pad = 2.0
+    def _draw_focus_ring(self, box_x, box_y, radius, width=None, height=None):
+        """画焦点带：贴着整个控件外沿的 3px **两层**带（与 FluCheckBox 一致）。
+
+        设计稿里单选框的焦点带是一个 **直径 26 的圆**（控件 20 + 每边 3），
+        不是圆角矩形。这里用 ``draw_roundrect`` 把圆角取成外径的一半得到正圆。
+        """
+        width = self.winfo_width() if width is None else width
+        height = self.winfo_height() if height is None else height
+        margin = FOCUS_MARGIN
+        # 关注的是"方框那一侧"还是"整个控件"：设计稿的 Plain 变体
+        # （只有圆、没有文字）焦点是 26×26 的圆；带文字时是包住整条的矩形。
+        if self.attributes.text:
+            x1, y1 = -margin, -margin
+            x2, y2 = width + margin, height + margin
+            outer_radius = FOCUS_RADIUS
+        else:
+            x1, y1 = box_x - margin, box_y - margin
+            x2, y2 = box_x + self.BOX + margin, box_y + self.BOX + margin
+            outer_radius = (x2 - x1) / 2.0
+
         self.element_focus = self.draw_roundrect(
-            box_x - pad,
-            box_y - pad,
-            box_x + self.BOX + pad,
-            box_y + self.BOX + pad,
-            radius + pad,
+            x1,
+            y1,
+            x2,
+            y2,
+            outer_radius,
+            temppath=self.temppath2,
+            temppath2=self.temppath4,
+            fill="transparent",
+            fill_opacity=0.0,
+            outline=self.attributes.focus_inner_color,
+            outline_opacity=self.attributes.focus_inner_opacity,
+            width=FOCUS_INNER_WIDTH + FOCUS_OUTER_WIDTH,
+        )
+        self.element_focus_inner = self.draw_roundrect(
+            x1,
+            y1,
+            x2,
+            y2,
+            outer_radius,
             temppath=self.temppath2,
             temppath2=self.temppath4,
             fill="transparent",
             fill_opacity=0.0,
             outline=self.attributes.focus_color,
             outline_opacity=self.attributes.focus_opacity,
-            width=2,
+            width=FOCUS_OUTER_WIDTH,
         )
 
     def _draw_dot(self, box_x, box_y, radius):
-        """画中间的实心圆点（未选中时不画）。"""
+        """画中间的实心圆点（未选中时不画）。
+
+        直径取 ``attributes.dot_size`` —— 设计稿里它在四个状态下不一样
+        （rest 8 / hover 10 / pressed 6 / disabled 8），所以不能按圆环半径
+        等比推。``dot_ratio`` 只是没有 dot_size 时的兜底。
+        """
         dot_color = self.attributes.dot_color
         if not dot_color:
             self.element_dot = None
             return
 
-        dot_radius = radius * float(self.attributes.dot_ratio or 0.5)
+        size = float(self.attributes.dot_size or 0) or (
+            radius * 2.0 * float(self.attributes.dot_ratio or 0.5)
+        )
+        dot_radius = size / 2.0
         center_x = box_x + self.BOX / 2.0
         center_y = box_y + self.BOX / 2.0
         self.element_dot = self.draw_roundrect(

@@ -142,8 +142,8 @@ from .constants import MODE
 class FluScrollBar(FluScrollBarCanvas, DDrawWidget):
     #: 轨道与控件边缘的距离
     PADDING = 2
-    #: 未展开（鼠标不在上面）时滑块的厚度
-    THIN = 3
+    #: 未展开（鼠标不在上面）时滑块的厚度。设计稿实测 2px。
+    THIN = 2
     #: 滑块的最小长度，避免内容极长时滑块细成一条线
     MIN_THUMB = 16
 

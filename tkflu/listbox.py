@@ -195,18 +195,25 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
     :cvar ROW_RADIUS: 条目高亮的圆角半径
     """
 
-    #: 单行高度
-    ITEM_HEIGHT = 32
-    #: 条目文字与左边缘的距离
-    PADDING_X = 10
-    #: 条目高亮相对控件边缘的内缩
-    ROW_INSET = 1
-    #: 条目高亮的圆角半径
-    ROW_RADIUS = 4
-    #: 选中指示条的宽度
+    #: 单行高度（设计稿：单行 40、两行 56、三行 72 —— 每多一行 +16）
+    ITEM_HEIGHT = 40
+    #: 条目文字与条目左边缘的距离（设计稿：16）
+    PADDING_X = 16
+    #: 条目高亮相对控件内边距的横向内缩（设计稿：左右各 5）
+    ROW_INSET_X = 5
+    #: 条目高亮相对控件内边距的纵向内缩（设计稿：上下各 3）
+    ROW_INSET_Y = 3
+    #: 条目高亮的圆角半径（设计稿：3）
+    ROW_RADIUS = 3
+    #: 选中指示条的宽度（设计稿：3，圆角 1.5）
     INDICATOR_WIDTH = 3
-    #: 滚动条滑块宽度
-    THUMB_WIDTH = 3
+    #: 选中指示条的长度（设计稿：40/56 高的行用 16，72 高的行用 32）
+    INDICATOR_HEIGHT = 16
+    #: 选中指示条距条目左边缘的距离（设计稿：4）
+    INDICATOR_INSET = 4
+    #: 滚动条滑块宽度（设计稿：细态 2 / 展开态 6；这里取展开态，
+    #: 因为本控件的滑块是常驻的，太细会看不见）
+    THUMB_WIDTH = 6
     #: 滑块的最小高度
     MIN_THUMB = 20
 
@@ -319,12 +326,14 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
                 "radius": RADIUS,
                 "text_color": "#1b1b1b",
                 "item_text_color": "#1b1b1b",
-                "item_hover_back": "#f5f5f5",
-                "item_selected_back": "#d9e8f7",
+                "item_hover_back": "#f0f0f0",
+                "item_pressed_back": "#f4f4f4",
+                "item_selected_back": "#f0f0f0",
                 "item_selected_text": "#1b1b1b",
                 "indicator_color": "#005fb8",
-                "scroll_thumb_color": "#8d8d8d",
-                "scroll_thumb_opacity": 0.9,
+                "indicator_disabled": "#c8c8c8",
+                "scroll_thumb_color": "#8a8a8a",
+                "scroll_thumb_opacity": 1.0,
             }
         )
 
@@ -656,13 +665,26 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
         return None
 
     def _row_geometry(self, position: int):
-        """第 ``position`` 行在画布上的 ``(x1, y1, x2, y2)``。"""
+        """第 ``position`` 行的**高亮底**在画布上的 ``(x1, y1, x2, y2)``。
+
+        设计稿：高亮底相对条目左右各内缩 5、上下各内缩 3，圆角 3。
+        """
         inset = self.attributes.border_width
         width, height = self._paint_size()
 
-        y1 = inset + (position - self._offset) * self.ITEM_HEIGHT
-        y2 = y1 + self.ITEM_HEIGHT - 2
-        return inset + 1, y1, max(inset + 1, width - inset - 1), min(y2, height - inset)
+        top = inset + (position - self._offset) * self.ITEM_HEIGHT
+        y1 = top + self.ROW_INSET_Y
+        y2 = top + self.ITEM_HEIGHT - self.ROW_INSET_Y
+        return (
+            inset + self.ROW_INSET_X,
+            y1,
+            max(inset + self.ROW_INSET_X + 1, width - inset - self.ROW_INSET_X),
+            min(y2, height - inset),
+        )
+
+    def _row_text_x(self, x1):
+        """条目文字的左边距：高亮底左边缘 + 16（设计稿）。"""
+        return x1 - self.ROW_INSET_X + self.PADDING_X
 
     def _paint_size(self):
         """本帧实际使用的画布尺寸。
@@ -838,11 +860,17 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
 
         selected = position in self._selected
         hovered = position == self._hover_index
+        pressed = hovered and self.button1 and self.attributes.state != "disabled"
+
+        # 设计稿：选中行与悬停行**同色**（都是中性色），强调色只给左侧指示条
         background = None
-        if selected:
-            background = self.attributes.item_selected_back
-        elif hovered and self.attributes.state != "disabled":
-            background = self.attributes.item_hover_back
+        if self.attributes.state != "disabled":
+            if pressed:
+                background = self.attributes.item_pressed_back
+            elif hovered:
+                background = self.attributes.item_hover_back
+            elif selected:
+                background = self.attributes.item_selected_back
 
         if background:
             self.create_roundrect_highlight(x1, y1, x2, y2, background)
@@ -850,17 +878,13 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
         if selected:
             self._draw_indicator(x1, y1, y2)
 
-        text_x = x1 + self.PADDING_X
+        text_x = self._row_text_x(x1)
         available = (x2 - text_x) - 6
         self.create_text(
             text_x,
             (y1 + y2) / 2.0,
             anchor="w",
-            fill=(
-                self.attributes.item_selected_text
-                if selected
-                else self.attributes.item_text_color
-            ),
+            fill=self.attributes.item_text_color,
             text=self._ellipsize(str(self._items[position]), available),
             font=self.attributes.font,
         )
@@ -883,15 +907,23 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
         )
 
     def _draw_indicator(self, x1, y1, y2):
-        """画选中行左侧的强调色指示条（Windows 的 selection indicator）。"""
+        """画选中行左侧的强调色指示条。
+
+        设计稿：``Selector`` 是 3 宽、圆角 1.5、垂直居中、长 16（行高 72 时 32）、
+        距条目左边缘 4（不是紧贴高亮底的左边缘——高亮底本身已经内缩了 5，
+        所以这里要从条目左边缘算起）。
+        """
         width = self.INDICATOR_WIDTH
-        height = max(2.0, (y2 - y1) - 8)
+        row_height = y2 - y1 + self.ROW_INSET_Y * 2
+        length = self.INDICATOR_HEIGHT * 2 if row_height > 56 else self.INDICATOR_HEIGHT
+        length = min(float(length), max(4.0, row_height - 8))
         center = (y1 + y2) / 2.0
+        left = x1 - self.ROW_INSET_X + self.INDICATOR_INSET
         self.draw_roundrect(
-            x1 + 1,
-            center - height / 2.0,
-            x1 + 1 + width,
-            center + height / 2.0,
+            left,
+            center - length / 2.0,
+            left + width,
+            center + length / 2.0,
             width / 2.0,
             temppath=self.temppath,
             temppath2=self.temppath3,

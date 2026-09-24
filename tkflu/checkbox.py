@@ -47,6 +47,13 @@ from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
 
 from .constants import MODE, STATE
+from .designs.checkbox import CHECK_GLYPH as GLYPH_CHECK
+from .designs.control import (
+    FOCUS_INNER_WIDTH,
+    FOCUS_MARGIN,
+    FOCUS_OUTER_WIDTH,
+    FOCUS_RADIUS,
+)
 from .designs.checkbox import checkbox as checkbox_design
 
 __all__ = ["FluCheckBox", "FluCheckBoxCanvas", "FluCheckBoxDraw"]
@@ -100,10 +107,19 @@ class FluCheckBox(FluCheckBoxCanvas, DDrawWidget, FluToolTipBase):
     BOX = 20
     #: 方框与文字之间的间距
     GAP = 8
-    #: 控件左右两侧的内边距
-    PADDING = 6
-    #: 勾号线宽
-    GLYPH_WIDTH = 2
+    #: 控件左/右内边距。
+    #: Figma 设计稿里三个实例的框都是「控件左边缘 + 4」——
+    #: ``120x32 @x=538`` → 方框 ``20x20 @x=542``，另两组是 680→684、989→993。
+    PADDING = 4
+    #: 勾号字号（WinUI 模板里 CheckGlyph 是 FontSize="12"）
+    GLYPH_FONT_SIZE = 12
+    #: 勾号相对方框中心的微调。实测（8 倍放大后量墨迹包围盒）图标字体的
+    #: 字形单元格在 ``anchor="center"`` 下正好居中，所以这里是 0。
+    GLYPH_OFFSET_Y = 0
+    #: 不确定态横杠的尺寸。设计稿里是 ``Dash12`` 这个部件，
+    #: 实测包围盒 **8.0 × 1.0**、端头半径 0.5、位于方框内 (6.0, 9.5)。
+    DASH_WIDTH = 8
+    DASH_HEIGHT = 1
 
     def __init__(
         self,
@@ -203,6 +219,8 @@ class FluCheckBox(FluCheckBoxCanvas, DDrawWidget, FluToolTipBase):
                 "glyph": "none",
                 "focus_color": "#000000",
                 "focus_opacity": 0.0,
+                "focus_inner_color": "#ffffff",
+                "focus_inner_opacity": 1.0,
             }
         )
 
@@ -332,7 +350,7 @@ class FluCheckBox(FluCheckBoxCanvas, DDrawWidget, FluToolTipBase):
         radius = self.attributes.radius
 
         if self.isfocus and self.attributes.focus_opacity:
-            self._draw_focus_ring(box_x, box_y, radius)
+            self._draw_focus_ring(box_x, box_y, radius, width, height)
 
         self.element_box = self.draw_roundrect(
             box_x,
@@ -362,53 +380,142 @@ class FluCheckBox(FluCheckBoxCanvas, DDrawWidget, FluToolTipBase):
 
         self._fit_to_text()
 
-    def _draw_focus_ring(self, box_x, box_y, radius):
-        """在方框外侧画一圈焦点环。"""
-        pad = 2.5
+    def _draw_focus_ring(self, box_x, box_y, radius, width=None, height=None):
+        """画焦点带：**贴着整个控件外沿的 3px 两层带**。
+
+        设计稿里 ``Focus Inner`` / ``Focus Outer`` 的包围盒是 126×38，
+        而控件本身是 120×32 —— 也就是紧贴控件外沿、外扩 3px，没有间隙。
+        两层叠出来的可见结果是「外 2px 深色 + 内 1px 浅色」：
+        先铺 3px 的"内色"，再在上面盖 2px 的"外色"。
+        """
+        width = self.winfo_width() if width is None else width
+        height = self.winfo_height() if height is None else height
+        margin = FOCUS_MARGIN
         self.element_focus = self.draw_roundrect(
-            box_x - pad,
-            box_y - pad,
-            box_x + self.BOX + pad,
-            box_y + self.BOX + pad,
-            radius + pad,
+            -margin,
+            -margin,
+            width + margin,
+            height + margin,
+            FOCUS_RADIUS,
+            temppath=self.temppath2,
+            temppath2=self.temppath4,
+            fill="transparent",
+            fill_opacity=0.0,
+            outline=self.attributes.focus_inner_color,
+            outline_opacity=self.attributes.focus_inner_opacity,
+            width=FOCUS_INNER_WIDTH + FOCUS_OUTER_WIDTH,
+        )
+        self.element_focus_inner = self.draw_roundrect(
+            -margin,
+            -margin,
+            width + margin,
+            height + margin,
+            FOCUS_RADIUS,
             temppath=self.temppath2,
             temppath2=self.temppath4,
             fill="transparent",
             fill_opacity=0.0,
             outline=self.attributes.focus_color,
             outline_opacity=self.attributes.focus_opacity,
-            width=2,
+            width=FOCUS_OUTER_WIDTH,
         )
 
     def _draw_glyph(self, box_x, box_y):
-        """画勾号或横杠（不确定态）。
+        """画勾号（不确定态画横杠）。
 
-        图形用画布线段绘制：勾号的三段折线在五个引擎上完全一致，
-        而它并不是"圆角矩形"，为此新增一种图元并不划算。线宽 2 + 圆头圆角
-        是 Fluent 勾号的画法。
+        **勾号用内嵌的 Segoe Fluent Icons 字形 ``\\uE73E``**，不用手画的折线。
+
+        为什么：WinUI 的 CheckBox 模板里，勾号是一个
+        ``FontIcon Glyph="&#xE73E;" FontSize="12"``——它的轮廓是字体给的，
+        笔画细、端点略带斜切。自己用 ``create_line`` 拼折线，无论怎么调都会
+        显得又粗又大、和 Windows 对不上。这个字体本来就随包分发
+        （``tkflu/designs/fonts/segoe_fluent_icons.ttf``），不用白不用。
+
+        不确定态则照抄模板里的 ``Rectangle Width="10" Height="2"
+        RadiusX="1" RadiusY="1"``：一个 10×2 的圆角矩形。
         """
         glyph = self.attributes.glyph
         if glyph == "none" or not self.attributes.glyph_color:
             self.element_glyph = None
             return
 
-        if glyph == "dash":
-            points = [
-                (box_x + self.BOX * 0.28, box_y + self.BOX / 2.0),
-                (box_x + self.BOX * 0.72, box_y + self.BOX / 2.0),
-            ]
-        else:
-            points = [
-                (box_x + self.BOX * 0.26, box_y + self.BOX * 0.53),
-                (box_x + self.BOX * 0.44, box_y + self.BOX * 0.70),
-                (box_x + self.BOX * 0.75, box_y + self.BOX * 0.32),
-            ]
+        center_x = box_x + self.BOX / 2.0
+        center_y = box_y + self.BOX / 2.0
 
-        flat = [value for point in points for value in point]
+        if glyph == "dash":
+            half_w = self.DASH_WIDTH / 2.0
+            half_h = self.DASH_HEIGHT / 2.0
+            self.element_glyph = self.draw_roundrect(
+                center_x - half_w,
+                center_y - half_h,
+                center_x + half_w,
+                center_y + half_h,
+                half_h,
+                temppath=self.temppath2,
+                temppath2=self.temppath4,
+                fill=self.attributes.glyph_color,
+                fill_opacity=1.0,
+                outline=None,
+                outline_opacity=0.0,
+                width=0,
+            )
+            return
+
+        font = self._icon_font()
+        if font is None:
+            # 拿不到真正的图标字体：退回手画折线，总比画一个"豆腐块"强
+            self._draw_glyph_fallback(box_x, box_y)
+            return
+
+        self.element_glyph = self.create_text(
+            center_x,
+            center_y + self.GLYPH_OFFSET_Y,
+            anchor="center",
+            text=GLYPH_CHECK,
+            fill=self.attributes.glyph_color,
+            font=font,
+        )
+
+    def _icon_font(self):
+        """勾号用的图标字体（按控件自己的解释器创建，惰性缓存）。
+
+        :returns: 可用的图标字体对象；**拿不到真正的 Segoe Fluent Icons 时返回
+            ``None``**（调用方退回手画折线）。字体包精简 / 加载失败的机器上，
+        Tk 会安静地退回默认字体——那样画出来是个"豆腐块"，比手画的折线还难看。
+        """
+        if not self.__dict__.get("_glyph_font_ready"):
+            font = None
+            try:
+                from .designs.fonts import SegoeFluentIcons
+
+                # master=self 不能省：字体是按 Tk 解释器注册的，不传就挂到默认根
+                # 窗口，同进程的第二个窗口会认不出这个名字（见 designs/fonts）。
+                candidate = SegoeFluentIcons(
+                    size=self.GLYPH_FONT_SIZE, master=self
+                )
+                family = str(candidate.actual().get("family", ""))
+                if family == "Segoe Fluent Icons":
+                    font = candidate
+            except Exception:
+                font = None
+            self.__dict__["_glyph_font"] = font
+            self.__dict__["_glyph_font_ready"] = True
+        return self.__dict__.get("_glyph_font")
+
+    def _draw_glyph_fallback(self, box_x, box_y):
+        """手画折线版的勾号（只在图标字体不可用时使用）。"""
+        points = (
+            (0.26, 0.53),
+            (0.44, 0.70),
+            (0.75, 0.32),
+        )
+        flat = []
+        for fx, fy in points:
+            flat.extend((box_x + self.BOX * fx, box_y + self.BOX * fy))
         self.element_glyph = self.create_line(
             *flat,
             fill=self.attributes.glyph_color,
-            width=self.GLYPH_WIDTH,
+            width=2,
             capstyle="round",
             joinstyle="round",
             smooth=False,
