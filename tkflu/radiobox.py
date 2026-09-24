@@ -81,6 +81,7 @@ class FluRadioBoxCanvas(DCanvas):
 from tkinter import Event  # noqa: E402
 
 from .defs import call_command, measure_label_width, set_default_font  # noqa: E402
+from .theme_transition import blend_theme_design  # noqa: E402
 from .tooltip import FluToolTipBase  # noqa: E402
 
 #: ``group="..."`` 用到的共享变量登记表。
@@ -293,13 +294,18 @@ class FluRadioBox(FluRadioBoxCanvas, DDrawWidget, FluToolTipBase):
         self._apply_design()
 
     def _apply_design(self):
-        """按 ``(mode, 交互状态, 勾选态)`` 刷新配色。"""
+        """按 ``(mode, 交互状态, 勾选态)`` 刷新配色。
+
+        与 :class:`~tkflu.checkbox.FluCheckBox` 同理：``_draw()`` 每次都重算配色，
+        所以过渡帧要靠 :func:`~tkflu.theme_transition.blend_theme_design` 保住，
+        否则单选按钮会在整屏的渐变里"瞬间跳变"。
+        """
         design = radiobox_design(
             getattr(self, "mode", "light"),
             self._visual_state(),
             self.attributes.checked,
         )
-        self.dconfigure(design)
+        self.dconfigure(blend_theme_design(self, design))
 
     def _visual_state(self):
         """把交互状态位归并成设计规范认识的状态名。"""

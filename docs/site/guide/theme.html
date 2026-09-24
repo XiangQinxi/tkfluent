@@ -972,7 +972,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#transition-animation" class="md-nav__link">
     <span class="md-ellipsis">
       
         五、过渡动画
@@ -980,10 +980,60 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="五、过渡动画">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        所有组件走同一条时间轴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        缓动曲线
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        帧数会按渲染开销自动裁剪
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode() 不会阻塞
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         六、设计规范在哪
@@ -2208,6 +2258,8 @@
       
         
       
+        
+      
     
     
     
@@ -2322,6 +2374,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3414,6 +3494,8 @@
       
         
       
+        
+      
     
     
     
@@ -3847,6 +3929,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4015,7 +4127,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#transition-animation" class="md-nav__link">
     <span class="md-ellipsis">
       
         五、过渡动画
@@ -4023,10 +4135,60 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="五、过渡动画">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        所有组件走同一条时间轴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        缓动曲线
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        帧数会按渲染开销自动裁剪
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode() 不会阻塞
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         六、设计规范在哪
@@ -4087,9 +4249,10 @@
 <div class="highlight"><pre><span></span><code><span class="n">toggle</span> <span class="o">=</span> <span class="n">tkflu</span><span class="o">.</span><span class="n">FluToggleButton</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;深色模式&quot;</span><span class="p">)</span>
 <span class="n">toggle</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">tkflu</span><span class="o">.</span><span class="n">toggle_theme</span><span class="p">(</span><span class="n">toggle</span><span class="p">,</span> <span class="n">thememanager</span><span class="p">))</span>
 </code></pre></div>
-<p><code>FluThemeManager.mode()</code> 会遍历窗口的直接子组件，调用它们的 <code>theme(mode=...)</code>
-并重绘。嵌套容器里的组件由其自身的 <code>update_children()</code> 负责向下传播，
-所以<strong>尽量把组件直接挂在窗口或 <code>FluFrame</code> 下</strong>。</p>
+<p><code>FluThemeManager.mode()</code> 会走完窗口的<strong>整棵控件树</strong>（不分层级、自动去重），
+把每个持有配色的组件都切到目标模式。<strong>组件挂多深都不影响</strong>——
+嵌套面板、菜单栏里的菜单项、列表 / 导航栏都会被覆盖到，
+不需要你手写 <code>update_children()</code> 之类的向下传播。</p>
 <h2 id="_5">二、全局主色调</h2>
 <p>强调色（<code>style="accent"</code> 的按钮、开关等）取的是一个全局主色调，
 提供 6 个预设：</p>
@@ -4169,16 +4332,80 @@
 <span class="p">})</span>
 <span class="n">button</span><span class="o">.</span><span class="n">_draw</span><span class="p">()</span>
 </code></pre></div>
-<h2 id="_8">五、过渡动画</h2>
+<h2 id="transition-animation">五、过渡动画</h2>
 <p>主题切换的渐变过渡由两个全局参数控制：</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_animation_steps</span><span class="p">,</span> <span class="n">set_animation_step_time</span>
 
 <span class="n">set_animation_steps</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>        <span class="c1"># 过渡帧数</span>
 <span class="n">set_animation_step_time</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>   <span class="c1"># 每帧间隔（毫秒）</span>
 </code></pre></div>
-<p>两者都设为 <code>0</code>（默认值）即关闭过渡。
-帧数越多越顺滑，但每帧都会重新绘制一次，低配机器上建议 3–6 帧。</p>
-<h2 id="_9">六、设计规范在哪</h2>
+<p>两者都设为 <code>0</code>（默认值）即关闭过渡。</p>
+<h3 id="_8">所有组件走同一条时间轴</h3>
+<p>一次换肤里，<strong>整棵树共用一条时间轴</strong>：每一帧把同一个进度 <code>t</code>（0 → 1）
+写给所有组件，然后统一重绘。因此颜色是"一起变"的，不会出现
+"这个按钮已经变完、旁边那个还没动"。</p>
+<p>这条时间轴由 <a href="../api/tkflu.theme_transition.html"><code>theme_transition</code></a> 驱动，
+也可以直接调：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_theme_transition</span>
+
+<span class="n">run_theme_transition</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">)</span>               <span class="c1"># 整棵子树一起过渡</span>
+<span class="n">run_theme_transition</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>      <span class="c1"># 只要结果，不要动画</span>
+<span class="n">run_theme_transition</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">easing</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><code>FluThemeManager.mode()</code> 还可以<strong>按次覆盖</strong>全局设置：</p>
+<div class="highlight"><pre><span></span><code><span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">animation_steps</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">animation_step_time</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">easing</span><span class="o">=</span><span class="s2">&quot;ease_out&quot;</span><span class="p">)</span>
+<span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">animation_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>     <span class="c1"># 这一次不要动画</span>
+</code></pre></div>
+<h3 id="_9">缓动曲线</h3>
+<p>默认是 <code>ease_in_out</code>（两头慢、中间快），比匀速自然得多。可选：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="n">easing_names</span><span class="p">,</span> <span class="n">set_theme_easing</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">easing_names</span><span class="p">())</span>
+<span class="c1"># [&#39;ease_in&#39;, &#39;ease_in_out&#39;, &#39;ease_out&#39;, &#39;ease_out_back&#39;, &#39;linear&#39;]</span>
+
+<span class="n">set_theme_easing</span><span class="p">(</span><span class="s2">&quot;ease_out&quot;</span><span class="p">)</span>     <span class="c1"># 快起慢落</span>
+</code></pre></div>
+<h3 id="_10">帧数会按渲染开销自动裁剪</h3>
+<p>主题过渡的<strong>每一帧都要重绘整棵树</strong>，所以"能画几帧"完全取决于渲染引擎：
+默认的 <code>tksvg</code> 下一屏 20 来个组件重绘一次要 100~200ms，而 <code>skia</code> 只要十几毫秒。</p>
+<p>因此实际帧数由<strong>预算</strong>决定，而不是硬按 <code>steps × step_time</code> 的时间表去排：</p>
+<ul>
+<li>库先抽几个组件量一次重绘开销，估算整棵树要多久；</li>
+<li>再把帧数<strong>降</strong>到能塞进预算的数量——宁可少几帧，也要每一帧都完整、同步；</li>
+<li>第一帧实测之后还会再收紧一次，所以抽样估偏也不会拖长。</li>
+</ul>
+<p>预算默认 <strong>600ms</strong>，可以调：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_transition_budget</span>
+
+<span class="n">set_transition_budget</span><span class="p">(</span><span class="mi">900</span><span class="p">)</span>     <span class="c1"># 想要更长更顺的过渡</span>
+<span class="n">set_transition_budget</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>       <span class="c1"># 不限制（渲染慢时会真的变慢）</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">想要丝滑就换渲染引擎</p>
+<p>过渡是否顺滑，主要取决于<strong>一次全树重绘要多久</strong>。
+在 <code>tksvg</code> 上加帧数收效甚微，换个栅格引擎立竿见影：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">tkflu</span>
+
+<span class="n">tkflu</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="s2">&quot;skia&quot;</span><span class="p">)</span>     <span class="c1"># 或 &quot;pillow&quot;（零额外依赖）</span>
+</code></pre></div>
+<p>详见 <a href="../tutorial/renderer.html">渲染引擎</a>。</p>
+</div>
+<h3 id="mode"><code>mode()</code> 不会阻塞</h3>
+<p><code>FluThemeManager.mode()</code> <strong>不会</strong>在返回前把过渡跑完，也不会去跑事件循环
+（早期版本在每个组件后面调了一次 <code>update()</code>，组件一多就会"卡两秒然后瞬间变色"）。
+它只做两件事：静默地把目标配色写进各组件的 <code>attributes</code>，
+然后把重绘交给事件循环。所以从点击到界面响应之间的延迟，只有几十毫秒。</p>
+<p>过渡对象本身也能用：</p>
+<div class="highlight"><pre><span></span><code><span class="n">transition</span> <span class="o">=</span> <span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+
+<span class="n">transition</span><span class="o">.</span><span class="n">finished</span>          <span class="c1"># 画完了吗</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">frames_painted</span>    <span class="c1"># 实际画了几帧</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>        <span class="c1"># 一句话说明这次过渡实际发生了什么</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>          <span class="c1"># 中断（restore=False 可以保留中间色接着切）</span>
+</code></pre></div>
+<p>连点"切换主题"不会叠加帧队列：新的过渡会<strong>就地接管</strong>旧的，
+并以当前中间色作为新起点，画面是连续的。</p>
+<h2 id="_11">六、设计规范在哪</h2>
 <p>组件"长什么样"集中在 <code>tkflu.designs</code> 包里，每个模块返回一份普通的 <code>dict</code>：</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu.designs.button</span><span class="w"> </span><span class="kn">import</span> <span class="n">button</span>
 

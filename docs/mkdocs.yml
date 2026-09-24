@@ -146,6 +146,7 @@ nav:
           - api/tkflu.constants.md
           - api/tkflu.defs.md
           - api/tkflu.thememanager.md
+          - api/tkflu.theme_transition.md
           - api/tkflu.icons.md
           - api/tkflu.render_manager.md
           - api/tkflu.designs.renderer.md

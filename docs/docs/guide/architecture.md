@@ -104,12 +104,21 @@ def _draw(self, event=None):
 
 ## 五、换主题的调用链
 
-`FluThemeManager` 就是"遍历一遍、让每个组件按新配色重画"：
+`FluThemeManager.mode()` 把整棵树交给
+[`theme_transition`](../api/tkflu.theme_transition.md)，分三步：
 
 <figure markdown>
   ![换主题的调用链](../assets/theme-flow.png)
-  <figcaption>一键换肤：窗口 → 直接子组件；嵌套容器再由各自的 update_children() 向下传播</figcaption>
+  <figcaption>一键换肤：静默落目标值 → 逐叶子算插值 → 一条时间轴画完整棵树</figcaption>
 </figure>
+
+1. **静默落目标值**——在"组件动画让路 + `_draw()` 被屏蔽"的上下文里，
+   依次调用各组件**原有**的 `theme(mode=...)`。配色被写进 `attributes`，
+   但屏幕上还是旧样子（那正好是过渡的第 0 帧）。
+2. **算插值**——对每个组件做一次 `attributes` 快照，与目标值逐叶子比对，
+   挑出能插值的叶子（`#rrggbb` 颜色、`*_opacity` 数值）。
+3. **一条时间轴**——整棵树共用一组帧；每一帧把同一个进度 `t` 写给所有组件，
+   再统一重绘。所以颜色是"一起变"的，而不是一个一个变。
 
 配色本身不在组件里，而在 `tkflu.designs` 包里——每个模块返回一份普通 `dict`：
 

@@ -2039,6 +2039,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#tkflu.toplevel.FluToplevel.theme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        theme
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2166,6 +2177,8 @@
       
         
       
+        
+      
     
     
     
@@ -2280,6 +2293,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3372,6 +3413,8 @@
       
         
       
+        
+      
     
     
     
@@ -3805,6 +3848,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3945,6 +4018,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#tkflu.toplevel.FluToplevel.theme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        theme
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4075,8 +4159,7 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluToplevel</span><span class="p">(</span><span class="n">Toplevel</span><span class="p">,</span> <span class="n">BWm</span><span class="p">,</span> <span class="n">DObject</span><span class="p">):</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluToplevel</span><span class="p">(</span><span class="n">Toplevel</span><span class="p">,</span> <span class="n">BWm</span><span class="p">,</span> <span class="n">DObject</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Fluent设计的子窗口&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -4113,15 +4196,14 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;把子窗口（连同里面的控件）切到 ``mode``。</span>
+
+<span class="sd">        实现交给 :meth:`tkflu.bwm.BWm.theme`（统一过渡）。</span>
+<span class="sd">        旧实现是逐个 ``widget.theme()`` + ``widget.update()``——那正是</span>
+<span class="sd">        &quot;一个一个变色、期间窗口点不动&quot;的根源。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
-        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">winfo_children</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;theme&quot;</span><span class="p">):</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;_draw&quot;</span><span class="p">):</span>
-                    <span class="n">widget</span><span class="o">.</span><span class="n">_draw</span><span class="p">()</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;update_children&quot;</span><span class="p">):</span>
-                    <span class="n">widget</span><span class="o">.</span><span class="n">update_children</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -4240,6 +4322,48 @@
 
     <span class="n">cancel_all_after</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tkflu.toplevel.FluToplevel.theme" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>把子窗口（连同里面的控件）切到 <code>mode</code>。</p>
+<p>实现交给 :meth:<code>tkflu.bwm.BWm.theme</code>（统一过渡）。
+旧实现是逐个 <code>widget.theme()</code> + <code>widget.update()</code>——那正是
+"一个一个变色、期间窗口点不动"的根源。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\toplevel.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;把子窗口（连同里面的控件）切到 ``mode``。</span>
+
+<span class="sd">    实现交给 :meth:`tkflu.bwm.BWm.theme`（统一过渡）。</span>
+<span class="sd">    旧实现是逐个 ``widget.theme()`` + ``widget.update()``——那正是</span>
+<span class="sd">    &quot;一个一个变色、期间窗口点不动&quot;的根源。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

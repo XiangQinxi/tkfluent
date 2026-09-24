@@ -75,6 +75,7 @@ class FluLiteNavCanvas(DCanvas):
 from tkinter import Event  # noqa: E402
 
 from .defs import call_command, measure_label_width, set_default_font  # noqa: E402
+from .theme_transition import blend_theme_design  # noqa: E402
 from .tooltip import FluToolTipBase  # noqa: E402
 
 
@@ -531,10 +532,14 @@ class FluLiteNav(FluLiteNavCanvas, DDrawWidget, FluToolTipBase):
         self._draw()
 
     def _apply_design(self):
-        """按 ``(mode, style)`` 刷新整套配色。"""
+        """按 ``(mode, style)`` 刷新整套配色（过渡期间会取中间色）。"""
         self.dconfigure(
-            litenav_design(
-                getattr(self, "mode", "light"), getattr(self, "style", "standard")
+            blend_theme_design(
+                self,
+                litenav_design(
+                    getattr(self, "mode", "light"),
+                    getattr(self, "style", "standard"),
+                ),
             )
         )
 

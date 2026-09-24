@@ -81,6 +81,7 @@ class FluCheckBoxCanvas(DCanvas):
 from tkinter import Event  # noqa: E402  （放在画布定义之后，保持文件阅读顺序）
 
 from .defs import call_command, measure_label_width, set_default_font  # noqa: E402
+from .theme_transition import blend_theme_design  # noqa: E402
 from .tooltip import FluToolTipBase  # noqa: E402
 
 
@@ -250,13 +251,19 @@ class FluCheckBox(FluCheckBoxCanvas, DDrawWidget, FluToolTipBase):
         self._apply_design()
 
     def _apply_design(self):
-        """按 ``(mode, 交互状态, 勾选态)`` 刷新配色。"""
+        """按 ``(mode, 交互状态, 勾选态)`` 刷新配色。
+
+        ``_draw()`` 每次都会调到这里重算配色，因此换肤过渡期间必须让
+        :func:`~tkflu.theme_transition.blend_theme_design` 把刚算出来的目标色
+        换成**当前帧的中间色**——否则过渡帧会被这次重算整个覆盖掉，
+        复选框就成了整屏里唯一"瞬间跳变"的组件。
+        """
         design = checkbox_design(
             getattr(self, "mode", "light"),
             self._visual_state(),
             self.attributes.checked,
         )
-        self.dconfigure(design)
+        self.dconfigure(blend_theme_design(self, design))
 
     def _visual_state(self):
         """把交互状态位归并成设计规范认识的状态名。"""

@@ -1384,6 +1384,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tkflu.easing_function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        easing_function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.easing_names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        easing_names
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tkflu.get_renderer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1399,6 +1421,17 @@
     <span class="md-ellipsis">
       
         get_renderer_name
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.get_theme_easing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_theme_easing
       
     </span>
   </a>
@@ -1520,6 +1553,39 @@
     <span class="md-ellipsis">
       
         set_renderer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.set_theme_easing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_theme_easing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.suspended_widget_animation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        suspended_widget_animation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.widget_animation_suspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        widget_animation_suspended
       
     </span>
   </a>
@@ -2396,6 +2462,8 @@
       
         
       
+        
+      
     
     
     
@@ -2510,6 +2578,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3602,6 +3698,8 @@
       
         
       
+        
+      
     
     
     
@@ -4035,6 +4133,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4270,6 +4398,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tkflu.easing_function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        easing_function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.easing_names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        easing_names
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tkflu.get_renderer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4285,6 +4435,17 @@
     <span class="md-ellipsis">
       
         get_renderer_name
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.get_theme_easing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_theme_easing
       
     </span>
   </a>
@@ -4406,6 +4567,39 @@
     <span class="md-ellipsis">
       
         set_renderer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.set_theme_easing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_theme_easing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.suspended_widget_animation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        suspended_widget_animation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.widget_animation_suspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        widget_animation_suspended
       
     </span>
   </a>
@@ -5238,6 +5432,83 @@ call_command(lambda *a: print(a), 1, 2)        # -&gt; (1, 2)
 <div class="doc doc-object doc-function">
 
 
+<h2 id="tkflu.easing_function" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">easing_function</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>按名字取缓动函数；名字不认识时<strong>退回默认曲线</strong>而不是抛异常。</p>
+<p>理由和 :meth:<code>tkflu.button.FluButton.theme</code> 里那个"未知 style 退回默认值"
+的约定一致：一次换肤不该因为一个拼错的曲线名整趟崩掉。</p>
+<p>:param name: 曲线名，或一个可调用对象（原样返回）</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\animation.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">easing_function</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;按名字取缓动函数；名字不认识时**退回默认曲线**而不是抛异常。</span>
+
+<span class="sd">    理由和 :meth:`tkflu.button.FluButton.theme` 里那个&quot;未知 style 退回默认值&quot;</span>
+<span class="sd">    的约定一致：一次换肤不该因为一个拼错的曲线名整趟崩掉。</span>
+
+<span class="sd">    :param name: 曲线名，或一个可调用对象（原样返回）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">name</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">EASINGS</span><span class="p">[</span><span class="n">DEFAULT_EASING</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">EASINGS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">EASINGS</span><span class="p">[</span><span class="n">DEFAULT_EASING</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tkflu.easing_names" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">easing_names</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>所有可用的缓动名字（排序后）。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\animation.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">easing_names</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;所有可用的缓动名字（排序后）。&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">EASINGS</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="tkflu.get_renderer" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">get_renderer</span><span class="p">()</span></code>
 
@@ -5290,6 +5561,33 @@ call_command(lambda *a: print(a), 1, 2)        # -&gt; (1, 2)
 <span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_renderer_name</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;当前引擎名，比编号更直观。&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_engine_name</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tkflu.get_theme_easing" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_theme_easing</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>当前主题过渡的缓动曲线名。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\animation.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_theme_easing</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;当前主题过渡的缓动曲线名。&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tkfluent.theme_easing&quot;</span><span class="p">,</span> <span class="n">DEFAULT_EASING</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5867,6 +6165,120 @@ call_command(lambda *a: print(a), 1, 2)        # -&gt; (1, 2)
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">engine</span> <span class="o">=</span> <span class="n">set_engine</span><span class="p">(</span><span class="n">_to_engine_ref</span><span class="p">(</span><span class="n">way</span><span class="p">))</span>
     <span class="n">environ</span><span class="p">[</span><span class="n">_ENV_KEY</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_INDEX_OF</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tkflu.set_theme_easing" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_theme_easing</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>设置主题过渡的缓动曲线，取值见 :data:<code>EASINGS</code>。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\animation.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_theme_easing</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;设置主题过渡的缓动曲线，取值见 :data:`EASINGS`。&quot;&quot;&quot;</span>
+    <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;tkfluent.theme_easing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tkflu.suspended_widget_animation" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">suspended_widget_animation</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>在这个上下文里，各组件自己的 <code>_theme()</code> 动画全部让路。</p>
+<p>:func:<code>~tkflu.theme_transition.run_theme_transition</code> 用它来"静默地"把
+目标配色写进各组件，从而拿到干净的插值起点。</p>
+<p>.. note::
+   用计数而不是布尔量：统一过渡本身也可能被嵌套调用（窗口 → 面板 → 菜单栏），
+   布尔量会在内层退出时把外层的暂停提前解除。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\animation.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">suspended_widget_animation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;在这个上下文里，各组件自己的 ``_theme()`` 动画全部让路。</span>
+
+<span class="sd">    :func:`~tkflu.theme_transition.run_theme_transition` 用它来&quot;静默地&quot;把</span>
+<span class="sd">    目标配色写进各组件，从而拿到干净的插值起点。</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       用计数而不是布尔量：统一过渡本身也可能被嵌套调用（窗口 → 面板 → 菜单栏），</span>
+<span class="sd">       布尔量会在内层退出时把外层的暂停提前解除。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_suspension_depth</span>
+    <span class="n">_suspension_depth</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">_suspension_depth</span> <span class="o">-=</span> <span class="mi">1</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tkflu.widget_animation_suspended" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">widget_animation_suspended</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>当前是否处于"让路"状态。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\animation.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">widget_animation_suspended</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;当前是否处于&quot;让路&quot;状态。&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_suspension_depth</span> <span class="o">&gt;</span> <span class="mi">0</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

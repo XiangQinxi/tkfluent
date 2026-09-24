@@ -181,6 +181,7 @@ class FluListBoxCanvas(DCanvas):
 from tkinter import Event  # noqa: E402
 
 from .defs import call_command, set_default_font  # noqa: E402
+from .theme_transition import blend_theme_design  # noqa: E402
 from .tooltip import FluToolTipBase  # noqa: E402
 
 #: 文本宽度测量结果的缓存上限（避免长列表反复二分）
@@ -755,13 +756,18 @@ class FluListBox(FluListBoxCanvas, DDrawWidget, FluToolTipBase):
         self._apply_design()
 
     def _apply_design(self):
-        """按 ``(mode, style, 状态)`` 刷新整套配色。"""
+        """按 ``(mode, style, 状态)`` 刷新整套配色。
+
+        :meth:`_draw` 开头就会调这里重算配色，所以换肤过渡期间必须让
+        :func:`~tkflu.theme_transition.blend_theme_design` 把目标色换成当前帧的
+        中间色——不然列表会是整屏里唯一不参与过渡的组件。
+        """
         design = listbox_design(
             getattr(self, "mode", "light"),
             getattr(self, "style", "standard"),
             self._visual_state(),
         )
-        self.dconfigure(design)
+        self.dconfigure(blend_theme_design(self, design))
 
     def _visual_state(self):
         """把交互状态位归并成设计规范认识的状态名。"""

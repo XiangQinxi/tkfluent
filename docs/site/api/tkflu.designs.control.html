@@ -2067,6 +2067,8 @@
       
         
       
+        
+      
     
     
     
@@ -2181,6 +2183,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -2655,6 +2685,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.control--_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数值来源
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.control--_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        为什么要保留"颜色 + 透明度"两个字段，而不是先合成成实色
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2662,6 +2720,17 @@
     <span class="md-ellipsis">
       
         blend
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.designs.control.paint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        paint
       
     </span>
   </a>
@@ -3344,6 +3413,8 @@
       
         
       
+        
+      
     
     
     
@@ -3777,6 +3848,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3881,6 +3982,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="control">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.control--_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数值来源
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.control--_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        为什么要保留"颜色 + 透明度"两个字段，而不是先合成成实色
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3888,6 +4017,17 @@
     <span class="md-ellipsis">
       
         blend
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.designs.control.paint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        paint
       
     </span>
   </a>
@@ -3925,20 +4065,21 @@
     <div class="doc doc-contents first">
 
         <p>控件通用配色（中性色 / 文本色 / 焦点环）。</p>
-<p>Windows 的 Fluent 设计规范里，这些颜色大多写成 <strong>带 alpha 的黑色或白色</strong>
-（例如 <code>TextFillColorPrimary = #E4000000</code>）。tkinter 的 <code>create_text</code>
-只认<strong>实色</strong> <code>fill</code>，没有透明度参数，所以：</p>
+<h3 id="tkflu.designs.control--_1">数值来源</h3>
+<p>这一版的数值<strong>直接取自设计稿</strong>（Figma 导出的 <code>Basic Input.svg</code>），
+不再是"按 Fluent 印象估的"：</p>
 <ul>
-<li>走画布图元（圆角矩形、圆形）的部分，把颜色 + 透明度一起交给引擎，
-  由引擎自己合成——这是 :mod:<code>tkflu.designs.checkbox</code> 等模块返回
-  <code>*_opacity</code> 字段的用途；</li>
-<li>走 <code>create_text</code> 的文字，必须先在这里按背景色<strong>合成成实色</strong>。</li>
+<li>复选框方框 / 单选框圆环的未选中描边 = <code>rgb(0,0,0)</code> + <code>stroke-opacity 0.6063</code></li>
+<li>同一个框的填充 = <code>rgb(0,0,0)</code> + <code>fill-opacity 0.0241</code></li>
+<li>选中填充 = <code>rgb(0,95,184)</code>（浅色强调色）</li>
+<li>禁用选中 = <code>rgb(0,0,0)</code> + <code>0.2169</code>（来自 <code>Lists &amp; Collections.svg</code>）</li>
 </ul>
-<p>本模块就是干第二件事的：:func:<code>blend</code> 把半透明前景压到不透明背景上，
-得到该主题下"看起来一样"的实色十六进制值。</p>
-<p>.. note::
-   :func:<code>blend</code> 只支持 <code>#rrggbb</code> 形式的十六进制输入，且背景必须不透明。
-   这是刻意的：设计规范里的背景要么是面板色要么是窗口色，都是实色。</p>
+<h3 id="tkflu.designs.control--_2">为什么要保留"颜色 + 透明度"两个字段，而不是先合成成实色</h3>
+<p>设计稿给的是半透明黑（<code>#000000</code> @ 0.6），它<strong>压在任何背景上都是对的</strong>：
+放在白色面板上得到 <code>#646464</code>，放在 <code>#2B2B2B</code> 的深色面板上得到 <code>#161616</code>。
+一旦提前合成成实色，换到深色主题就全错了。所以这里成对返回，
+交给绘制引擎自己去合成（圆角矩形、圆环都支持 <code>*_opacity</code>）。</p>
+<p>只有 <code>create_text</code> 没有透明度参数（见 :data:<code>TEXT</code>），文字色必须提前合成。</p>
 
 
 
@@ -3984,24 +4125,24 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\designs\control.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">blend</span><span class="p">(</span><span class="n">foreground</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">background</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">blend</span><span class="p">(</span><span class="n">foreground</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">background</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;把半透明的 ``foreground`` 合成到不透明的 ``background`` 上。</span>
 
 <span class="sd">    :param foreground: 前景色（``#rgb`` / ``#rrggbb``）</span>
@@ -4019,6 +4160,50 @@
     <span class="n">ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)))</span>
     <span class="n">mixed</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">ratio</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">)))</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="p">))</span>
     <span class="k">return</span> <span class="s2">&quot;#</span><span class="si">{:02x}{:02x}{:02x}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">mixed</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tkflu.designs.control.paint" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">paint</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>把 <code>(颜色, 不透明度)</code> 拆成绘制用的两个字段。</p>
+<p>:param pair: <code>(color, opacity)</code>；<code>None</code> 表示"这一层不画"
+:param fallback: <code>pair</code> 为空时返回什么
+:returns: <code>(color, opacity)</code></p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\control.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">paint</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;把 ``(颜色, 不透明度)`` 拆成绘制用的两个字段。</span>
+
+<span class="sd">    :param pair: ``(color, opacity)``；``None`` 表示&quot;这一层不画&quot;</span>
+<span class="sd">    :param fallback: ``pair`` 为空时返回什么</span>
+<span class="sd">    :returns: ``(color, opacity)``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pair</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fallback</span>
+    <span class="k">return</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

@@ -2067,6 +2067,8 @@
       
         
       
+        
+      
     
     
     
@@ -2181,6 +2183,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -2567,6 +2597,34 @@
     <span class="md-ellipsis">
       
         radiobox
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="radiobox">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.radiobox--_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数值来源
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.designs.radiobox.dot_size_for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dot_size_for
       
     </span>
   </a>
@@ -3344,6 +3402,8 @@
       
         
       
+        
+      
     
     
     
@@ -3777,6 +3837,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3881,6 +3971,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="radiobox">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.radiobox--_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数值来源
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tkflu.designs.radiobox.dot_size_for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dot_size_for
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3926,9 +4044,28 @@
 
         <p>单选框的设计规范。</p>
 <p>:func:<code>radiobox</code> 按 <code>(mode, state, checked)</code> 返回一份配色字典——形状与
-复选框不同（圆环 + 圆点，而不是方框 + 勾号），配色令牌却是同一套
-<code>ControlStrongStrokeColor*</code> / <code>AccentFillColor*</code>，所以
-:data:<code>tkflu.designs.control.NEUTRAL</code> 被两个模块共用。</p>
+复选框不同（圆环 + 圆点，而不是方框 + 勾号），几何却是同一套：
+外径 20、描边 1px、圆角取半径的一半（也就是正圆）。</p>
+<h3 id="tkflu.designs.radiobox--_1">数值来源</h3>
+<p>取自 Figma 设计稿 <code>Basic Input (1).svg</code>：</p>
+<p>============ ==========================================================
+元素          设计稿里的写法
+============ ==========================================================
+外圈          20×20 占位
+圆环          19×19 <code>rx=9.5</code>，<code>stroke-width=1</code>
+圆内          18×18 <code>rx=9</code>（这一层就是"圆环内部的填充"）
+圆点          8×8 <code>rx=4</code>，居中（圆心与圆环同心）
+============ ==========================================================</p>
+<p>未选中：圆环 <code>#000000 @ 0.6063</code> + 内部填充 <code>#000000 @ 0.0241</code>。
+选中：圆环换成强调色。</p>
+<p>.. warning::
+   设计稿里"选中"这一态的圆内填充被画成了<strong>强调色</strong>，圆点却是<strong>白色</strong>——
+   两个叠起来是一枚"蓝色甜甜圈"。而 Windows 11 的 RadioButton 是
+   <strong>细圆环 + 中间一个小圆点</strong>（圆内不填充）。
+   这里按 <strong>Windows 的形态</strong>实现（圆内不填充、圆点用强调色），
+   但圆点的直径照抄设计稿的 <strong>8px</strong>（旧实现是 10px，偏大）。
+   如果确实要设计稿那个"甜甜圈"，把 :data:<code>ARC_FILL_WHEN_CHECKED</code> 改成
+   <code>True</code> 即可。</p>
 
 
 
@@ -3953,6 +4090,33 @@
 <div class="doc doc-object doc-function">
 
 
+<h2 id="tkflu.designs.radiobox.dot_size_for" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">dot_size_for</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>某个状态下圆点的直径。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\designs\radiobox.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dot_size_for</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;某个状态下圆点的直径。&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DOT_SIZES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">DOT_SIZE</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="tkflu.designs.radiobox.radiobox" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">radiobox</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s1">&#39;rest&#39;</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
@@ -3971,56 +4135,68 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\designs\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">radiobox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rest&quot;</span><span class="p">,</span> <span class="n">checked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">radiobox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rest&quot;</span><span class="p">,</span> <span class="n">checked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;取单选框在某个状态下的配色。</span>
 
 <span class="sd">    :param mode: ``&quot;light&quot;`` / ``&quot;dark&quot;``</span>
@@ -4035,40 +4211,52 @@
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;未知的主题模式 </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">；应为 &#39;light&#39; 或 &#39;dark&#39;&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NEUTRAL</span><span class="p">[</span><span class="n">mode</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;未知的状态 </span><span class="si">{</span><span class="n">state</span><span class="si">!r}</span><span class="s2">；应为 </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">NEUTRAL</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span><span class="si">}</span><span class="s2"> 之一&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;未知的状态 </span><span class="si">{</span><span class="n">state</span><span class="si">!r}</span><span class="s2">；应为 </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">NEUTRAL</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span><span class="si">}</span><span class="s2"> 之一&quot;</span><span class="p">)</span>
 
     <span class="n">accent</span> <span class="o">=</span> <span class="n">get_primary_color</span><span class="p">()[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">neutral</span> <span class="o">=</span> <span class="n">NEUTRAL</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="n">state</span><span class="p">]</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;disabled&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span><span class="p">:</span>
-        <span class="c1"># 禁用态：圆环与圆点都用中性灰，不再跟随强调色</span>
-        <span class="n">ring_color</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">]</span>
-        <span class="n">dot_color</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">checked</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">],</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="c1"># 禁用：圆环与圆点都退回中性色（不再跟随强调色）。</span>
+        <span class="c1"># 设计稿里禁用的选中态是&quot;一个 20×20 的实心圆 + 白/黑圆点&quot;，没有独立圆环。</span>
+        <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">checked</span><span class="p">:</span>
+            <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span>
+            <span class="n">dot_color</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;on_accent&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">])</span>
+            <span class="n">dot_color</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">elif</span> <span class="n">checked</span><span class="p">:</span>
-        <span class="c1"># 选中：圆环与圆点都是强调色，内部不填充</span>
-        <span class="n">ring_color</span> <span class="o">=</span> <span class="n">accent</span>
-        <span class="n">dot_color</span> <span class="o">=</span> <span class="n">accent</span>
-        <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">],</span> <span class="mf">0.0</span>
+        <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">accent</span><span class="p">,</span> <span class="mf">1.0</span>
+        <span class="n">dot_color</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;on_accent&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">DOT_COLOR_ON_ACCENT</span> <span class="k">else</span> <span class="n">accent</span>
+        <span class="k">if</span> <span class="n">ARC_FILL_WHEN_CHECKED</span><span class="p">:</span>
+            <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">accent</span><span class="p">,</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ring_color</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">]</span>
+        <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">])</span>
+        <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">])</span>
         <span class="n">dot_color</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">],</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mf">0.0</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;back_color&quot;</span><span class="p">:</span> <span class="n">back_color</span><span class="p">,</span>
         <span class="s2">&quot;back_opacity&quot;</span><span class="p">:</span> <span class="n">back_opacity</span><span class="p">,</span>
-        <span class="s2">&quot;border_color&quot;</span><span class="p">:</span> <span class="n">ring_color</span><span class="p">,</span>
-        <span class="s2">&quot;border_color_opacity&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s2">&quot;border_color&quot;</span><span class="p">:</span> <span class="n">border_color</span><span class="p">,</span>
+        <span class="s2">&quot;border_color_opacity&quot;</span><span class="p">:</span> <span class="n">border_opacity</span><span class="p">,</span>
         <span class="s2">&quot;border_width&quot;</span><span class="p">:</span> <span class="n">RING_WIDTH</span><span class="p">,</span>
         <span class="s2">&quot;text_color&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
         <span class="s2">&quot;dot_color&quot;</span><span class="p">:</span> <span class="n">dot_color</span><span class="p">,</span>
+        <span class="s2">&quot;dot_size&quot;</span><span class="p">:</span> <span class="n">dot_size_for</span><span class="p">(</span><span class="n">state</span><span class="p">),</span>
         <span class="s2">&quot;dot_ratio&quot;</span><span class="p">:</span> <span class="n">DOT_RATIO</span><span class="p">,</span>
-        <span class="s2">&quot;focus_color&quot;</span><span class="p">:</span> <span class="n">FOCUS</span><span class="p">[</span><span class="n">mode</span><span class="p">],</span>
-        <span class="s2">&quot;focus_opacity&quot;</span><span class="p">:</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="mf">0.35</span><span class="p">,</span>
+        <span class="s2">&quot;focus_color&quot;</span><span class="p">:</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;outer&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;focus_opacity&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="mf">0.0</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;outer&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;focus_inner_color&quot;</span><span class="p">:</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;inner&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;focus_inner_opacity&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="mf">0.0</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;inner&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">),</span>
     <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>

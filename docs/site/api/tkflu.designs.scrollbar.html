@@ -2067,6 +2067,8 @@
       
         
       
+        
+      
     
     
     
@@ -2181,6 +2183,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3344,6 +3374,8 @@
       
         
       
+        
+      
     
     
     
@@ -3777,6 +3809,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3925,6 +3987,31 @@
     <div class="doc doc-contents first">
 
         <p>滚动条的设计规范。</p>
+<p>数值来源：Figma 设计稿 <code>Scrolling.svg</code>（该文件的图层名也是可读的，
+<code>Scroll Bar / Parts / Track</code>、<code>Scroll Bar / Parts / Thumb</code>、
+<code>Mode=…, Orientation=…, Expanded=…</code>）。经 96 dpi 栅格逐像素复核。</p>
+<p>================== ==========================================================
+项                  设计稿
+================== ==========================================================
+控件外框            厚 14px（轨道 12 + 每边 1 内缩）
+轨道                厚 12px、圆角 6（整条胶囊）、只在展开态出现
+滑块（收起）        厚 <strong>2</strong>px、圆角 1（整条胶囊）
+滑块（展开）        厚 <strong>6</strong>px、圆角 3
+定位边距            轨道居中于 14px 外框内
+================== ==========================================================</p>
+<p>配色（合成到各自的面板上之后的实色）：</p>
+<p>======== ============ ============
+项       浅色（#FAFAFA） 深色（#1C1C1C）
+======== ============ ============
+滑块       #8A8A8A      #989898
+滑块（展开） #8B8B8B      #9F9F9F
+轨道       #FCFCFC      #2C2C2C
+======== ============ ============</p>
+<p>.. note::
+   设计稿里<strong>收起态不画轨道</strong>，只有一条细滑块；展开（悬停）时才出现轨道，
+   同时滑块变粗。按下 / 禁用两个状态在这份文件里<strong>完全不存在</strong>
+   （全文检索不到 pressed / disabled / PointerOver 等字样），
+   这里保留历史值，不做推测。</p>
 
 
 
@@ -3957,78 +4044,98 @@
 
     <div class="doc doc-contents ">
 
-        <p>滚动栏设计配置</p>
+        <p>取滚动条的配色表。</p>
+<p>:param mode: <code>"light"</code> / <code>"dark"</code>
+:returns: <code>{"rest": {...}, "expand": {...}, "disabled": {...}}</code></p>
 
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\designs\scrollbar.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scrollbar</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;滚动栏设计配置&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scrollbar</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;取滚动条的配色表。</span>
+
+<span class="sd">    :param mode: ``&quot;light&quot;`` / ``&quot;dark&quot;``</span>
+<span class="sd">    :returns: ``{&quot;rest&quot;: {...}, &quot;expand&quot;: {...}, &quot;disabled&quot;: {...}}``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#9a9a9a&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#989898&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;expand&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;track_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#2b2b2b&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#2c2c2c&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#9f9f9f&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;disabled&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#515151&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># light mode</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#868686&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;expand&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;track_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#f8f8f8&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#898989&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;disabled&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#9f9f9f&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#8a8a8a&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;expand&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;track_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#fcfcfc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#8b8b8b&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;disabled&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#9f9f9f&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

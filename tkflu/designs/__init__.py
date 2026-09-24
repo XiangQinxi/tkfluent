@@ -7,11 +7,19 @@
 因此**换皮肤不需要改组件代码**——改这里的返回值即可。"""
 
 from .animation import (
+    DEFAULT_EASING,
+    EASINGS,
     FluAnimation,
+    easing_function,
+    easing_names,
     get_animation_step_time,
     get_animation_steps,
+    get_theme_easing,
     set_animation_step_time,
     set_animation_steps,
+    set_theme_easing,
+    suspended_widget_animation,
+    widget_animation_suspended,
 )
 from .design import FluDesign
 from .fonts import *

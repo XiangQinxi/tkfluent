@@ -107,39 +107,75 @@ class BWm(FluGradient):
 
     def theme(self, mode: str):
         """
-        同 `theme_myself`
+        把窗口（连同里面的控件）切到 ``mode``。
+
+        旧实现只改窗口自己的配色，子控件要等 ``FluThemeManager`` 一个一个来；
+        而换到窗口背景色的那一趟用的是**裸 ``after``**、还夹着 ``update()``。
+        现在整棵子树交给统一过渡：所有组件共用一条时间轴（见
+        :mod:`tkflu.theme_transition`）。
 
         :param mode:
         :return:
         """
+        from .theme_transition import applying_themes, run_theme_transition
 
-        self.theme_myself(mode=mode)
+        # 两种情况只能"只改自己"：
+        #  * applying_themes()：正被统一过渡驱动，子控件由驱动方负责；
+        #  * 还没有 Tk 实例：``FluWindow.__init__`` 是在 ``Tk.__init__``
+        #    **之前**调 ``_init()`` 的，那时还没法遍历控件树。
+        if applying_themes() or not self._tk_ready():
+            self.theme_myself(mode=mode)
+            return
+        run_theme_transition(self, mode)
+
+    def _tk_ready(self) -> bool:
+        """这个控件是否已经拿到 Tk 解释器。
+
+        .. warning::
+           不能用 ``getattr(self, "tk", None)``——``tkinter.Misc.__getattr__``
+           会把未知属性转发给 ``self.tk``，而 ``self.tk`` 正是要问的东西，
+           结果是无限递归 ``RecursionError``。所以直接查实例字典。
+        """
+        return self.__dict__.get("tk") is not None
 
     def theme_myself(self, mode: str):
         """
-        修改该窗口的Fluent主题
+        修改该窗口的Fluent主题（只改这个窗口自己）
 
         :param mode:
         :return:
         """
 
+        previous = self.__dict__.get("mode")
         self.mode = mode
-        if mode.lower() == "dark":
-            try:
-                import pywinstyles
-
-                pywinstyles.apply_style(self, "dark")
-            except ModuleNotFoundError:
-                pass
+        if str(mode).lower() != str(previous or "").lower():
+            self._apply_titlebar_style(mode)
+        if str(mode).lower() == "dark":
             self._dark()
         else:
-            try:
-                import pywinstyles
-
-                pywinstyles.apply_style(self, "light")
-            except ModuleNotFoundError:
-                pass
             self._light()
+
+    def _apply_titlebar_style(self, mode: str):
+        """把 Windows 原生的标题栏也染成对应深浅（没有 pywinstyles 就跳过）。
+
+        .. warning::
+           只在**模式真的变了**的时候调，不是随手调调就行：
+           ``pywinstyles.detect()`` 内部会 ``window.update()``——那会把
+           **全部待办事件**（含用户输入）跑一遍。换肤本来就是我们刚拆掉的
+           "在换肤里跑事件循环"，没必要因为一次重复设置又把它请回来。
+        """
+        try:
+            import pywinstyles
+
+            pywinstyles.apply_style(
+                self, "dark" if str(mode).lower() == "dark" else "light"
+            )
+        except ModuleNotFoundError:
+            pass
+        except Exception:
+            # 个别 Windows 版本 / 主题组合下 apply_style 会失败，
+            # 那不该让窗口换不了肤。
+            pass
 
     def _theme(
         self, mode, animation_steps: int = None, animation_step_time: int = None

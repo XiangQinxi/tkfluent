@@ -1,0 +1,26 @@
+{
+  "mode_sync_ms": 3.59,
+  "mode_sync_max_ms": 4.44,
+  "sweep_ms": 549.71,
+  "max_gap_ms": 156.48,
+  "distinct_colors": 6.17,
+  "sync_spread_ms": 126.59,
+  "last_detail": {
+    "mode": "light",
+    "widgets": 13,
+    "animated": 13,
+    "requested_steps": 5,
+    "steps": 5,
+    "step_time": 20,
+    "frames_painted": 4,
+    "paint_cost_ms": 89.86,
+    "failures": []
+  },
+  "label": "after",
+  "scene": "compact",
+  "extra_widgets": 0,
+  "steps": 5,
+  "step_time": 20,
+  "renderer": "tksvg",
+  "expected_sweep_ms": 100
+}

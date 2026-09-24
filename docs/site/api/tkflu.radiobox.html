@@ -2293,6 +2293,8 @@
       
         
       
+        
+      
     
     
     
@@ -2407,6 +2409,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3499,6 +3529,8 @@
       
         
       
+        
+      
     
     
     
@@ -3932,6 +3964,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4319,14 +4381,7 @@
 
               <details class="mkdocstrings-source">
                 <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">133</span>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
@@ -4744,7 +4799,61 @@
 <span class="normal">548</span>
 <span class="normal">549</span>
 <span class="normal">550</span>
-<span class="normal">551</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluRadioBox</span><span class="p">(</span><span class="n">FluRadioBoxCanvas</span><span class="p">,</span> <span class="n">DDrawWidget</span><span class="p">,</span> <span class="n">FluToolTipBase</span><span class="p">):</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span>
+<span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluRadioBox</span><span class="p">(</span><span class="n">FluRadioBoxCanvas</span><span class="p">,</span> <span class="n">DDrawWidget</span><span class="p">,</span> <span class="n">FluToolTipBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Fluent 风格的单选框。</span>
 
 <span class="sd">    :cvar BOX: 圆环外径（像素）</span>
@@ -4756,8 +4865,8 @@
     <span class="n">BOX</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="c1">#: 圆环与文字之间的间距</span>
     <span class="n">GAP</span> <span class="o">=</span> <span class="mi">8</span>
-    <span class="c1">#: 控件左右两侧的内边距</span>
-    <span class="n">PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="c1">#: 控件左/右内边距（与 FluCheckBox 一致：Figma 里都是&quot;控件左边缘 + 4&quot;）</span>
+    <span class="n">PADDING</span> <span class="o">=</span> <span class="mi">4</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4878,8 +4987,11 @@
                 <span class="s2">&quot;text_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#1b1b1b&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;dot_color&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;dot_ratio&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                <span class="s2">&quot;dot_size&quot;</span><span class="p">:</span> <span class="n">DOT_SIZE</span><span class="p">,</span>
                 <span class="s2">&quot;focus_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#000000&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;focus_opacity&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">&quot;focus_inner_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;focus_inner_opacity&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -4905,13 +5017,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_apply_design</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_design</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;按 ``(mode, 交互状态, 勾选态)`` 刷新配色。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;按 ``(mode, 交互状态, 勾选态)`` 刷新配色。</span>
+
+<span class="sd">        与 :class:`~tkflu.checkbox.FluCheckBox` 同理：``_draw()`` 每次都重算配色，</span>
+<span class="sd">        所以过渡帧要靠 :func:`~tkflu.theme_transition.blend_theme_design` 保住，</span>
+<span class="sd">        否则单选按钮会在整屏的渐变里&quot;瞬间跳变&quot;。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">design</span> <span class="o">=</span> <span class="n">radiobox_design</span><span class="p">(</span>
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;light&quot;</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_visual_state</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">checked</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="n">design</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="n">blend_theme_design</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_visual_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;把交互状态位归并成设计规范认识的状态名。&quot;&quot;&quot;</span>
@@ -5048,7 +5165,7 @@
         <span class="n">radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_opacity</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_draw_focus_ring</span><span class="p">(</span><span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_draw_focus_ring</span><span class="p">(</span><span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">element_ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
             <span class="n">box_x</span><span class="p">,</span>
@@ -5069,32 +5186,71 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_draw_label</span><span class="p">(</span><span class="n">box_x</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_to_text</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_focus_ring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;在圆环外侧画一圈焦点环。&quot;&quot;&quot;</span>
-        <span class="n">pad</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_focus_ring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;画焦点带：贴着整个控件外沿的 3px **两层**带（与 FluCheckBox 一致）。</span>
+
+<span class="sd">        设计稿里单选框的焦点带是一个 **直径 26 的圆**（控件 20 + 每边 3），</span>
+<span class="sd">        不是圆角矩形。这里用 ``draw_roundrect`` 把圆角取成外径的一半得到正圆。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">winfo_width</span><span class="p">()</span> <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">width</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">winfo_height</span><span class="p">()</span> <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">height</span>
+        <span class="n">margin</span> <span class="o">=</span> <span class="n">FOCUS_MARGIN</span>
+        <span class="c1"># 关注的是&quot;方框那一侧&quot;还是&quot;整个控件&quot;：设计稿的 Plain 变体</span>
+        <span class="c1"># （只有圆、没有文字）焦点是 26×26 的圆；带文字时是包住整条的矩形。</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="o">-</span><span class="n">margin</span><span class="p">,</span> <span class="o">-</span><span class="n">margin</span>
+            <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">width</span> <span class="o">+</span> <span class="n">margin</span><span class="p">,</span> <span class="n">height</span> <span class="o">+</span> <span class="n">margin</span>
+            <span class="n">outer_radius</span> <span class="o">=</span> <span class="n">FOCUS_RADIUS</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">box_x</span> <span class="o">-</span> <span class="n">margin</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">-</span> <span class="n">margin</span>
+            <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">+</span> <span class="n">margin</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">+</span> <span class="n">margin</span>
+            <span class="n">outer_radius</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">element_focus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
-            <span class="n">box_x</span> <span class="o">-</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">box_y</span> <span class="o">-</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">+</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">+</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">radius</span> <span class="o">+</span> <span class="n">pad</span><span class="p">,</span>
+            <span class="n">x1</span><span class="p">,</span>
+            <span class="n">y1</span><span class="p">,</span>
+            <span class="n">x2</span><span class="p">,</span>
+            <span class="n">y2</span><span class="p">,</span>
+            <span class="n">outer_radius</span><span class="p">,</span>
+            <span class="n">temppath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath2</span><span class="p">,</span>
+            <span class="n">temppath2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath4</span><span class="p">,</span>
+            <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;transparent&quot;</span><span class="p">,</span>
+            <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">outline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_inner_color</span><span class="p">,</span>
+            <span class="n">outline_opacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_inner_opacity</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">FOCUS_INNER_WIDTH</span> <span class="o">+</span> <span class="n">FOCUS_OUTER_WIDTH</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element_focus_inner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
+            <span class="n">x1</span><span class="p">,</span>
+            <span class="n">y1</span><span class="p">,</span>
+            <span class="n">x2</span><span class="p">,</span>
+            <span class="n">y2</span><span class="p">,</span>
+            <span class="n">outer_radius</span><span class="p">,</span>
             <span class="n">temppath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath2</span><span class="p">,</span>
             <span class="n">temppath2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath4</span><span class="p">,</span>
             <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;transparent&quot;</span><span class="p">,</span>
             <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
             <span class="n">outline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_color</span><span class="p">,</span>
             <span class="n">outline_opacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_opacity</span><span class="p">,</span>
-            <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">FOCUS_OUTER_WIDTH</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;画中间的实心圆点（未选中时不画）。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;画中间的实心圆点（未选中时不画）。</span>
+
+<span class="sd">        直径取 ``attributes.dot_size`` —— 设计稿里它在四个状态下不一样</span>
+<span class="sd">        （rest 8 / hover 10 / pressed 6 / disabled 8），所以不能按圆环半径</span>
+<span class="sd">        等比推。``dot_ratio`` 只是没有 dot_size 时的兜底。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dot_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">dot_color</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dot_color</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">element_dot</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
 
-        <span class="n">dot_radius</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">dot_ratio</span> <span class="ow">or</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">dot_size</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">radius</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">dot_ratio</span> <span class="ow">or</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">dot_radius</span> <span class="o">=</span> <span class="n">size</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="n">center_x</span> <span class="o">=</span> <span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="n">center_y</span> <span class="o">=</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">element_dot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
@@ -5263,14 +5419,7 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span>
@@ -5340,7 +5489,14 @@
 <span class="normal">215</span>
 <span class="normal">216</span>
 <span class="normal">217</span>
-<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="n">args</span><span class="p">,</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -5440,9 +5596,9 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">386</span>
-<span class="normal">387</span>
-<span class="normal">388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;取消选中本项。&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="n">notify</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5469,18 +5625,18 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">390</span>
-<span class="normal">391</span>
-<span class="normal">392</span>
-<span class="normal">393</span>
-<span class="normal">394</span>
-<span class="normal">395</span>
-<span class="normal">396</span>
-<span class="normal">397</span>
-<span class="normal">398</span>
-<span class="normal">399</span>
-<span class="normal">400</span>
-<span class="normal">401</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;走一遍&quot;用户点击&quot;的完整流程。</span>
 
 <span class="sd">    已经是选中状态时不做任何事（单选框不能靠再点一下取消，</span>
@@ -5514,9 +5670,9 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">382</span>
-<span class="normal">383</span>
-<span class="normal">384</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;选中本项。&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="n">notify</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5546,22 +5702,7 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
-<span class="normal">354</span>
-<span class="normal">355</span>
-<span class="normal">356</span>
-<span class="normal">357</span>
-<span class="normal">358</span>
-<span class="normal">359</span>
-<span class="normal">360</span>
-<span class="normal">361</span>
-<span class="normal">362</span>
-<span class="normal">363</span>
-<span class="normal">364</span>
-<span class="normal">365</span>
-<span class="normal">366</span>
-<span class="normal">367</span>
-<span class="normal">368</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">368</span>
 <span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span>
@@ -5573,7 +5714,22 @@
 <span class="normal">377</span>
 <span class="normal">378</span>
 <span class="normal">379</span>
-<span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;直接设置选中状态。</span>
 
 <span class="sd">    :param checked: ``True`` 选中；``False`` 取消选中</span>
@@ -5625,17 +5781,17 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;切换主题 / 状态配色。</span>
 
 <span class="sd">    :param mode: ``&quot;light&quot;`` / ``&quot;dark&quot;``；省略表示沿用当前值</span>
@@ -5691,15 +5847,15 @@
 
               <details class="mkdocstrings-source">
                 <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
 <span class="normal">71</span>
-<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluRadioBoxCanvas</span><span class="p">(</span><span class="n">DCanvas</span><span class="p">):</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluRadioBoxCanvas</span><span class="p">(</span><span class="n">DCanvas</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;单选框的画布。</span>
 
 <span class="sd">    圆环就是把圆角半径取成&quot;外径的一半&quot;的圆角矩形——SVG 与三个栅格引擎</span>
@@ -5760,8 +5916,8 @@
 
               <details class="mkdocstrings-source">
                 <summary>源代码位于： <code>tkflu\radiobox.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluRadioBoxDraw</span><span class="p">(</span><span class="n">DSvgDraw</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluRadioBoxDraw</span><span class="p">(</span><span class="n">DSvgDraw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;单选框的 SVG 绘制后端。&quot;&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>

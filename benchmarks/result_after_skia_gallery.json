@@ -1,0 +1,26 @@
+{
+  "mode_sync_ms": 32.23,
+  "mode_sync_max_ms": 50.53,
+  "sweep_ms": 908.64,
+  "max_gap_ms": 659.16,
+  "distinct_colors": 3.33,
+  "sync_spread_ms": 0.0,
+  "last_detail": {
+    "mode": "dark",
+    "widgets": 59,
+    "animated": 50,
+    "requested_steps": 5,
+    "steps": 3,
+    "step_time": 20,
+    "frames_painted": 2,
+    "paint_cost_ms": 206.37,
+    "failures": []
+  },
+  "label": "after",
+  "scene": "gallery",
+  "extra_widgets": 0,
+  "steps": 5,
+  "step_time": 20,
+  "renderer": "skia",
+  "expected_sweep_ms": 100
+}

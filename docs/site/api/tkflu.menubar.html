@@ -1804,6 +1804,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="FluMenuBar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.menubar.FluMenuBar.theme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        theme
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.menubar.FluMenuBar.update_children" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        update_children
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -2138,6 +2166,8 @@
       
         
       
+        
+      
     
     
     
@@ -2252,6 +2282,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3344,6 +3402,8 @@
       
         
       
+        
+      
     
     
     
@@ -3777,6 +3837,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3891,6 +3981,34 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="FluMenuBar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.menubar.FluMenuBar.theme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        theme
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.menubar.FluMenuBar.update_children" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        update_children
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4207,7 +4325,9 @@
 <span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span>
-<span class="normal">247</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluMenuBar</span><span class="p">(</span><span class="n">Frame</span><span class="p">,</span> <span class="n">DObject</span><span class="p">,</span> <span class="n">FluGradient</span><span class="p">):</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluMenuBar</span><span class="p">(</span><span class="n">Frame</span><span class="p">,</span> <span class="n">DObject</span><span class="p">,</span> <span class="n">FluGradient</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
 
@@ -4348,27 +4468,29 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcget</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">)[</span><span class="nb">id</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcget</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
-            <span class="n">widget</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;把菜单项按钮重新换一次肤（历史 API）。</span>
+
+<span class="sd">        保留名字是为了兼容老代码；内部走统一过渡，因此不再逐个 ``update()``。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcget</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;theme&quot;</span><span class="p">):</span>
                 <span class="n">widget</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;_draw&quot;</span><span class="p">):</span>
-                    <span class="n">widget</span><span class="o">.</span><span class="n">_draw</span><span class="p">()</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;菜单栏（连同菜单项按钮）切到 ``mode``。</span>
 
-        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcget</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">)</span>
+<span class="sd">        旧实现是&quot;自己换 + 遍历按钮 + 每个按钮 ``update()``&quot;：那会让每个按钮</span>
+<span class="sd">        各排各的过渡帧，还会在遍历途中把别人的帧提前执行掉，于是菜单项</span>
+<span class="sd">        一个一个变色。现在整棵子树交给统一过渡：一条时间轴，同步插值。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.theme_transition</span><span class="w"> </span><span class="kn">import</span> <span class="n">applying_themes</span><span class="p">,</span> <span class="n">run_theme_transition</span>
 
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
-            <span class="n">widget</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;theme&quot;</span><span class="p">):</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;_draw&quot;</span><span class="p">):</span>
-                    <span class="n">widget</span><span class="o">.</span><span class="n">_draw</span><span class="p">()</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">applying_themes</span><span class="p">():</span>
+            <span class="c1"># 有人（FluThemeManager）正在统一驱动：只改自己的配色，</span>
+            <span class="c1"># 菜单项按钮由驱动方负责，别在这里另起一条时间轴。</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">run_theme_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">theme_myself</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">animation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">animation_step_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
@@ -4457,6 +4579,98 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tkflu.menubar.FluMenuBar.theme" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>菜单栏（连同菜单项按钮）切到 <code>mode</code>。</p>
+<p>旧实现是"自己换 + 遍历按钮 + 每个按钮 <code>update()</code>"：那会让每个按钮
+各排各的过渡帧，还会在遍历途中把别人的帧提前执行掉，于是菜单项
+一个一个变色。现在整棵子树交给统一过渡：一条时间轴，同步插值。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\menubar.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;菜单栏（连同菜单项按钮）切到 ``mode``。</span>
+
+<span class="sd">    旧实现是&quot;自己换 + 遍历按钮 + 每个按钮 ``update()``&quot;：那会让每个按钮</span>
+<span class="sd">    各排各的过渡帧，还会在遍历途中把别人的帧提前执行掉，于是菜单项</span>
+<span class="sd">    一个一个变色。现在整棵子树交给统一过渡：一条时间轴，同步插值。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.theme_transition</span><span class="w"> </span><span class="kn">import</span> <span class="n">applying_themes</span><span class="p">,</span> <span class="n">run_theme_transition</span>
+
+    <span class="k">if</span> <span class="n">applying_themes</span><span class="p">():</span>
+        <span class="c1"># 有人（FluThemeManager）正在统一驱动：只改自己的配色，</span>
+        <span class="c1"># 菜单项按钮由驱动方负责，别在这里另起一条时间轴。</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">run_theme_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tkflu.menubar.FluMenuBar.update_children" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">update_children</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>把菜单项按钮重新换一次肤（历史 API）。</p>
+<p>保留名字是为了兼容老代码；内部走统一过渡，因此不再逐个 <code>update()</code>。</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>源代码位于： <code>tkflu\menubar.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;把菜单项按钮重新换一次肤（历史 API）。</span>
+
+<span class="sd">    保留名字是为了兼容老代码；内部走统一过渡，因此不再逐个 ``update()``。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcget</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;theme&quot;</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

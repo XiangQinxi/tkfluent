@@ -2177,6 +2177,8 @@
       
         
       
+        
+      
     
     
     
@@ -2291,6 +2293,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3383,6 +3413,8 @@
       
         
       
+        
+      
     
     
     
@@ -3803,6 +3835,36 @@
     
   
     0.4.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
   
 
     
@@ -4301,7 +4363,43 @@
 <span class="normal">256</span>
 <span class="normal">257</span>
 <span class="normal">258</span>
-<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BWm</span><span class="p">(</span><span class="n">FluGradient</span><span class="p">):</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BWm</span><span class="p">(</span><span class="n">FluGradient</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        重新绘制窗口及自定义的窗口组件</span>
@@ -4401,39 +4499,75 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        同 `theme_myself`</span>
+<span class="sd">        把窗口（连同里面的控件）切到 ``mode``。</span>
+
+<span class="sd">        旧实现只改窗口自己的配色，子控件要等 ``FluThemeManager`` 一个一个来；</span>
+<span class="sd">        而换到窗口背景色的那一趟用的是**裸 ``after``**、还夹着 ``update()``。</span>
+<span class="sd">        现在整棵子树交给统一过渡：所有组件共用一条时间轴（见</span>
+<span class="sd">        :mod:`tkflu.theme_transition`）。</span>
 
 <span class="sd">        :param mode:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.theme_transition</span><span class="w"> </span><span class="kn">import</span> <span class="n">applying_themes</span><span class="p">,</span> <span class="n">run_theme_transition</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="c1"># 两种情况只能&quot;只改自己&quot;：</span>
+        <span class="c1">#  * applying_themes()：正被统一过渡驱动，子控件由驱动方负责；</span>
+        <span class="c1">#  * 还没有 Tk 实例：``FluWindow.__init__`` 是在 ``Tk.__init__``</span>
+        <span class="c1">#    **之前**调 ``_init()`` 的，那时还没法遍历控件树。</span>
+        <span class="k">if</span> <span class="n">applying_themes</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tk_ready</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">run_theme_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tk_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;这个控件是否已经拿到 Tk 解释器。</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">           不能用 ``getattr(self, &quot;tk&quot;, None)``——``tkinter.Misc.__getattr__``</span>
+<span class="sd">           会把未知属性转发给 ``self.tk``，而 ``self.tk`` 正是要问的东西，</span>
+<span class="sd">           结果是无限递归 ``RecursionError``。所以直接查实例字典。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tk&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">theme_myself</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        修改该窗口的Fluent主题</span>
+<span class="sd">        修改该窗口的Fluent主题（只改这个窗口自己）</span>
 
 <span class="sd">        :param mode:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
-        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="kn">import</span><span class="w"> </span><span class="nn">pywinstyles</span>
-
-                <span class="n">pywinstyles</span><span class="o">.</span><span class="n">apply_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-                <span class="k">pass</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">previous</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_titlebar_style</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dark</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="kn">import</span><span class="w"> </span><span class="nn">pywinstyles</span>
-
-                <span class="n">pywinstyles</span><span class="o">.</span><span class="n">apply_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;light&quot;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-                <span class="k">pass</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_light</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_titlebar_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;把 Windows 原生的标题栏也染成对应深浅（没有 pywinstyles 就跳过）。</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">           只在**模式真的变了**的时候调，不是随手调调就行：</span>
+<span class="sd">           ``pywinstyles.detect()`` 内部会 ``window.update()``——那会把</span>
+<span class="sd">           **全部待办事件**（含用户输入）跑一遍。换肤本来就是我们刚拆掉的</span>
+<span class="sd">           &quot;在换肤里跑事件循环&quot;，没必要因为一次重复设置又把它请回来。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pywinstyles</span>
+
+            <span class="n">pywinstyles</span><span class="o">.</span><span class="n">apply_style</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span> <span class="k">else</span> <span class="s2">&quot;light&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># 个别 Windows 版本 / 主题组合下 apply_style 会失败，</span>
+            <span class="c1"># 那不该让窗口换不了肤。</span>
+            <span class="k">pass</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_theme</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">animation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">animation_step_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
@@ -4578,7 +4712,11 @@
 
     <div class="doc doc-contents ">
 
-        <p>同 <code>theme_myself</code></p>
+        <p>把窗口（连同里面的控件）切到 <code>mode</code>。</p>
+<p>旧实现只改窗口自己的配色，子控件要等 <code>FluThemeManager</code> 一个一个来；
+而换到窗口背景色的那一趟用的是<strong>裸 <code>after</code></strong>、还夹着 <code>update()</code>。
+现在整棵子树交给统一过渡：所有组件共用一条时间轴（见
+:mod:<code>tkflu.theme_transition</code>）。</p>
 <p>:param mode:
 :return:</p>
 
@@ -4593,15 +4731,41 @@
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    同 `theme_myself`</span>
+<span class="sd">    把窗口（连同里面的控件）切到 ``mode``。</span>
+
+<span class="sd">    旧实现只改窗口自己的配色，子控件要等 ``FluThemeManager`` 一个一个来；</span>
+<span class="sd">    而换到窗口背景色的那一趟用的是**裸 ``after``**、还夹着 ``update()``。</span>
+<span class="sd">    现在整棵子树交给统一过渡：所有组件共用一条时间轴（见</span>
+<span class="sd">    :mod:`tkflu.theme_transition`）。</span>
 
 <span class="sd">    :param mode:</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.theme_transition</span><span class="w"> </span><span class="kn">import</span> <span class="n">applying_themes</span><span class="p">,</span> <span class="n">run_theme_transition</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="c1"># 两种情况只能&quot;只改自己&quot;：</span>
+    <span class="c1">#  * applying_themes()：正被统一过渡驱动，子控件由驱动方负责；</span>
+    <span class="c1">#  * 还没有 Tk 实例：``FluWindow.__init__`` 是在 ``Tk.__init__``</span>
+    <span class="c1">#    **之前**调 ``_init()`` 的，那时还没法遍历控件树。</span>
+    <span class="k">if</span> <span class="n">applying_themes</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tk_ready</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme_myself</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">run_theme_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4619,61 +4783,43 @@
 
     <div class="doc doc-contents ">
 
-        <p>修改该窗口的Fluent主题</p>
+        <p>修改该窗口的Fluent主题（只改这个窗口自己）</p>
 <p>:param mode:
 :return:</p>
 
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\bwm.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme_myself</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme_myself</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    修改该窗口的Fluent主题</span>
+<span class="sd">    修改该窗口的Fluent主题（只改这个窗口自己）</span>
 
 <span class="sd">    :param mode:</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
-    <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">pywinstyles</span>
-
-            <span class="n">pywinstyles</span><span class="o">.</span><span class="n">apply_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-            <span class="k">pass</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">previous</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_titlebar_style</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dark&quot;</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dark</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">pywinstyles</span>
-
-            <span class="n">pywinstyles</span><span class="o">.</span><span class="n">apply_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;light&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-            <span class="k">pass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_light</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4700,43 +4846,7 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\bwm.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span>
@@ -4768,7 +4878,43 @@
 <span class="normal">256</span>
 <span class="normal">257</span>
 <span class="normal">258</span>
-<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wincustom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">way</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wincustom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">way</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    自定义窗口 仅限`Windows系统`</span>
 

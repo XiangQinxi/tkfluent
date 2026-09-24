@@ -2067,6 +2067,8 @@
       
         
       
+        
+      
     
     
     
@@ -2181,6 +2183,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -2598,23 +2628,6 @@
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="listbox">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tkflu.designs.listbox--_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        高亮色的算法
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -3361,6 +3374,8 @@
       
         
       
+        
+      
     
     
     
@@ -3794,6 +3809,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3898,23 +3943,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="listbox">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tkflu.designs.listbox--_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        高亮色的算法
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -3959,16 +3987,24 @@
     <div class="doc doc-contents first">
 
         <p>列表的设计规范。</p>
-<p>:func:<code>listbox</code> 返回列表控件在某个状态下的整套配色：控件底色与描边、
-条目的悬停/选中高亮、选中指示条，以及自绘滚动条的滑块。</p>
-<p>列表的描边沿用历史上的一点点"上浅下深"竖直渐变
-（<code>border_color</code> → <code>border_color2</code>），与
-:meth:<code>tkflu.listbox.FluListBoxCanvas.create_round_rectangle</code> 里传的
-<code>gradient_stop1/2</code> 对应。</p>
-<h3 id="tkflu.designs.listbox--_1">高亮色的算法</h3>
-<p>标准样式下是"把强调色按很低的比例压到控件底色上"，得到一行淡蓝；
-强调样式下控件本身就是强调色，再压强调色等于没压，所以改成往
-<code>on_accent</code>（浅色强调 → 白、深色强调 → 黑）方向混合。</p>
+<p>数值来源：Figma 设计稿 <code>Lists &amp; Collections.svg</code> 里的
+<code>List View / List View Item</code> 组件（该文件的图层名是可读的，
+所以下面每条都能对应到具体元素）。</p>
+<p>==================== ==========================================================
+项                    设计稿
+==================== ==========================================================
+条目高度              40（单行）/ 56（两行）/ 72（三行）
+条目宽度              容器宽 − 2（左右各留 1px）
+条目圆角              4；高亮底圆角 3
+高亮底内缩            左右 <strong>5</strong>、上下 <strong>3</strong>
+选中指示条            3 宽、圆角 1.5、距条目左边缘 <strong>4</strong>、垂直居中、长 <strong>16</strong>
+文字左缩进            <strong>16</strong>
+容器圆角              <strong>8</strong>
+==================== ==========================================================</p>
+<p>.. important::
+   <strong>选中行的底色和悬停行是同一个中性色</strong>（浅色 <code>#000000 @ 0.0373</code>），
+   <em>不是</em> 强调色的淡色。强调色只用在左侧那条指示条上。
+   旧实现把选中行做成了"强调色 16% 的淡蓝"，那是错的。</p>
 
 
 
@@ -4003,7 +4039,7 @@
 
         <p>取列表控件在某个状态下的配色。</p>
 <p>:param mode: <code>"light"</code> / <code>"dark"</code>
-:param style: <code>"standard"</code> / <code>"accent"</code>
+:param style: <code>"standard"</code>（白面板）/ <code>"accent"</code>（强调色底）
 :param state: <code>"rest"</code> / <code>"hover"</code> / <code>"pressed"</code> / <code>"disabled"</code>
 :returns: 配色字典，键与 <code>FluListBox.attributes</code> 一一对应</p>
 <p>:raises ValueError: <code>mode</code> / <code>style</code> / <code>state</code> 无法识别</p>
@@ -4011,76 +4047,85 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\designs\listbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">listbox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rest&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">listbox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rest&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;取列表控件在某个状态下的配色。</span>
 
 <span class="sd">    :param mode: ``&quot;light&quot;`` / ``&quot;dark&quot;``</span>
-<span class="sd">    :param style: ``&quot;standard&quot;`` / ``&quot;accent&quot;``</span>
+<span class="sd">    :param style: ``&quot;standard&quot;``（白面板）/ ``&quot;accent&quot;``（强调色底）</span>
 <span class="sd">    :param state: ``&quot;rest&quot;`` / ``&quot;hover&quot;`` / ``&quot;pressed&quot;`` / ``&quot;disabled&quot;``</span>
 <span class="sd">    :returns: 配色字典，键与 ``FluListBox.attributes`` 一一对应</span>
 
@@ -4099,31 +4144,34 @@
     <span class="n">accent</span> <span class="o">=</span> <span class="n">get_primary_color</span><span class="p">()[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">surface</span> <span class="o">=</span> <span class="s2">&quot;#ffffff&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#2b2b2b&quot;</span>
     <span class="n">disabled</span> <span class="o">=</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span>
+    <span class="n">overlay</span> <span class="o">=</span> <span class="n">_overlay_color</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;accent&quot;</span><span class="p">:</span>
         <span class="n">back_color</span> <span class="o">=</span> <span class="n">border_color</span> <span class="o">=</span> <span class="n">border_color2</span> <span class="o">=</span> <span class="n">accent</span>
-        <span class="n">item_overlay</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;on_accent&quot;</span><span class="p">]</span>
-        <span class="n">selected_back</span> <span class="o">=</span> <span class="n">blend</span><span class="p">(</span><span class="n">item_overlay</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="n">back_color</span><span class="p">)</span>
-        <span class="n">hover_back</span> <span class="o">=</span> <span class="n">blend</span><span class="p">(</span><span class="n">item_overlay</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="n">back_color</span><span class="p">)</span>
-        <span class="n">indicator_color</span> <span class="o">=</span> <span class="n">item_overlay</span>
+        <span class="n">item_text</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;on_accent&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">back_color</span> <span class="o">=</span> <span class="n">surface</span>
+        <span class="c1"># 设计稿里容器**只给了圆角，没画描边和底色**；这里保留历史上</span>
+        <span class="c1"># &quot;上浅下深&quot;的那道 1px 渐变边（它是这个库的既有外观）。</span>
         <span class="n">border_color</span> <span class="o">=</span> <span class="s2">&quot;#f0f0f0&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#3a3a3a&quot;</span>
         <span class="n">border_color2</span> <span class="o">=</span> <span class="s2">&quot;#d6d6d6&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#262626&quot;</span>
-        <span class="n">selected_back</span> <span class="o">=</span> <span class="n">blend</span><span class="p">(</span><span class="n">accent</span><span class="p">,</span> <span class="n">_SELECT_TINT</span><span class="p">[</span><span class="n">mode</span><span class="p">],</span> <span class="n">back_color</span><span class="p">)</span>
-        <span class="n">hover_back</span> <span class="o">=</span> <span class="n">blend</span><span class="p">(</span>
-            <span class="s2">&quot;#000000&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span> <span class="n">_HOVER_TINT</span><span class="p">,</span> <span class="n">back_color</span>
-        <span class="p">)</span>
-        <span class="n">indicator_color</span> <span class="o">=</span> <span class="n">accent</span>
+        <span class="n">item_text</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span>
 
-    <span class="n">text_color</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;accent&quot;</span><span class="p">:</span>
-        <span class="n">text_color</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;on_accent&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">disabled</span><span class="p">:</span>
-        <span class="n">text_color</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;disabled&quot;</span><span class="p">]</span>
-        <span class="n">hover_back</span> <span class="o">=</span> <span class="n">selected_back</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;accent&quot;</span> <span class="k">else</span> <span class="n">blend</span><span class="p">(</span>
-            <span class="s2">&quot;#000000&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">back_color</span>
-        <span class="p">)</span>
+        <span class="n">item_text</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;disabled&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">row_fill</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;行底色：把中性色叠到控件底色上，得到可直接绘制的实色。&quot;&quot;&quot;</span>
+        <span class="n">tint</span> <span class="o">=</span> <span class="n">_ROW_TINT</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tint</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="n">tint</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tint</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">tint</span><span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">back_color</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;standard&quot;</span> <span class="k">else</span> <span class="n">accent</span>
+        <span class="k">return</span> <span class="n">blend</span><span class="p">(</span><span class="n">overlay</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+
+    <span class="n">hover_back</span> <span class="o">=</span> <span class="n">row_fill</span><span class="p">(</span><span class="s2">&quot;hover&quot;</span><span class="p">)</span>
+    <span class="n">pressed_back</span> <span class="o">=</span> <span class="n">row_fill</span><span class="p">(</span><span class="s2">&quot;pressed&quot;</span><span class="p">)</span>
+    <span class="n">selected_back</span> <span class="o">=</span> <span class="n">row_fill</span><span class="p">(</span><span class="s2">&quot;hover&quot;</span><span class="p">)</span>  <span class="c1"># 设计稿：选中与悬停同色，强调色只给指示条</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;back_color&quot;</span><span class="p">:</span> <span class="n">back_color</span><span class="p">,</span>
@@ -4131,16 +4179,22 @@
         <span class="s2">&quot;border_color2&quot;</span><span class="p">:</span> <span class="n">border_color2</span><span class="p">,</span>
         <span class="s2">&quot;border_width&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">RADIUS</span><span class="p">,</span>
-        <span class="s2">&quot;text_color&quot;</span><span class="p">:</span> <span class="n">text_color</span><span class="p">,</span>
+        <span class="s2">&quot;text_color&quot;</span><span class="p">:</span> <span class="n">item_text</span><span class="p">,</span>
         <span class="c1"># 条目</span>
-        <span class="s2">&quot;item_text_color&quot;</span><span class="p">:</span> <span class="n">text_color</span><span class="p">,</span>
+        <span class="s2">&quot;item_text_color&quot;</span><span class="p">:</span> <span class="n">item_text</span><span class="p">,</span>
         <span class="s2">&quot;item_hover_back&quot;</span><span class="p">:</span> <span class="n">hover_back</span><span class="p">,</span>
+        <span class="s2">&quot;item_pressed_back&quot;</span><span class="p">:</span> <span class="n">pressed_back</span><span class="p">,</span>
         <span class="s2">&quot;item_selected_back&quot;</span><span class="p">:</span> <span class="n">selected_back</span><span class="p">,</span>
-        <span class="s2">&quot;item_selected_text&quot;</span><span class="p">:</span> <span class="n">text_color</span><span class="p">,</span>
-        <span class="s2">&quot;indicator_color&quot;</span><span class="p">:</span> <span class="n">indicator_color</span><span class="p">,</span>
-        <span class="c1"># 自绘滚动条</span>
-        <span class="s2">&quot;scroll_thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#8d8d8d&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#9f9f9f&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;scroll_thumb_opacity&quot;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">disabled</span> <span class="k">else</span> <span class="mf">0.4</span><span class="p">,</span>
+        <span class="s2">&quot;item_selected_text&quot;</span><span class="p">:</span> <span class="n">item_text</span><span class="p">,</span>
+        <span class="s2">&quot;indicator_color&quot;</span><span class="p">:</span> <span class="n">accent</span><span class="p">,</span>
+        <span class="s2">&quot;indicator_disabled&quot;</span><span class="p">:</span> <span class="n">blend</span><span class="p">(</span>
+            <span class="s2">&quot;#000000&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
+            <span class="mf">0.2169</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="mf">0.1581</span><span class="p">,</span>
+            <span class="n">surface</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="c1"># 自绘滚动条（数值来自 Scrolling.svg：细态 2px / 展开态 6px / 轨道 12px）</span>
+        <span class="s2">&quot;scroll_thumb_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#8a8a8a&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;#989898&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scroll_thumb_opacity&quot;</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">disabled</span> <span class="k">else</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>

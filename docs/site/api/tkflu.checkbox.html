@@ -2271,6 +2271,8 @@
       
         
       
+        
+      
     
     
     
@@ -2385,6 +2387,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3477,6 +3507,8 @@
       
         
       
+        
+      
     
     
     
@@ -3910,6 +3942,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4271,15 +4333,7 @@ root.mainloop()
 
               <details class="mkdocstrings-source">
                 <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
@@ -4616,7 +4670,121 @@ root.mainloop()
 <span class="normal">433</span>
 <span class="normal">434</span>
 <span class="normal">435</span>
-<span class="normal">436</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluCheckBox</span><span class="p">(</span><span class="n">FluCheckBoxCanvas</span><span class="p">,</span> <span class="n">DDrawWidget</span><span class="p">,</span> <span class="n">FluToolTipBase</span><span class="p">):</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluCheckBox</span><span class="p">(</span><span class="n">FluCheckBoxCanvas</span><span class="p">,</span> <span class="n">DDrawWidget</span><span class="p">,</span> <span class="n">FluToolTipBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Fluent 风格的复选框。</span>
 
 <span class="sd">    :cvar BOX: 方框边长（像素）</span>
@@ -4628,10 +4796,19 @@ root.mainloop()
     <span class="n">BOX</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="c1">#: 方框与文字之间的间距</span>
     <span class="n">GAP</span> <span class="o">=</span> <span class="mi">8</span>
-    <span class="c1">#: 控件左右两侧的内边距</span>
-    <span class="n">PADDING</span> <span class="o">=</span> <span class="mi">6</span>
-    <span class="c1">#: 勾号线宽</span>
-    <span class="n">GLYPH_WIDTH</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="c1">#: 控件左/右内边距。</span>
+    <span class="c1">#: Figma 设计稿里三个实例的框都是「控件左边缘 + 4」——</span>
+    <span class="c1">#: ``120x32 @x=538`` → 方框 ``20x20 @x=542``，另两组是 680→684、989→993。</span>
+    <span class="n">PADDING</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="c1">#: 勾号字号（WinUI 模板里 CheckGlyph 是 FontSize=&quot;12&quot;）</span>
+    <span class="n">GLYPH_FONT_SIZE</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="c1">#: 勾号相对方框中心的微调。实测（8 倍放大后量墨迹包围盒）图标字体的</span>
+    <span class="c1">#: 字形单元格在 ``anchor=&quot;center&quot;`` 下正好居中，所以这里是 0。</span>
+    <span class="n">GLYPH_OFFSET_Y</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">#: 不确定态横杠的尺寸。设计稿里是 ``Dash12`` 这个部件，</span>
+    <span class="c1">#: 实测包围盒 **8.0 × 1.0**、端头半径 0.5、位于方框内 (6.0, 9.5)。</span>
+    <span class="n">DASH_WIDTH</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">DASH_HEIGHT</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4731,6 +4908,8 @@ root.mainloop()
                 <span class="s2">&quot;glyph&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;focus_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#000000&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;focus_opacity&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">&quot;focus_inner_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;focus_inner_opacity&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -4760,13 +4939,19 @@ root.mainloop()
         <span class="bp">self</span><span class="o">.</span><span class="n">_apply_design</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_design</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;按 ``(mode, 交互状态, 勾选态)`` 刷新配色。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;按 ``(mode, 交互状态, 勾选态)`` 刷新配色。</span>
+
+<span class="sd">        ``_draw()`` 每次都会调到这里重算配色，因此换肤过渡期间必须让</span>
+<span class="sd">        :func:`~tkflu.theme_transition.blend_theme_design` 把刚算出来的目标色</span>
+<span class="sd">        换成**当前帧的中间色**——否则过渡帧会被这次重算整个覆盖掉，</span>
+<span class="sd">        复选框就成了整屏里唯一&quot;瞬间跳变&quot;的组件。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">design</span> <span class="o">=</span> <span class="n">checkbox_design</span><span class="p">(</span>
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;light&quot;</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_visual_state</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">checked</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="n">design</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dconfigure</span><span class="p">(</span><span class="n">blend_theme_design</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_visual_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;把交互状态位归并成设计规范认识的状态名。&quot;&quot;&quot;</span>
@@ -4860,7 +5045,7 @@ root.mainloop()
         <span class="n">radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">radius</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_opacity</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_draw_focus_ring</span><span class="p">(</span><span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_draw_focus_ring</span><span class="p">(</span><span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">element_box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
             <span class="n">box_x</span><span class="p">,</span>
@@ -4890,53 +5075,142 @@ root.mainloop()
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_to_text</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_focus_ring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;在方框外侧画一圈焦点环。&quot;&quot;&quot;</span>
-        <span class="n">pad</span> <span class="o">=</span> <span class="mf">2.5</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_focus_ring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;画焦点带：**贴着整个控件外沿的 3px 两层带**。</span>
+
+<span class="sd">        设计稿里 ``Focus Inner`` / ``Focus Outer`` 的包围盒是 126×38，</span>
+<span class="sd">        而控件本身是 120×32 —— 也就是紧贴控件外沿、外扩 3px，没有间隙。</span>
+<span class="sd">        两层叠出来的可见结果是「外 2px 深色 + 内 1px 浅色」：</span>
+<span class="sd">        先铺 3px 的&quot;内色&quot;，再在上面盖 2px 的&quot;外色&quot;。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">winfo_width</span><span class="p">()</span> <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">width</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">winfo_height</span><span class="p">()</span> <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">height</span>
+        <span class="n">margin</span> <span class="o">=</span> <span class="n">FOCUS_MARGIN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">element_focus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
-            <span class="n">box_x</span> <span class="o">-</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">box_y</span> <span class="o">-</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">+</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">+</span> <span class="n">pad</span><span class="p">,</span>
-            <span class="n">radius</span> <span class="o">+</span> <span class="n">pad</span><span class="p">,</span>
+            <span class="o">-</span><span class="n">margin</span><span class="p">,</span>
+            <span class="o">-</span><span class="n">margin</span><span class="p">,</span>
+            <span class="n">width</span> <span class="o">+</span> <span class="n">margin</span><span class="p">,</span>
+            <span class="n">height</span> <span class="o">+</span> <span class="n">margin</span><span class="p">,</span>
+            <span class="n">FOCUS_RADIUS</span><span class="p">,</span>
+            <span class="n">temppath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath2</span><span class="p">,</span>
+            <span class="n">temppath2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath4</span><span class="p">,</span>
+            <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;transparent&quot;</span><span class="p">,</span>
+            <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">outline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_inner_color</span><span class="p">,</span>
+            <span class="n">outline_opacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_inner_opacity</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">FOCUS_INNER_WIDTH</span> <span class="o">+</span> <span class="n">FOCUS_OUTER_WIDTH</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element_focus_inner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
+            <span class="o">-</span><span class="n">margin</span><span class="p">,</span>
+            <span class="o">-</span><span class="n">margin</span><span class="p">,</span>
+            <span class="n">width</span> <span class="o">+</span> <span class="n">margin</span><span class="p">,</span>
+            <span class="n">height</span> <span class="o">+</span> <span class="n">margin</span><span class="p">,</span>
+            <span class="n">FOCUS_RADIUS</span><span class="p">,</span>
             <span class="n">temppath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath2</span><span class="p">,</span>
             <span class="n">temppath2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath4</span><span class="p">,</span>
             <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;transparent&quot;</span><span class="p">,</span>
             <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
             <span class="n">outline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_color</span><span class="p">,</span>
             <span class="n">outline_opacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">focus_opacity</span><span class="p">,</span>
-            <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">FOCUS_OUTER_WIDTH</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_glyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;画勾号或横杠（不确定态）。</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;画勾号（不确定态画横杠）。</span>
 
-<span class="sd">        图形用画布线段绘制：勾号的三段折线在五个引擎上完全一致，</span>
-<span class="sd">        而它并不是&quot;圆角矩形&quot;，为此新增一种图元并不划算。线宽 2 + 圆头圆角</span>
-<span class="sd">        是 Fluent 勾号的画法。</span>
+<span class="sd">        **勾号用内嵌的 Segoe Fluent Icons 字形 ``\\uE73E``**，不用手画的折线。</span>
+
+<span class="sd">        为什么：WinUI 的 CheckBox 模板里，勾号是一个</span>
+<span class="sd">        ``FontIcon Glyph=&quot;&amp;#xE73E;&quot; FontSize=&quot;12&quot;``——它的轮廓是字体给的，</span>
+<span class="sd">        笔画细、端点略带斜切。自己用 ``create_line`` 拼折线，无论怎么调都会</span>
+<span class="sd">        显得又粗又大、和 Windows 对不上。这个字体本来就随包分发</span>
+<span class="sd">        （``tkflu/designs/fonts/segoe_fluent_icons.ttf``），不用白不用。</span>
+
+<span class="sd">        不确定态则照抄模板里的 ``Rectangle Width=&quot;10&quot; Height=&quot;2&quot;</span>
+<span class="sd">        RadiusX=&quot;1&quot; RadiusY=&quot;1&quot;``：一个 10×2 的圆角矩形。</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">glyph</span>
         <span class="k">if</span> <span class="n">glyph</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">glyph_color</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">element_glyph</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">glyph</span> <span class="o">==</span> <span class="s2">&quot;dash&quot;</span><span class="p">:</span>
-            <span class="n">points</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="p">(</span><span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.28</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.72</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">points</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="p">(</span><span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.26</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.53</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.44</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.70</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.75</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="mf">0.32</span><span class="p">),</span>
-            <span class="p">]</span>
+        <span class="n">center_x</span> <span class="o">=</span> <span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">center_y</span> <span class="o">=</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">/</span> <span class="mf">2.0</span>
 
-        <span class="n">flat</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">point</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">glyph</span> <span class="o">==</span> <span class="s2">&quot;dash&quot;</span><span class="p">:</span>
+            <span class="n">half_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DASH_WIDTH</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">half_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DASH_HEIGHT</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_roundrect</span><span class="p">(</span>
+                <span class="n">center_x</span> <span class="o">-</span> <span class="n">half_w</span><span class="p">,</span>
+                <span class="n">center_y</span> <span class="o">-</span> <span class="n">half_h</span><span class="p">,</span>
+                <span class="n">center_x</span> <span class="o">+</span> <span class="n">half_w</span><span class="p">,</span>
+                <span class="n">center_y</span> <span class="o">+</span> <span class="n">half_h</span><span class="p">,</span>
+                <span class="n">half_h</span><span class="p">,</span>
+                <span class="n">temppath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath2</span><span class="p">,</span>
+                <span class="n">temppath2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temppath4</span><span class="p">,</span>
+                <span class="n">fill</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">glyph_color</span><span class="p">,</span>
+                <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">outline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">outline_opacity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_icon_font</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># 拿不到真正的图标字体：退回手画折线，总比画一个&quot;豆腐块&quot;强</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_draw_glyph_fallback</span><span class="p">(</span><span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">element_glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_text</span><span class="p">(</span>
+            <span class="n">center_x</span><span class="p">,</span>
+            <span class="n">center_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GLYPH_OFFSET_Y</span><span class="p">,</span>
+            <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">GLYPH_CHECK</span><span class="p">,</span>
+            <span class="n">fill</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">glyph_color</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_icon_font</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;勾号用的图标字体（按控件自己的解释器创建，惰性缓存）。</span>
+
+<span class="sd">        :returns: 可用的图标字体对象；**拿不到真正的 Segoe Fluent Icons 时返回</span>
+<span class="sd">            ``None``**（调用方退回手画折线）。字体包精简 / 加载失败的机器上，</span>
+<span class="sd">        Tk 会安静地退回默认字体——那样画出来是个&quot;豆腐块&quot;，比手画的折线还难看。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_glyph_font_ready&quot;</span><span class="p">):</span>
+            <span class="n">font</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">.designs.fonts</span><span class="w"> </span><span class="kn">import</span> <span class="n">SegoeFluentIcons</span>
+
+                <span class="c1"># master=self 不能省：字体是按 Tk 解释器注册的，不传就挂到默认根</span>
+                <span class="c1"># 窗口，同进程的第二个窗口会认不出这个名字（见 designs/fonts）。</span>
+                <span class="n">candidate</span> <span class="o">=</span> <span class="n">SegoeFluentIcons</span><span class="p">(</span>
+                    <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">GLYPH_FONT_SIZE</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="bp">self</span>
+                <span class="p">)</span>
+                <span class="n">family</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">actual</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;family&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">&quot;Segoe Fluent Icons&quot;</span><span class="p">:</span>
+                    <span class="n">font</span> <span class="o">=</span> <span class="n">candidate</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_glyph_font&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">font</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_glyph_font_ready&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_glyph_font&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_glyph_fallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box_x</span><span class="p">,</span> <span class="n">box_y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;手画折线版的勾号（只在图标字体不可用时使用）。&quot;&quot;&quot;</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mf">0.26</span><span class="p">,</span> <span class="mf">0.53</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">0.44</span><span class="p">,</span> <span class="mf">0.70</span><span class="p">),</span>
+            <span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">flat</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+            <span class="n">flat</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">box_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="n">fx</span><span class="p">,</span> <span class="n">box_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BOX</span> <span class="o">*</span> <span class="n">fy</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">element_glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_line</span><span class="p">(</span>
             <span class="o">*</span><span class="n">flat</span><span class="p">,</span>
             <span class="n">fill</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">glyph_color</span><span class="p">,</span>
-            <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">GLYPH_WIDTH</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">capstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span>
             <span class="n">joinstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span>
             <span class="n">smooth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -5032,24 +5306,7 @@ root.mainloop()
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
@@ -5085,7 +5342,24 @@ root.mainloop()
 <span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
-<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="n">args</span><span class="p">,</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -5162,16 +5436,16 @@ root.mainloop()
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;走一遍&quot;用户点击&quot;的完整流程：切换状态 → 重绘 → 触发 ``command``。</span>
 
 <span class="sd">    禁用状态下什么都不做。</span>
@@ -5205,20 +5479,20 @@ root.mainloop()
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">272</span>
-<span class="normal">273</span>
-<span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;算出&quot;点一下之后&quot;的状态。</span>
 
 <span class="sd">    :returns: 单态复选框返回取反结果；三态复选框按</span>
@@ -5256,16 +5530,16 @@ root.mainloop()
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">redraw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">redraw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;直接设置勾选状态（**不触发** ``command``）。</span>
 
 <span class="sd">    :param value: ``True`` / ``False`` / ``None``</span>
@@ -5303,22 +5577,22 @@ root.mainloop()
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;切换主题 / 状态配色。</span>
 
 <span class="sd">    :param mode: ``&quot;light&quot;`` / ``&quot;dark&quot;``；省略表示沿用当前值</span>
@@ -5356,9 +5630,9 @@ root.mainloop()
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;切换勾选状态并重绘（**不触发** ``command``）。&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_checked</span><span class="p">())</span>
 </code></pre></div></td></tr></table></div>
@@ -5405,14 +5679,14 @@ root.mainloop()
 
               <details class="mkdocstrings-source">
                 <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluCheckBoxCanvas</span><span class="p">(</span><span class="n">DCanvas</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluCheckBoxCanvas</span><span class="p">(</span><span class="n">DCanvas</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;复选框的画布。</span>
 
 <span class="sd">    除了换掉绘制后端之外不做别的事——&quot;先试栅格快速路径、失败再回退 SVG&quot;</span>
@@ -5475,13 +5749,13 @@ root.mainloop()
 
               <details class="mkdocstrings-source">
                 <summary>源代码位于： <code>tkflu\checkbox.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluCheckBoxDraw</span><span class="p">(</span><span class="n">DSvgDraw</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FluCheckBoxDraw</span><span class="p">(</span><span class="n">DSvgDraw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;复选框的 SVG 绘制后端。</span>
 
 <span class="sd">    方框直接用 :meth:`tkdeft.windows.draw.DSvgDraw.create_roundrect`</span>

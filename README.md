@@ -166,6 +166,38 @@ set_renderer(0)   # 之前的 0/1 语义不变
 
 复现：`python benchmarks/run_all.py`（在 `tkdeft` 仓库里）
 
+### 0.5.0：一次换肤，所有组件一起变
+
+这一版只做一件事：**把主题切换重写**。老实现是"挨个组件换肤 + 每个组件后面
+跟一句 `update()`"，于是点一次"切换主题"会卡住一两秒、组件从左到右一个一个
+变色、而且**动画根本看不到**。现在整棵树共用一条时间轴。
+
+同一个组件画廊（**59 个控件**参与换肤，本机实测）：
+
+| | 0.4.0 | 0.5.0 |
+| --- | --- | --- |
+| `FluThemeManager.mode()` 阻塞（`skia`） | 2.8 ~ 4.0 s | **≈ 30 ms** |
+| 同上（`tksvg`，默认引擎） | ≈ 3.3 s | **≈ 25 ms** |
+| 各组件"第一次变色"的时刻差 | 150 ms 以上 | **0 ms**（同一帧） |
+| 过渡中间色 | 1 种（瞬间跳变） | 3 ~ 6 种 |
+
+| 问题 | 影响 |
+| --- | --- |
+| 换肤在每个组件后面调 `update()` | 处理全部待办事件：组件越多越久，期间窗口点不动 |
+| 每个组件各排各的过渡帧 | 起点是"轮到它自己"那一刻，画面变成"一个一个变色" |
+| 过渡帧在 `mode()` 内部就被消耗掉 | 用户看到的不是过渡，而是"卡两秒然后瞬间变色" |
+| 顶层就是叶子的配色字段（`FluLabel.text_color`）从不参与插值 | 回写时对"路径长度为 1"的叶子取 `path[1:]` 得到空元组 → `IndexError` 被兜住，这些组件**从不参与过渡** |
+| `pywinstyles.apply_style()` 内部带一句 `window.update()` | 每次换肤都请回来一次"在换肤里跑事件循环"；现在只在模式真的变了时才调 |
+| 收尾时先整树重绘一遍、再逐个 `restore() + _draw()` | 白画一整棵树（`tksvg` 下就是白等几百毫秒） |
+
+新增公开接口：`run_theme_transition` / `ThemeTransition` / `blend_theme_design` /
+`set_theme_easing` / `easing_names` / `set_transition_budget` /
+`collect_themed_widgets` / `active_transition`。
+升级**不需要改任何调用代码**：`mode()` / `toggle()` / `toggle_theme()` 用法不变。
+完整说明见 [更新日志 · 0.5.0](docs/docs/blog/posts/2026-09-24_2.md)
+与 [主题与配色 · 过渡动画](docs/docs/guide/theme.md#transition-animation)。
+量法见 [`benchmarks/`](benchmarks/README.md)（上表的原始结果 JSON 就在那个目录里）。
+
 ### 0.4.0 修掉的组件层缺陷
 
 **补齐的组件**：`FluCheckBox`（含不确定态）、`FluRadioBox`（变量 / 组名分组）、
@@ -213,7 +245,7 @@ set_renderer(0)   # 之前的 0/1 语义不变
 ## 测试
 
 ```bash
-python -m pytest tests/          # 121 passed
+python -m pytest tests/          # 132 passed（另有 3 个用例依赖可写的临时目录，受限环境下会跳过）
 python -m ruff check tkflu tests # All checks passed!
 ```
 
@@ -221,6 +253,7 @@ python -m ruff check tkflu tests # All checks passed!
 | --- | --- |
 | [`tests/test_new_widgets.py`](tests/test_new_widgets.py) | 四个新组件的 API 与交互 |
 | [`tests/test_regressions.py`](tests/test_regressions.py) | 每一条修复各一到两个断言 |
+| [`tests/test_theme_transition.py`](tests/test_theme_transition.py) | 统一主题过渡：同一时间轴、不阻塞、帧数裁剪、接管与取消 |
 | [`tests/test_engines.py`](tests/test_engines.py) | 五个渲染引擎 ×（全部组件构建 + 换肤 + 画廊自检） |
 
 > 几何类断言必须在窗口**已映射**时才有意义（`withdraw` 下 `winfo_width()` 恒为 1）；

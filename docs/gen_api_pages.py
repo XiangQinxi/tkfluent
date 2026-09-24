@@ -63,6 +63,7 @@ GROUPS = {
         ("constants", "constants 常量"),
         ("defs", "defs 便捷函数"),
         ("thememanager", "FluThemeManager 主题管理"),
+        ("theme_transition", "theme_transition 主题过渡时间轴"),
         ("icons", "icons 窗口图标"),
         ("render_manager", "render_manager 重绘调度"),
         ("designs.renderer", "renderer 渲染引擎"),

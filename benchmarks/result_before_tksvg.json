@@ -1,0 +1,16 @@
+{
+  "mode_sync_ms": 418.02,
+  "mode_sync_max_ms": 468.3,
+  "sweep_ms": 433.99,
+  "max_gap_ms": 481.72,
+  "distinct_colors": 1,
+  "sync_spread_ms": null,
+  "last_detail": null,
+  "label": "before",
+  "scene": "compact",
+  "extra_widgets": 0,
+  "steps": 5,
+  "step_time": 20,
+  "renderer": "tksvg",
+  "expected_sweep_ms": 100
+}

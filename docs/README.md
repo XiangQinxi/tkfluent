@@ -10,6 +10,7 @@ docs/
 ├── requirements.txt      文档工具链版本
 ├── gen_api_pages.py      生成 api/*.md（每个模块一个页面）
 ├── gen_figures.py        生成 docs/assets/*.png（插图）
+├── check_links.py        内链自检（相对链接 + 锚点；只读文件，不需要能建站）
 ├── diagrams/*.mmd        流程图源码（mermaid），由 gen_figures.py 渲染
 └── docs/
     ├── index.md          主页
@@ -32,7 +33,7 @@ docs/
 | 导航顺序、新增页面 | `mkdocs.yml` 的 `nav` |
 | 插图样式、配色 | `docs/docs/stylesheets/extra.css` |
 
-## 两个生成脚本
+## 三个脚本
 
 ```bash
 cd docs
@@ -43,7 +44,23 @@ python gen_api_pages.py --write    # 重建 api/*.md
 python gen_figures.py              # 预览插图
 python gen_figures.py --write      # 重建全部插图
 python gen_figures.py --write --only widgets-light   # 只做一张
+
+python check_links.py              # 内链自检：相对链接 + 锚点
 ```
+
+`check_links.py` 只读文件、不建临时目录，所以在
+`mkdocs build --strict` 跑不起来的环境里（见下）也能用来兜底。
+它专治两件事：**改了文件名之后的死链**，以及**中文标题的锚点**——
+`## 过渡动画` 的锚点是 `#_5` 这类，需要被链接的小节必须显式写 id：
+
+```markdown
+## 过渡动画 {: #transition-animation }
+```
+
+!!! warning "attr_list 语法里的冒号不能少"
+    写成 `{ #transition-animation }`（没有冒号）**不会报错**，
+    只会被当成普通文字渲染出来，锚点也就没了。`check_links.py` 会把这种
+    情况报成"锚点不存在"。
 
 ### 插图（`gen_figures.py`）
 
@@ -53,6 +70,7 @@ python gen_figures.py --write --only widgets-light   # 只做一张
 | `button-states.png` | 4 状态 × 3 样式 × 2 主题的真实按钮：`enter` / `button1` / `state` 设成对应状态后 `_draw()` |
 | `gallery-light.png` / `gallery-dark.png` | 跑 `python -m tkflu` 的画廊并截整窗（含系统标题栏） |
 | `theme-compare.png` | 上面两张并排 |
+| `theme-transition.png` | **不是这个脚本生成的**：由 tkfluent 自己的 `benchmarks/theme_transition_shots.py` 抓真画廊换肤途中的 7 帧拼成（同样用 Win32 `PrintWindow` + `winfo_id`）。要重做就照那个脚本改一下窗口尺寸与拼接即可 |
 | `architecture.png` / `widget-anatomy.png` / `theme-flow.png` / `event-flow.png` / `svg-pipeline.png` | `diagrams/*.mmd` 经 mermaid-cli 渲染 |
 
 !!! warning "流程图为什么是预渲染的图片"
@@ -92,6 +110,9 @@ mkdocs build --strict --site-dir /tmp/tkfluent-docs   # 严格构建（写到临
 cd ../..                       # 到 tkdeft 仓库根（两个站的检查都在那里）
 python benchmarks/check_docs.py          # 两个文档站都构建一遍（--strict）
 python benchmarks/check_docs.py tkfluent # 只构建 tkfluent
+
+cd tkfluent/docs
+python check_links.py                    # 内链兜底（不需要能建站）
 ```
 
 `--strict` 会把 WARNING 当 ERROR，能挡下 nav 缺失、正文死链、图片路径写错、
@@ -99,8 +120,12 @@ docstring 解析失败。锚点（`#xxx`）也已在 `mkdocs.yml` 里调成 `war
 **中文标题的锚点会被 slugify 成 `#_1` 这类**，要链接某个小节时请显式写 id：
 
 ```markdown
-## 主题与配色 { #theme }
+## 主题与配色 {: #theme }
 ```
+
+> **注意冒号**：`{: #theme }` 才是 attr_list 语法。写成 `{ #theme }`
+> 不报错、也不生效，只会原样渲染成文字，链接过去是死锚点——
+> `check_links.py` 就是为这个坑写的（本文件以前就写错过）。
 
 ## 更新日志怎么写
 

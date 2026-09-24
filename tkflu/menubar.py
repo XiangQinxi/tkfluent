@@ -151,27 +151,29 @@ class FluMenuBar(Frame, DObject, FluGradient):
         return self.dcget("actions")[id]
 
     def update_children(self):
-        actions = self.dcget("actions")
-        for key in actions:
-            widget = actions[key]
+        """把菜单项按钮重新换一次肤（历史 API）。
+
+        保留名字是为了兼容老代码；内部走统一过渡，因此不再逐个 ``update()``。
+        """
+        for widget in self.dcget("actions").values():
             if hasattr(widget, "theme"):
                 widget.theme(mode=self.mode)
-                if hasattr(widget, "_draw"):
-                    widget._draw()
-                widget.update()
 
     def theme(self, mode="light"):
-        self.theme_myself(mode=mode)
+        """菜单栏（连同菜单项按钮）切到 ``mode``。
 
-        actions = self.dcget("actions")
+        旧实现是"自己换 + 遍历按钮 + 每个按钮 ``update()``"：那会让每个按钮
+        各排各的过渡帧，还会在遍历途中把别人的帧提前执行掉，于是菜单项
+        一个一个变色。现在整棵子树交给统一过渡：一条时间轴，同步插值。
+        """
+        from .theme_transition import applying_themes, run_theme_transition
 
-        for key in actions:
-            widget = actions[key]
-            if hasattr(widget, "theme"):
-                widget.theme(mode=mode)
-                if hasattr(widget, "_draw"):
-                    widget._draw()
-                widget.update()
+        if applying_themes():
+            # 有人（FluThemeManager）正在统一驱动：只改自己的配色，
+            # 菜单项按钮由驱动方负责，别在这里另起一条时间轴。
+            self.theme_myself(mode=mode)
+            return
+        run_theme_transition(self, mode)
 
     def theme_myself(
         self, mode="light", animation_steps: int = None, animation_step_time: int = None

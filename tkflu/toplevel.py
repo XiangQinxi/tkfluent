@@ -47,12 +47,11 @@ class FluToplevel(Toplevel, BWm, DObject):
         super().destroy()
 
     def theme(self, mode: str):
+        """把子窗口（连同里面的控件）切到 ``mode``。
+
+        实现交给 :meth:`tkflu.bwm.BWm.theme`（统一过渡）。
+        旧实现是逐个 ``widget.theme()`` + ``widget.update()``——那正是
+        "一个一个变色、期间窗口点不动"的根源。
+        """
         super().theme(mode)
         self._mode = mode
-        for widget in self.winfo_children():
-            if hasattr(widget, "theme"):
-                widget.theme(mode=mode)
-                if hasattr(widget, "_draw"):
-                    widget._draw()
-                if hasattr(widget, "update_children"):
-                    widget.update_children()

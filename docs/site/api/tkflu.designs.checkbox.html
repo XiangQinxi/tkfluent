@@ -2067,6 +2067,8 @@
       
         
       
+        
+      
     
     
     
@@ -2181,6 +2183,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -2542,6 +2572,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="checkbox">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.checkbox--_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        几何与配色的来源
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3344,6 +3391,8 @@
       
         
       
+        
+      
     
     
     
@@ -3777,6 +3826,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3881,6 +3960,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="checkbox">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tkflu.designs.checkbox--_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        几何与配色的来源
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3928,16 +4024,19 @@
 <p>:func:<code>checkbox</code> 按 <code>(mode, state, checked)</code> 返回一份配色字典，
 共 2 主题 × 4 状态 × 3 勾选态。</p>
 <p>勾选态有三种取值，与 Windows 的 Fluent 复选框一致：</p>
-<p>=================== ==========================================
-<code>checked</code>         外观
-=================== ==========================================
-<code>False</code>           空的方框
-<code>True</code>            强调色填充 + 勾号
-<code>None</code>            强调色填充 + 横杠（不确定态，indeterminate）
-=================== ==========================================</p>
-<p>配色数值来自 Fluent 的 <code>CheckBoxCheckBackground*</code> 系列令牌，
-其中的半透明黑/白已按面板底色（见 :data:<code>tkflu.designs.control.SURFACE</code>）
-合成为实色——<code>create_text</code> 不吃透明度，文字必须是实色。</p>
+<p>====================== ==========================================
+<code>checked</code>            外观
+====================== ==========================================
+<code>False</code>              空的方框
+<code>True</code>               强调色填充 + 勾号
+<code>None</code>               强调色填充 + 横杠（不确定态，indeterminate）
+====================== ==========================================</p>
+<h3 id="tkflu.designs.checkbox--_1">几何与配色的来源</h3>
+<p><code>tests</code> 之外的一切数值都取自 Figma 设计稿（<code>Basic Input.svg</code>）：
+方框 20×20、圆角 4、描边 1px；未选中描边 <code>#000000 @ 0.6063</code>、
+填充 <code>#000000 @ 0.0241</code>；选中填充 <code>rgb(0,95,184)</code>。
+描边与填充成对返回 <code>(颜色, 不透明度)</code>，由绘制引擎按背景合成，
+见 :mod:<code>tkflu.designs.control</code>。</p>
 
 
 
@@ -3980,17 +4079,7 @@
 
             <details class="mkdocstrings-source">
               <summary>源代码位于： <code>tkflu\designs\checkbox.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 48</span>
-<span class="normal"> 49</span>
-<span class="normal"> 50</span>
-<span class="normal"> 51</span>
-<span class="normal"> 52</span>
-<span class="normal"> 53</span>
-<span class="normal"> 54</span>
-<span class="normal"> 55</span>
-<span class="normal"> 56</span>
-<span class="normal"> 57</span>
-<span class="normal"> 58</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 58</span>
 <span class="normal"> 59</span>
 <span class="normal"> 60</span>
 <span class="normal"> 61</span>
@@ -4036,7 +4125,27 @@
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">checkbox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rest&quot;</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">checkbox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rest&quot;</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;取复选框在某个状态下的配色。</span>
 
 <span class="sd">    :param mode: ``&quot;light&quot;`` / ``&quot;dark&quot;``</span>
@@ -4061,24 +4170,28 @@
     <span class="n">glyph</span> <span class="o">=</span> <span class="n">_glyph_for</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">glyph</span> <span class="o">==</span> <span class="n">GLYPH_NONE</span><span class="p">:</span>
-        <span class="c1"># 未勾选：只有描边（禁用态更淡）</span>
-        <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span>
-        <span class="n">border_color</span> <span class="o">=</span> <span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">]</span>
-        <span class="n">border_opacity</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="c1"># 未选中：只有描边 + 一层极淡的底（设计稿里有这层底：fill-opacity 0.0241）</span>
+        <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;fill&quot;</span><span class="p">])</span>
+        <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">neutral</span><span class="p">[</span><span class="s2">&quot;border&quot;</span><span class="p">])</span>
         <span class="n">glyph_color</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># 已勾选 / 不确定：强调色填充，描边不可见</span>
+        <span class="c1"># 已勾选 / 不确定：强调色填充，描边与填充同色（设计稿里就是这样，</span>
+        <span class="c1"># 视觉上等于没有独立描边）</span>
         <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span><span class="p">:</span>
-            <span class="c1"># 禁用态不跟随强调色，避免&quot;看起来还能点&quot;</span>
-            <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">NEUTRAL</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;disabled&quot;</span><span class="p">][</span><span class="s2">&quot;border&quot;</span><span class="p">],</span> <span class="mf">1.0</span>
+            <span class="c1"># 禁用态不跟随强调色，避免&quot;看起来还能点&quot;。</span>
+            <span class="c1"># 数值来自 Lists &amp; Collections.svg 里的禁用勾选框：</span>
+            <span class="c1"># 浅色 = #000000 @ 0.2169、深色 = #FFFFFF @ 0.1581</span>
+            <span class="n">fill</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;#000000&quot;</span><span class="p">,</span> <span class="mf">0.2169</span><span class="p">)</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span> <span class="mf">0.1581</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">back_color</span><span class="p">,</span> <span class="n">back_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">fill</span><span class="p">)</span>
+            <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">paint</span><span class="p">(</span><span class="n">fill</span><span class="p">)</span>
             <span class="n">glyph_color</span> <span class="o">=</span> <span class="n">GLYPH_DISABLED</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">back_color</span> <span class="o">=</span> <span class="n">accent</span>
             <span class="n">back_opacity</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;hover&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;pressed&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}[</span><span class="n">state</span><span class="p">]</span>
+            <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">accent</span><span class="p">,</span> <span class="mf">1.0</span>
             <span class="n">glyph_color</span> <span class="o">=</span> <span class="n">TEXT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;on_accent&quot;</span><span class="p">]</span>
-        <span class="n">border_color</span><span class="p">,</span> <span class="n">border_opacity</span> <span class="o">=</span> <span class="n">accent</span><span class="p">,</span> <span class="mf">0.0</span>
-
-    <span class="n">focus_opacity</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="mf">0.35</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;back_color&quot;</span><span class="p">:</span> <span class="n">back_color</span><span class="p">,</span>
@@ -4090,8 +4203,14 @@
         <span class="s2">&quot;text_color&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
         <span class="s2">&quot;glyph_color&quot;</span><span class="p">:</span> <span class="n">glyph_color</span><span class="p">,</span>
         <span class="s2">&quot;glyph&quot;</span><span class="p">:</span> <span class="n">glyph</span><span class="p">,</span>
-        <span class="s2">&quot;focus_color&quot;</span><span class="p">:</span> <span class="n">FOCUS</span><span class="p">[</span><span class="n">mode</span><span class="p">],</span>
-        <span class="s2">&quot;focus_opacity&quot;</span><span class="p">:</span> <span class="n">focus_opacity</span><span class="p">,</span>
+        <span class="s2">&quot;focus_color&quot;</span><span class="p">:</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;outer&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;focus_opacity&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="mf">0.0</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;outer&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;focus_inner_color&quot;</span><span class="p">:</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;inner&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;focus_inner_opacity&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="mf">0.0</span> <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disabled&quot;</span> <span class="k">else</span> <span class="n">FOCUS_RING</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s2">&quot;inner&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">),</span>
     <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>

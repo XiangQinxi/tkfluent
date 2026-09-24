@@ -11,7 +11,7 @@
 ```python
 import tkflu
 
-print(tkflu.__version__)          # 至少 0.4.0（这一版补齐了复选框/单选框/列表/导航栏）
+print(tkflu.__version__)          # 至少 0.5.0（这一版重写了主题切换）
 ```
 
 ```bash
@@ -107,9 +107,9 @@ def theme(self, mode="light", style=None):
 **原因**：`FluWindow(mode=...)` **只管窗口自己**，不会递归改子组件；
 `FluToplevel` 同理。
 
-**怎么办**：用 `FluThemeManager` 做批量切换。它会遍历窗口的**直接子组件**，
-调用它们的 `theme(mode=...)` 并重绘；更深的层级由各容器自己的
-`update_children()` 向下传播。
+**怎么办**：用 `FluThemeManager` 做批量切换。它会走完窗口的**整棵控件树**
+（自动去重），把每个持有配色的组件都切到目标模式——组件挂多深都不影响，
+嵌套面板、菜单栏里的菜单项、列表 / 导航栏都会被覆盖到。
 
 ```python
 import tkflu
@@ -129,9 +129,10 @@ toggle = tkflu.FluToggleButton(root, text="深色模式")
 toggle.dconfigure(command=lambda: tkflu.toggle_theme(toggle, thememanager))
 ```
 
-!!! tip "组件的挂载位置会影响换肤是否覆盖到"
-    尽量把组件**直接挂在窗口或 `FluFrame` 下**。如果你自己写了中间层容器，
-    记得实现 `update_children()` 并向下传播，否则它下面的组件换不到主题。
+!!! tip "自己写的容器不用做任何事"
+    只要组件是用 `master=` 正常挂进去的，换肤就会走到它。
+    不需要实现 `update_children()` 之类的向下传播
+    （这个约定在 0.5.0 之前存在，现在已由统一过渡接管）。
 
 ### 4. 过渡动画没效果，或者很卡
 
@@ -147,12 +148,12 @@ set_animation_steps(5)        # 过渡帧数
 set_animation_step_time(20)   # 每帧间隔（毫秒）
 ```
 
-**怎么办**：想要动画就显式打开；觉得卡就调小帧数或调大帧间隔，低配机器建议 **3–6 帧**。
+**怎么办**：想要动画就显式打开。
 
 ```python
 from tkflu import set_animation_steps, set_animation_step_time
 
-set_animation_steps(4)        # 低配机器：4 帧足够了
+set_animation_steps(5)
 set_animation_step_time(20)
 
 # 录屏 / 做基准测试时彻底关掉
@@ -164,6 +165,83 @@ set_animation_step_time(0)
     `python -m tkflu`（组件画廊）为了让效果明显，**默认给的是 5 帧 / 20ms**；
     命令行也提供 `--animation-steps` / `--animation-step-time` / `--no-animation`。
     库本身的默认值仍是 0。详见 [运行演示](run-demo.md)。
+
+!!! warning "帧数不等于会画几帧"
+    每一帧都要重绘**整棵树**，所以实际画几帧取决于渲染引擎有多快：
+
+    | 引擎 | 一次全树重绘（约 20 个组件） |
+    | --- | --- |
+    | `tksvg`（默认） | 100 ~ 200 ms |
+    | `pillow` | 50 ~ 100 ms |
+    | `skia` | 10 ~ 30 ms |
+
+    库会先量一次开销，再把帧数降到**预算**（默认 600ms）以内——
+    所以在 `tksvg` 上即使设了 5 帧，实际也可能只画出 2 帧。
+    这是刻意的：宁可少几帧，也要每一帧都完整、同步，更不能把窗口冻住。
+
+    **想要丝滑就换引擎**（比加帧数有效得多）：
+
+    ```python
+    import tkflu
+
+    tkflu.set_renderer("skia")     # 或 "pillow"
+    ```
+
+    想看这次到底画了几帧：
+
+    ```python
+    transition = thememanager.mode("dark")
+    transition.describe()
+    # {'mode': 'dark', 'widgets': 59, 'requested_steps': 5, 'steps': 3,
+    #  'frames_painted': 2, 'paint_cost_ms': 316.83, 'failures': []}
+    ```
+
+### 4'. 换肤"一个一个变色" / 点完按钮卡住
+
+**症状**：点"切换主题"之后，组件从左到右挨个变色；或者界面先卡住一两秒，
+然后"啪"地一下变成新主题，中间什么都看不到。
+
+**原因**：0.4.0 及更早的实现是这么写的：
+
+```python
+for widget in window.winfo_children():
+    widget.theme(mode=mode)   # 每个组件内部各排各的过渡帧
+    widget._draw()
+    widget.update()           # ← 这一句把事件循环跑了起来
+```
+
+`update()` 会处理**全部**待办事件（包括用户输入、重绘、定时器），于是：
+
+1. **阻塞**——组件越多这一趟越久。实测 59 个组件的画廊里单次
+   `mode()` 要 **2.3 ~ 3.3 秒**，这期间窗口完全点不动；
+2. **不同步**——每个组件各排各的 `after`，起点是"轮到它自己"那一刻；
+   而前面组件的 `update()` 又会把后面组件的帧提前执行掉，于是"一个一个变色"；
+3. **动画被吃掉**——真正跑完的帧全在那次 `mode()` 里消耗掉了，
+   用户看到的不是过渡，而是"卡两秒然后瞬间变色"。
+
+**现在**（0.5.0 起）：`FluThemeManager.mode()` 把整棵树交给一条统一时间轴
+（详见 [主题与配色 · 过渡动画](theme.md#transition-animation)）。同样的 59 个组件：
+
+| | 0.4.0 | 0.5.0 |
+| --- | --- | --- |
+| `mode()` 阻塞（`skia`） | 2787 ms | **12 ms** |
+| `mode()` 阻塞（`tksvg`） | 3282 ms | **30 ms** |
+| 各组件"第一次变色"的时刻差 | 150 ms 以上 | **0 ms**（同一帧） |
+| 过渡中间色 | 0 帧（瞬间跳变） | 2 ~ 4 帧 |
+
+**要不要改自己的代码**：不需要。`thememanager.mode()` / `toggle()` /
+`tkflu.toggle_theme()` 的用法一个都没变。
+
+!!! note "`mode()` 不再在返回前画完"
+    它只把目标配色静默写进各组件的 `attributes`，重绘交给事件循环。
+    所以**紧接着 `mode()` 读 `attributes` 已经是新主题的值，但画面还没变**；
+    要等约 `steps × step_time` 才会全部落定。测试里同步等结果的话：
+
+    ```python
+    transition = thememanager.mode("dark")
+    while not transition.finished:
+        root.update()
+    ```
 
 ---
 
@@ -626,10 +704,60 @@ python -m tkflu --custom-titlebar 1        # 实验特性，仅 Windows
 
 ---
 
+## 十、0.5.0 改了什么（主题切换重写）
+
+0.5.0 只做了一件事：**把主题切换重写**。完整来龙去脉见
+[更新日志](../blog/posts/2026-09-24_2.md)，这里只列"你需要知道的行为变化"。
+
+| 事项 | 0.4.0 | 0.5.0 |
+| --- | --- | --- |
+| `mode()` 的阻塞时长（59 个控件的画廊，`skia`） | 2.8 ~ 4.0 s | **≈ 30 ms** |
+| 同上（`tksvg`，默认引擎） | ≈ 3.3 s | **≈ 25 ms** |
+| 各组件"第一次变色"的时刻差 | 150 ms 以上 | **0 ms**（同一帧） |
+| 过渡中间色 | 1 种（瞬间跳变） | 3 ~ 6 种 |
+| 换肤覆盖范围 | 窗口的直接子组件 + 各容器自己向下传播 | **整棵控件树** |
+| `FluWindow.theme(mode)` | 只管窗口自己 | 连带窗口里的全部组件 |
+| `mode()` 返回时画面 | 已经是新主题 | 还是旧主题（过渡随后开始） |
+
+**升级要不要改代码**：不用。`FluThemeManager.mode()` / `toggle()` /
+`tkflu.toggle_theme()` 的用法一个都没变。
+
+**唯一要留意的**：如果你在测试里紧跟着 `mode()` 就去断言"画面/属性是最终态"，
+现在要等过渡跑完。同步等的话：
+
+```python
+transition = thememanager.mode("dark")
+while not transition.finished:
+    root.update()
+assert button.attributes.rest.back_color == "#202020"
+```
+
+只想立刻落定、不要动画，就按次关掉：
+
+```python
+thememanager.mode("dark", animation_steps=0)
+```
+
+### 附：老实现坏在哪（想理解细节可以看）
+
+```python
+for widget in window.winfo_children():
+    widget.theme(mode=mode)   # 每个组件内部各排各的过渡帧
+    widget._draw()
+    widget.update()           # ← 这一句把事件循环跑了起来
+```
+
+`update()` 处理**全部**待办事件（含用户输入），于是：组件越多这一趟越久；
+每个组件的帧起点是"轮到它自己"那一刻（而前面组件的 `update()` 又会把后面
+组件已经到点的帧就地执行掉），所以"一个一个变色"；真正跑完的帧又都在那次
+`mode()` 里消耗掉了，所以动画根本看不到——用户看到的是"卡两秒然后瞬间变色"。
+
+---
+
 ## 还找不到原因？
 
 1. 先确认版本：`python -c "import tkflu, tkdeft; print(tkflu.__version__, tkdeft.__version__)"`
-   应为 `0.4.0 0.3.0`；
+   应为 `0.5.0 0.3.0`；
 2. 跑一遍全引擎自检（见第 13 条）；
 3. 用 [运行演示](run-demo.md) 里的画廊复现看看——排除是不是自己代码里的用法问题；
 4. 还是不行，就带着**最小复现代码 + 报错栈 + `--list-engines` 输出**去提 issue。

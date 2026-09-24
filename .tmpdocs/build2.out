@@ -1,0 +1,85 @@
+
+ ��  \u26a0  Warning from the Material for MkDocs team
+ ��
+ ��  MkDocs 2.0, the underlying framework of Material for MkDocs,
+ ��  will introduce backward-incompatible changes, including:
+ ��
+ ��  �� All plugins will stop working �C the plugin system has been removed
+ ��  �� All theme overrides will break �C the theming system has been rewritten
+ ��  �� No migration path exists �C existing projects cannot be upgraded
+ ��  �� Closed contribution model �C community members can't report bugs
+ ��  �� Currently unlicensed �C unsuitable for production use
+ ��
+ ��  Our full analysis:
+ ��
+ ��  https://squidfunk.github.io/mkdocs-material/blog/2026/02/18/mkdocs-2.0/
+
+INFO    -  Cleaning site directory
+INFO    -  Building documentation to directory: C:\Users\Xiang\PycharmProjects\tkfluent\.tmpdocs\site
+Traceback (most recent call last):
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\__main__.py", line 288, in build_command
+    build.build(cfg, dirty=not clean)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\commands\build.py", line 292, in build
+    files = config.plugins.on_files(files, config=config)
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\plugins.py", line 593, in on_files
+    return self.run_event('files', files, config=config)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\plugins.py", line 566, in run_event
+    result = method(item, **kwargs)
+  File "C:\Python\Py313\Lib\site-packages\material\plugins\blog\plugin.py", line 146, in on_files
+    self.blog.views.extend(views)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\material\plugins\blog\plugin.py", line 563, in _generate_archive
+    self._save_to_file(file.abs_src_path, f"# {name}")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\material\plugins\blog\plugin.py", line 1033, in _save_to_file
+    os.makedirs(os.path.dirname(path), exist_ok = True)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 218, in makedirs
+  File "<frozen os>", line 228, in makedirs
+PermissionError: [WinError 5] �ܾ����ʡ�: 'C:\\Users\\Xiang\\PycharmProjects\\tkfluent\\.tmpdocs\\tmpvtlfyqrc\\blog'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\__main__.py", line 370, in <module>
+    cli()
+    ~~~^^
+  File "C:\Python\Py313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "C:\Python\Py313\Lib\site-packages\click\core.py", line 1830, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\__main__.py", line 290, in build_command
+    cfg.plugins.on_shutdown()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\plugins.py", line 579, in on_shutdown
+    return self.run_event('shutdown')
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\site-packages\mkdocs\plugins.py", line 568, in run_event
+    result = method(**kwargs)
+  File "C:\Python\Py313\Lib\site-packages\material\plugins\blog\plugin.py", line 389, in on_shutdown
+    rmtree(self.temp_dir)
+    ~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Python\Py313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Python\Py313\Lib\shutil.py", line 613, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 372, in walk
+  File "C:\Python\Py313\Lib\shutil.py", line 611, in onerror
+    onexc(os.scandir, err.filename, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 369, in walk
+PermissionError: [WinError 5] �ܾ����ʡ�: 'C:\\Users\\Xiang\\PycharmProjects\\tkfluent\\.tmpdocs\\tmpvtlfyqrc'

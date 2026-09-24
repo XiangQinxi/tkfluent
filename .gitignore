@@ -6,3 +6,7 @@ __pycache__/
 # 工具缓存
 .pytest_cache/
 .ruff_cache/
+
+# 主题过渡连拍验证的产物：benchmarks/theme_transition_shots.py 每次运行都会重写，
+# 属于"看一眼就好"的临时证据，不进仓库。
+benchmarks/shots/

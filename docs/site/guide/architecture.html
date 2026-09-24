@@ -2191,6 +2191,8 @@
       
         
       
+        
+      
     
     
     
@@ -2305,6 +2307,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3397,6 +3427,8 @@
       
         
       
+        
+      
     
     
     
@@ -3830,6 +3862,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../blog/category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4161,12 +4223,22 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">element_border</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_round_rectangle</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>   <span class="c1"># 再画新的</span>
 </code></pre></div>
 <h2 id="_5">五、换主题的调用链</h2>
-<p><code>FluThemeManager</code> 就是"遍历一遍、让每个组件按新配色重画"：</p>
+<p><code>FluThemeManager.mode()</code> 把整棵树交给
+<a href="../api/tkflu.theme_transition.html"><code>theme_transition</code></a>，分三步：</p>
 <figure>
 <p><img alt="换主题的调用链" src="../assets/theme-flow.png" />
   </p>
-<figcaption>一键换肤：窗口 → 直接子组件；嵌套容器再由各自的 update_children() 向下传播</figcaption>
+<figcaption>一键换肤：静默落目标值 → 逐叶子算插值 → 一条时间轴画完整棵树</figcaption>
 </figure>
+<ol>
+<li><strong>静默落目标值</strong>——在"组件动画让路 + <code>_draw()</code> 被屏蔽"的上下文里，
+   依次调用各组件<strong>原有</strong>的 <code>theme(mode=...)</code>。配色被写进 <code>attributes</code>，
+   但屏幕上还是旧样子（那正好是过渡的第 0 帧）。</li>
+<li><strong>算插值</strong>——对每个组件做一次 <code>attributes</code> 快照，与目标值逐叶子比对，
+   挑出能插值的叶子（<code>#rrggbb</code> 颜色、<code>*_opacity</code> 数值）。</li>
+<li><strong>一条时间轴</strong>——整棵树共用一组帧；每一帧把同一个进度 <code>t</code> 写给所有组件，
+   再统一重绘。所以颜色是"一起变"的，而不是一个一个变。</li>
+</ol>
 <p>配色本身不在组件里，而在 <code>tkflu.designs</code> 包里——每个模块返回一份普通 <code>dict</code>：</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu.designs.button</span><span class="w"> </span><span class="kn">import</span> <span class="n">button</span>
 

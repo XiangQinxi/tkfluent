@@ -32,6 +32,16 @@ from .scrollbar import FluScrollBar
 from .slider import FluSlider
 from .text import FluText
 from .thememanager import FluThemeManager
+from .theme_transition import (
+    ThemeTransition,
+    active_transition,
+    blend_theme_design,
+    collect_themed_widgets,
+    get_transition_budget,
+    interpolatable,
+    run_theme_transition,
+    set_transition_budget,
+)
 from .togglebutton import FluToggleButton
 from .tooltip import FluToolTip, FluToolTip2, FluToolTipBase
 from .toplevel import FluToplevel
@@ -53,7 +63,7 @@ FluRadioButton = FluRadioBox
 FluNavigationView = FluLiteNav
 
 #: 库版本号。需要与 pyproject.toml 里的 version 保持一致。
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 #: 本库需要的 tkdeft 最低版本（绘制引擎层从 0.2.0 起提供）。
 #: 运行时校验见 :mod:`tkflu.designs.renderer`。

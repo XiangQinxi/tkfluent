@@ -1,0 +1,16 @@
+{
+  "mode_sync_ms": 4001.91,
+  "mode_sync_max_ms": 7171.42,
+  "sweep_ms": 4010.8,
+  "max_gap_ms": 7181.82,
+  "distinct_colors": 1,
+  "sync_spread_ms": null,
+  "last_detail": null,
+  "label": "before",
+  "scene": "gallery",
+  "extra_widgets": 0,
+  "steps": 5,
+  "step_time": 20,
+  "renderer": "skia",
+  "expected_sweep_ms": 100
+}

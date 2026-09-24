@@ -2062,6 +2062,8 @@
       
         
       
+        
+      
     
     
     
@@ -2176,6 +2178,34 @@
     
   
     tkflu.thememanager · FluThemeManager 主题管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/tkflu.theme_transition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tkflu.theme_transition · theme_transition 主题过渡时间轴
   
 
     
@@ -3273,6 +3303,8 @@
       
         
       
+        
+      
     
     
     
@@ -3706,6 +3738,36 @@
 
               
             
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="category/050.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4093,6 +4155,217 @@ python<span class="w"> </span>-m<span class="w"> </span>ruff<span class="w"> </s
 <li>组件内部不再有"每次重绘都排一个 <code>after</code> 且从不取消"的写法；
   自己扩展组件时，请照着 <code>tkflu._after.TracedAfter</code> 来。</li>
 </ul>
+    
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2026-09-24 00:00:00+00:00">2026年9月24日</time></li>
+        
+          <li class="md-meta__item">
+            分类于
+            
+              <a href="category/050.html" class="md-meta__link">0.5.0</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              需要 3 分钟阅读时间
+            
+          </li>
+        
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="050"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html">版本 0.5.0：一次换肤，所有组件一起变</a></h2>
+<p>这一版只做一件事：<strong>把主题切换重写</strong>。</p>
+<p>老实现是"挨个组件换肤 + 每个组件后面跟一句 <code>update()</code>"，于是点一次
+"切换主题"会卡住一两秒、组件从左到右一个一个变色、而且<strong>动画根本看不到</strong>。
+现在整棵树共用一条时间轴，颜色是一起变的，而且 <code>mode()</code> 几乎立刻返回。</p>
+<p>同一个组件画廊（59 个控件参与换肤，本机实测）：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0.4.0</th>
+<th>0.5.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode()</code> 阻塞（<code>skia</code>）</td>
+<td>2.8 ~ 4.0 s</td>
+<td><strong>≈ 30 ms</strong></td>
+</tr>
+<tr>
+<td><code>mode()</code> 阻塞（<code>tksvg</code>，默认引擎）</td>
+<td>≈ 3.3 s</td>
+<td><strong>≈ 25 ms</strong></td>
+</tr>
+<tr>
+<td>各组件"第一次变色"的时刻差</td>
+<td>150 ms 以上</td>
+<td><strong>0 ms</strong>（同一帧）</td>
+</tr>
+<tr>
+<td>过渡中间色</td>
+<td>1 种（瞬间跳变）</td>
+<td>3 ~ 6 种</td>
+</tr>
+</tbody>
+</table>
+<p><strong>升级不需要改任何调用代码</strong>：<code>FluThemeManager.mode()</code> / <code>toggle()</code> /
+<code>tkflu.toggle_theme()</code> 的用法一个都没变。</p>
+<p>真画廊上连拍的几帧（按窗口句柄抓的<strong>屏幕像素</strong>，不是属性）：</p>
+<figure>
+<p><img alt="主题过渡的实测帧" src="../assets/theme-transition.png" />
+  </p>
+<figcaption>
+    同一个组件画廊（59 个控件）从浅色切到深色。+300ms / +460ms 两帧里整屏
+    处在**同一个中间色**上——这就是"同步"：不存在"这一半变了、那一半还没变"。
+    每张图下方标注的是离切换时刻的毫秒数。
+  </figcaption>
+</figure>
+<p>（生成方式：<code>python benchmarks/theme_transition_shots.py</code> 的同类脚本，
+用 Win32 <code>PrintWindow</code> 按窗口句柄抓客户区，见 <code>benchmarks/README.md</code>。）</p>
+<h3 id="_1"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_1">老实现坏在哪</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">window</span><span class="o">.</span><span class="n">winfo_children</span><span class="p">():</span>
+    <span class="n">widget</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>   <span class="c1"># 每个组件内部各排各的过渡帧</span>
+    <span class="n">widget</span><span class="o">.</span><span class="n">_draw</span><span class="p">()</span>
+    <span class="n">widget</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>           <span class="c1"># ← 这一句把事件循环跑了起来</span>
+</code></pre></div>
+<p><code>update()</code> 会处理<strong>全部</strong>待办事件（含用户输入、重绘、定时器）。三个毛病
+互相放大：</p>
+<ol>
+<li><strong>阻塞</strong>。组件越多这一趟越久，而且这段时间里窗口完全点不动。</li>
+<li><strong>不同步</strong>。每个组件的过渡各排各的 <code>after</code>，起点是"轮到它自己"那一刻；
+   而前面组件的 <code>update()</code> 又把后面组件已经到点的帧就地执行掉，
+   于是画面变成"一个一个地变色"。</li>
+<li><strong>动画被吃掉</strong>。真正跑完的帧全在那次 <code>mode()</code> 里消耗掉了，
+   用户看到的不是过渡，而是"卡两秒然后瞬间变色"。</li>
+</ol>
+<p>顺带一提，<code>FluFrame</code> / <code>FluMenuBar</code> / <code>FluToplevel</code> 里的递归换肤也各带一遍
+<code>update()</code>，所以实际跑的事件循环次数比组件数还多。</p>
+<h3 id="_2"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_2">现在的做法</a></h3>
+<p>新增 <a href="../api/tkflu.theme_transition.html"><code>tkflu.theme_transition</code></a>，
+一次换肤分三步：</p>
+<ol>
+<li><strong>静默算目标</strong>。在"组件动画全部让路"的上下文里，依次调用各组件<strong>原有</strong>的
+   <code>theme()</code>，把目标配色写进 <code>attributes</code>。这一步的 <code>_draw()</code> 被临时屏蔽，
+   所以屏幕还停在换肤前的样子——那正好就是过渡的第 0 帧。</li>
+<li><strong>统一插值</strong>。对每个组件做一次 <code>attributes</code> 快照，与目标值逐叶子比对，
+   挑出<strong>能插值</strong>的叶子：<code>#rrggbb</code> 颜色按 RGB 插值，<code>*_opacity</code> 按数值插值。
+   线宽、圆角、字体这类字段<strong>直接落到目标值</strong>——让边框"长出来"比瞬间变过去更怪。</li>
+<li><strong>一条时间轴画所有组件</strong>。整棵树共用一组帧，每一帧把同一个进度 <code>t</code>
+   写给所有组件再统一重绘。任意时刻屏幕上所有控件都处于同一个 <code>t</code>，
+   不会出现"这一半变了、那一半还没变"的撕裂。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">tkflu</span>
+
+<span class="n">tkflu</span><span class="o">.</span><span class="n">run_theme_transition</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">)</span>          <span class="c1"># 整棵子树一起过渡</span>
+<span class="n">tkflu</span><span class="o">.</span><span class="n">run_theme_transition</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 只要结果，不要动画</span>
+</code></pre></div>
+<h4 id="_3"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_3">顺带修掉的两个真缺陷</a></h4>
+<ul>
+<li><strong>顶层就是叶子的配色字段从来没被插值过。</strong>
+  <code>FluLabel</code> 只有 <code>attributes.text_color</code>、<code>FluBadge</code> 只有 <code>back_color</code>——
+  回写时对"路径长度为 1"的叶子取 <code>path[1:]</code> 得到空元组，
+  插值时直接 <code>IndexError</code>，异常被兜住，于是这些组件<strong>从不参与过渡</strong>。</li>
+<li><strong><code>pywinstyles</code> 内部会 <code>window.update()</code>。</strong>
+  <code>BWm.theme_myself()</code> 每次换肤都调 <code>pywinstyles.apply_style()</code>，
+  而那个第三方函数里带了一句 <code>window.update()</code>——一个不在我们控制里的
+  "跑一遍事件循环"。现在只在<strong>模式真的变了</strong>的时候才调它。</li>
+</ul>
+<h3 id="_4"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_4">新增</a></h3>
+<h4 id="_5"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_5">缓动曲线</a></h4>
+<p>默认从匀速换成了 <code>ease_in_out</code>（两头慢、中间快），观感自然得多：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tkflu</span><span class="w"> </span><span class="kn">import</span> <span class="n">easing_names</span><span class="p">,</span> <span class="n">set_theme_easing</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">easing_names</span><span class="p">())</span>
+<span class="c1"># [&#39;ease_in&#39;, &#39;ease_in_out&#39;, &#39;ease_out&#39;, &#39;ease_out_back&#39;, &#39;linear&#39;]</span>
+
+<span class="n">set_theme_easing</span><span class="p">(</span><span class="s2">&quot;ease_out&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="_6"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_6">自适应帧数：宁可少几帧，也不冻窗口</a></h4>
+<p>过渡的每一帧都要<strong>重绘整棵树</strong>，所以"能画几帧"完全取决于渲染引擎：
+默认的 <code>tksvg</code> 下一屏 20 来个组件重绘一次要 100~200ms，<code>skia</code> 只要十几毫秒。
+硬按 <code>steps × step_time</code> 的时间表去排，时间轴上大部分帧会被直接跳过，
+用户看到的其实是"闪一下"。</p>
+<p>所以现在先量一次重绘开销，再把<strong>帧数降到预算以内</strong>（默认 600ms），
+第一帧实测之后还会再收紧一次：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">tkflu</span>
+
+<span class="n">transition</span> <span class="o">=</span> <span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="c1"># {&#39;mode&#39;: &#39;dark&#39;, &#39;widgets&#39;: 59, &#39;requested_steps&#39;: 5, &#39;steps&#39;: 3,</span>
+<span class="c1">#  &#39;frames_painted&#39;: 2, &#39;paint_cost_ms&#39;: 316.83, &#39;failures&#39;: []}</span>
+
+<span class="n">tkflu</span><span class="o">.</span><span class="n">set_transition_budget</span><span class="p">(</span><span class="mi">900</span><span class="p">)</span>   <span class="c1"># 想要更长更顺的过渡</span>
+</code></pre></div>
+<p><strong>想要丝滑就换引擎</strong>，比加帧数有效得多：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tkflu</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="s2">&quot;skia&quot;</span><span class="p">)</span>     <span class="c1"># 或 &quot;pillow&quot;（零额外依赖）</span>
+</code></pre></div>
+<h4 id="_7"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_7">过渡对象</a></h4>
+<div class="highlight"><pre><span></span><code><span class="n">transition</span> <span class="o">=</span> <span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+
+<span class="n">transition</span><span class="o">.</span><span class="n">finished</span>          <span class="c1"># 画完了吗</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">frames_painted</span>    <span class="c1"># 实际画了几帧</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">failures</span>          <span class="c1"># 这次换肤里抛异常的组件（不影响其它组件）</span>
+<span class="n">transition</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>          <span class="c1"># 中断；restore=False 可保留中间色接着切</span>
+</code></pre></div>
+<p>连点"切换主题"不会叠加帧队列：新的过渡会<strong>就地接管</strong>旧的（以当前中间色为
+新起点），画面是连续的。</p>
+<h4 id="_8"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_8">按次覆盖动画参数</a></h4>
+<div class="highlight"><pre><span></span><code><span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">animation_steps</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">animation_step_time</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                  <span class="n">easing</span><span class="o">=</span><span class="s2">&quot;ease_out&quot;</span><span class="p">)</span>
+<span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="n">animation_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>     <span class="c1"># 这一次不要动画</span>
+</code></pre></div>
+<h3 id="_9"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_9">改了什么行为</a></h3>
+<ul>
+<li><code>FluThemeManager.mode()</code> <strong>不再在返回前画完</strong>。它只把目标配色静默写进
+  <code>attributes</code>，重绘交给事件循环；所以 <code>mode()</code> 之后立刻读 <code>attributes</code>
+  已经是新主题的值，但画面还没变。要同步等结果：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">transition</span> <span class="o">=</span> <span class="n">thememanager</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span><span class="p">)</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">transition</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</code></pre></div>
+<ul>
+<li>
+<p>换肤的覆盖范围从"窗口的直接子组件 + 各容器自己向下传播"变成
+  <strong>整棵控件树</strong>。以前需要自己写 <code>update_children()</code> 的中间层容器，
+  现在什么都不用做。</p>
+</li>
+<li>
+<p><code>FluWindow.theme(mode)</code> / <code>FluToplevel.theme(mode)</code> 现在会<strong>连带</strong>换掉
+  整个窗口里的组件（以前只管窗口自己）。想让一个子树单独换肤时，
+  直接对它调 <code>run_theme_transition(subtree, mode)</code> 即可。</p>
+</li>
+</ul>
+<h3 id="_10"><a class="toclink" href="2026/09/24/%E7%89%88%E6%9C%AC-050%E4%B8%80%E6%AC%A1%E6%8D%A2%E8%82%A4%E6%89%80%E6%9C%89%E7%BB%84%E4%BB%B6%E4%B8%80%E8%B5%B7%E5%8F%98.html#_10">验证</a></h3>
+<ul>
+<li>新增 <code>tests/test_theme_transition.py</code>（18 个用例）：同一帧里所有组件的进度
+  必须相同、换肤不跑事件循环、<code>mode()</code> 返回时一帧都没画、帧数按预算裁剪、
+  第二次切换接管第一次、中断/取消、坏组件不拖垮整趟换肤、缓动端点与单调性。</li>
+<li>新增 <code>benchmarks/theme_switch_bench.py</code>：量 <code>mode()</code> 阻塞时长、总时长、
+  最长无响应间隔、<strong>过渡中间色帧数</strong>与<strong>各组件变色时刻的同步偏差</strong>。
+  上表的原始结果 JSON 与该脚本一起提交在 <code>benchmarks/</code> 里。</li>
+<li>新增 <code>benchmarks/theme_transition_shots.py</code>：用 Win32 <code>PrintWindow</code>
+  按窗口句柄连拍，用<strong>屏幕上的像素</strong>证明那段过渡真的发生了
+  （面板颜色 <code>255 → 251 → 251 → 224 → 149 → 74 → 47</code>，单调变暗）。</li>
+</ul>
+<p><code>ruff check tkflu tests benchmarks</code> 清零，<code>python -m tkflu --check</code> 退出码 0，
+<code>pytest tests</code> 全绿。</p>
     
     
   </div>
@@ -4704,46 +4977,6 @@ or
 
 <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
 </code></pre></div>
-    
-    
-  </div>
-</article>
-      
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2025-06-22 00:00:00+00:00">2025年6月22日</time></li>
-        
-          <li class="md-meta__item">
-            分类于
-            
-              <a href="category/010.html" class="md-meta__link">0.1.0</a></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              需要 1 分钟阅读时间
-            
-          </li>
-        
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="010"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC010%E6%9B%B4%E6%96%B0.html">版本0.1.0更新！</a></h2>
-<h3 id="_1"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC010%E6%9B%B4%E6%96%B0.html#_1">新增</a></h3>
-<h4 id="_2"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC010%E6%9B%B4%E6%96%B0.html#_2"><em>部分组件</em>实现切换主题时渐变</a></h4>
-<p><img alt="渐变效果" src="Gradient.gif" /></p>
-<p>已经实现了<code>FluMenuBar</code>、<code>FluWindow</code>、<code>FluToggleButton</code>的渐变效果，但从实际效果上来看，还有不足。间接导致部分组件背景在切换后未转变回来。</p>
-<p>实现渐变效果任重而道远。</p>
-<h3 id="_3"><a class="toclink" href="2025/06/22/%E7%89%88%E6%9C%AC010%E6%9B%B4%E6%96%B0.html#_3">修复</a></h3>
-<p>再之前我自己测试的时候，在某些组件中留下了自己的<code>print()</code>测试痕迹，导致使用时，会打印出无用的数据。</p>
     
     
   </div>

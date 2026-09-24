@@ -133,22 +133,27 @@ class FluFrameCanvas(DCanvas):
     draw = FluFrameDraw
     frame = None
 
+    #: 这张画布**不持有主题状态**——配色属于它内嵌的 :class:`FluFrame`。
+    #: ``FluThemeManager`` 会走整棵控件树，那个 ``FluFrame`` 自己就会被收到；
+    #: 若再让画布转发一次，同一套配色会被算两遍（旧实现就是这样，还附带
+    #: 每个子控件一次 ``update()``）。
+    _theme_proxy = True
+
     def theme(self, mode="light"):
-        self.theme_myself(mode=mode)
+        """把面板（连同它的子控件）切到 ``mode``。
 
-        for widget in self.frame.winfo_children():
-            if hasattr(widget, "theme"):
-                widget.theme(mode=mode)
-                if hasattr(widget, "_draw"):
-                    widget._draw()
-                widget.update()
+        旧实现是"自己写 + 遍历子控件 + 每个子控件 ``update()``"，那是
+        "一个一个变色"的根源。现在整棵子树交给统一过渡：一条时间轴，
+        所有组件同步插值（见 :mod:`tkflu.theme_transition`）。
+        """
+        from .theme_transition import applying_themes, run_theme_transition
 
-    def theme_myself(self, mode="light"):
-        self.frame.theme(mode)
-        if hasattr(self.frame, "_draw"):
-            self.frame._draw()
-        self.frame.update()
-        self.update()
+        if applying_themes():
+            # 有人（FluThemeManager）正在统一驱动：只改自己的配色，
+            # 子控件由驱动方负责，别在这里另起一条时间轴。
+            self.frame.theme(mode)
+            return
+        run_theme_transition(self, mode)
 
 
 from tkinter import Frame
