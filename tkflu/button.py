@@ -45,12 +45,13 @@ class FluButtonCanvas(DCanvas):
 from tkinter import Event
 from tkinter.font import Font
 
+from ._after import TracedAfter
 from .constants import BUTTONSTYLE, MODE, STATE
 from .designs.gradient import FluGradient
 from .tooltip import FluToolTipBase
 
 
-class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
+class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient, TracedAfter):
     def __init__(
         self,
         *args,
@@ -95,15 +96,15 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
         )
 
         self.bind("<<Clicked>>", lambda event=None: self.focus_set(), add="+")
-        self.bind("<<Clicked>>", lambda event=None: self.attributes.command(), add="+")
+        self.bind("<<Clicked>>", lambda event=None: self.invoke(), add="+")
 
         self.bind(
-            "<Return>", lambda event=None: self.attributes.command(), add="+"
+            "<Return>", lambda event=None: self.invoke(), add="+"
         )  # 可以使用回车键模拟点击
 
         from .defs import set_default_font
 
-        set_default_font(font, self.attributes)
+        set_default_font(font, self.attributes, master=self)
 
     def _init(self, mode: MODE, style: BUTTONSTYLE):
         """
@@ -118,6 +119,11 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
 
         self.enter = False
         self.button1 = False
+        #: 先落一份"出厂"的 mode / style。`theme()` 只在参数**为真**时才覆盖它们，
+        #: 所以不预置的话，`FluButton(mode=None)` 会在 `theme()` 里撞
+        #: `AttributeError: 'FluButton' object has no attribute 'mode'`。
+        self.mode = mode or "light"
+        self.style = style or "standard"
 
         self.attributes = EasyDict(
             {
@@ -235,10 +241,31 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
         # 双倍开销）。真正的重绘请求应当由事件处理函数发出。
 
     def theme(self, mode: MODE = None, style: BUTTONSTYLE = None):
+        """切换主题 / 样式。
+
+        :param mode: ``"light"`` / ``"dark"``；省略表示沿用当前值
+        :param style: ``"standard"`` / ``"accent"`` / ``"menu"``；省略同上
+
+        .. note::
+           无法识别的取值会**退回默认值**（``light`` / ``standard``）而不是
+           存下来。旧实现直接查表再无条件调用结果，于是：
+
+           * ``theme(style="bogus")`` → ``TypeError: 'NoneType' object is not callable``，
+             而且 ``self.style`` 已经变成 ``"bogus"``，**这个按钮从此再也切不了主题**；
+           * 只要画廊里有一个这样的按钮，``FluThemeManager.mode()``
+             整趟遍历都会崩在那里，后面的兄弟组件全都轮不到换肤。
+
+           同样地，``mode`` / ``style`` 在 :meth:`_init` 里就有了初值，
+           ``FluButton(mode=None)`` 不再抛 ``AttributeError``。
+        """
         if mode:
-            self.mode = mode
+            self.mode = mode if str(mode).lower() in ("light", "dark") else "light"
         if style:
-            self.style = style
+            self.style = (
+                style
+                if str(style).lower() in ("standard", "accent", "menu")
+                else "standard"
+            )
         theme_handlers = {
             ("light", "accent"): self._light_accent,
             ("light", "menu"): self._light_menu,
@@ -247,22 +274,12 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
             ("dark", "menu"): self._dark_menu,
             ("dark", "standard"): self._dark,
         }
-        handler = theme_handlers.get((self.mode.lower(), self.style.lower()))
+        handler = theme_handlers.get(
+            (str(self.mode).lower(), str(self.style).lower())
+        )
+        if handler is None:  # 理论上到不了这里，留一道保险
+            handler = self._light
         handler()
-        """if self.mode.lower() == "dark":
-            if self.style.lower() == "accent":
-                self._dark_accent()
-            elif self.style.lower() == "menu":
-                self._dark_menu()
-            else:
-                self._dark()
-        else:
-            if self.style.lower() == "accent":
-                self._light_accent()
-            elif self.style.lower() == "menu":
-                self._light_menu()
-            else:
-                self._light()"""
 
     def _theme(
         self,
@@ -284,6 +301,9 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
         p = button(mode, style, "pressed")
         d = button(mode, style, "disabled")
         if not animation_steps == 0 or not animation_step_time == 0:
+            # 撤销上一轮还没跑完的动画帧。用户来回悬停时，上一轮的帧会迟到，
+            # 把这一轮刚画好的状态覆盖回去，看起来"悬停了却没反应"。
+            self.cancel_traced()
             if self.dcget("state") == "normal":
                 if self.enter:
                     if self.button1:
@@ -357,15 +377,27 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
                                 "border_color2_opacity": str(
                                     border_color2_opacitys[ii]
                                 ),
-                                "border_width": 1,
+                                # 线宽与圆角要跟**目标状态**一致，不能写死。
+                                # light+accent 的 disabled 状态 border_width 是 0，
+                                # 写死 1 会留下一圈目标状态里根本没有的白边。
+                                "border_width": now["border_width"],
                                 "text_color": text_colors[ii],
-                                "radius": 6,
+                                "radius": now["radius"],
                             }
                         )
                         self._draw(None, tempcolor)
 
-                    self.after(i * animation_step_time, update)
-                # self.after(animation_steps * animation_step_time + 10, lambda: self._draw(None, None))
+                    self.after_traced(i * animation_step_time, update)
+                # 动画的最后一帧永远是"中间态"，必须补一次权威重绘回到
+                # 目标状态。旧实现把这一句注释掉了，后果是：
+                #   * steps=1 时（np.linspace(0,1,1) 只给出起始色）按钮
+                #     会**停留在旧主题**上，直到下一次无关事件才刷新；
+                #   * 动画途中鼠标移入/按下时，迟到的旧帧会把 hover/pressed
+                #     的绘制覆盖掉，看起来"鼠标悬停却没反应"。
+                self.after_traced(
+                    animation_steps * animation_step_time + 10,
+                    lambda: self._draw(None, None),
+                )
 
         self.dconfigure(
             rest={
@@ -433,6 +465,16 @@ class FluButton(FluButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
         self._theme("dark", "accent")
 
     def invoke(self):
+        """走一遍"用户点击"的完整流程（禁用状态下什么都不做）。
+
+        .. note::
+           旧实现不检查 ``state``，于是 ``disabled`` 的按钮用
+           ``invoke()`` 或**回车键**照样会触发 ``command``——鼠标点击却被
+           正确挡住，行为不自相矛盾。:class:`FluToggleButton` 一直是有这道
+           判断的，这里补齐。
+        """
+        if self.dcget("state") != "normal":
+            return
         self.attributes.command()
 
     def _event_off_button1(self, event: Event = None):

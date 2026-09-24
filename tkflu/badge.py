@@ -105,11 +105,15 @@ class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
 
         self._init(mode, style)
 
-        super().__init__(*args, width=width, height=height, **kwargs)
-
-        # 延迟刷新的回调需要在销毁时撤销，否则残留回调会在窗口关闭后触发
+        # 这两个标记必须在 super().__init__() **之前**就位：基类的构造函数里
+        # 会立刻调用 self._draw()，而 _draw 结尾会排一个 after 回调。
+        # 旧实现是在 super().__init__() 之后才赋值，等于把那第一个回调 id
+        # 覆盖成 None —— 它再也无法被取消（虽然触发时会自己判断并退出）。
         self._update_after_id = None
         self._destroyed = False
+
+        super().__init__(*args, width=width, height=height, **kwargs)
+
         self.bind("<Destroy>", self._event_destroy_badge, add="+")
 
         self.dconfigure(
@@ -120,7 +124,7 @@ class FluBadge(FluBadgeCanvas, DDrawWidget, FluToolTipBase):
 
         from .defs import set_default_font
 
-        set_default_font(font, self.attributes)
+        set_default_font(font, self.attributes, master=self)
 
     def _init(self, mode, style):
         from easydict import EasyDict

@@ -1,5 +1,5 @@
 site_name: tkfluent
-copyright: Copyright &copy; 2024 XiangQinxi
+copyright: Copyright &copy; 2024-2026 XiangQinxi
 site_url: https://tkfluent.netlify.app/
 repo_url: https://github.com/XiangQinxi/tkfluent
 
@@ -120,12 +120,15 @@ nav:
           - api/tkflu.badge.md
           - api/tkflu.button.md
           - api/tkflu.togglebutton.md
+          - api/tkflu.checkbox.md
+          - api/tkflu.radiobox.md
           - api/tkflu.entry.md
           - api/tkflu.text.md
           - api/tkflu.label.md
           - api/tkflu.frame.md
           - api/tkflu.image.md
           - api/tkflu.listbox.md
+          - api/tkflu.litenav.md
           - api/tkflu.scrollbar.md
           - api/tkflu.slider.md
           - api/tkflu.menu.md
@@ -150,6 +153,11 @@ nav:
           - api/tkflu.designs.md
           - api/tkflu.designs.button.md
           - api/tkflu.designs.badge.md
+          - api/tkflu.designs.checkbox.md
+          - api/tkflu.designs.radiobox.md
+          - api/tkflu.designs.listbox.md
+          - api/tkflu.designs.litenav.md
+          - api/tkflu.designs.control.md
           - api/tkflu.designs.entry.md
           - api/tkflu.designs.text.md
           - api/tkflu.designs.frame.md

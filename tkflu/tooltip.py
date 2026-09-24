@@ -11,7 +11,6 @@
     label = FluLabel(root, text="把鼠标放上来")
     label.tooltip(text="我是提示")"""
 
-import sys
 from tkinter import Event, Widget
 
 from .popupwindow import FluPopupWindow
@@ -53,25 +52,51 @@ class FluToolTip(FluPopupWindow):
         self.theme(mode)
 
     def enter(self, event: Event):
-        def check() -> None:
-            if self._enter:
-                # 先定位工具提示位置
-                self.popup(
-                    round(
-                        self._widget.winfo_rootx()
-                        + self._widget.winfo_width() / 2
-                        - self.winfo_width() / 2
-                    ),
-                    round(self._widget.winfo_rooty() + self._widget.winfo_height() + 2),
-                )
-
-        self.id = self.after(self._delay, check)
         self._enter = True
 
-    def leave(self, event):
-        self.after_cancel(self.id)
+        def check() -> None:
+            # 延迟期间被悬停的控件可能已经被销毁（切页、刷新列表都很常见），
+            # 这时读它的 winfo_* 会抛 "bad window path name"。
+            if not self._enter:
+                return
+            try:
+                if not self._widget.winfo_exists():
+                    return
+                x = round(
+                    self._widget.winfo_rootx()
+                    + self._widget.winfo_width() / 2
+                    - self.winfo_width() / 2
+                )
+                y = round(
+                    self._widget.winfo_rooty() + self._widget.winfo_height() + 2
+                )
+            except Exception:
+                return
+            try:
+                self.popup(x, y)
+            except Exception:
+                pass
+
+        self.id = self.after(self._delay, check)
+
+    def leave(self, event=None):
         self._enter = False
-        self.withdraw()
+        after_id = getattr(self, "id", None)
+        if after_id is not None:
+            try:
+                self.after_cancel(after_id)
+            except Exception:
+                pass
+            self.id = None
+        try:
+            self.withdraw()
+        except Exception:
+            pass
+
+    def destroy(self):
+        """销毁提示窗口时把它自己排的 ``after`` 撤掉。"""
+        self.leave()
+        super().destroy()
 
     def theme(self, mode=None):
         from .designs.tooltip import tooltip

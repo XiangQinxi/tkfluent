@@ -216,7 +216,7 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
 
         from .defs import set_default_font
 
-        set_default_font(font, self.attributes)
+        set_default_font(font, self.attributes, master=self)
 
         # Text 建好之后再画一次，把它嵌进画布
         self._draw()
@@ -285,12 +285,15 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
         _underline_width = _dict.underline_width
 
         if text_widget is not None:
+            # 注意：**不要**在这里写 width= / height=。
+            # tkinter 的 Text 的 width/height 单位是**字符数与行数**，不是像素；
+            # 拿像素值去填会得到一个 1334x1232 的"请求尺寸"（实测 230x90 的
+            # 控件），布局计算全被带偏。内嵌控件的实际大小由画布上的
+            # create_window(width=..., height=...) 决定，这里不需要它是"刚好"的。
             text_widget.configure(
                 background=_back_color,
                 insertbackground=_text_color,
                 foreground=_text_color,
-                width=self.winfo_width() - _border_width * 2 - _radius,
-                height=self.winfo_height() - _border_width * 2 - _radius,
             )
 
         if hasattr(self, "element_border"):
@@ -335,7 +338,7 @@ class FluText(FluTextCanvas, DDrawWidget, FluToolTipBase):
                 self.itemconfigure(self.element_line, width=_underline_width, fill=_underline_fill)
         """
 
-        """        
+        """
         if not hasattr(self, "element_text"):
             self.element_text = self.create_window(
                 self.winfo_width() / 2, self.winfo_height() / 2,

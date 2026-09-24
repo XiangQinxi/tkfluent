@@ -18,13 +18,12 @@ NORMAL = "normal"
 DISABLED = "disabled"
 STATE = Literal["normal", "disabled"]
 
-# FluButton Styles
+# 组件样式
+# ``STANDARD`` 是按钮与面板**共用**的取值，定义一次即可
+# （旧文件里写了两遍，读起来像是两个不同的常量）。
 STANDARD = "standard"
 ACCENT = "accent"
 MENU = "menu"
-BUTTONSTYLE = Literal["standard", "accent", "menu"]
-
-# FluFrame Styles
-STANDARD = "standard"
 POPUPMENU = "popupmenu"
+BUTTONSTYLE = Literal["standard", "accent", "menu"]
 FRAMESTYLE = Literal["standard", "popupmenu"]

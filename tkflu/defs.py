@@ -60,7 +60,11 @@ def measure_label_width(master, label, padding: int = 26) -> int:
     try:
         from tkinter.font import Font
 
-        font = Font(master=master, family=_DEFAULT_FONT_FAMILY, size=_DEFAULT_FONT_SIZE)
+        # 注意是 root= 而不是 master=：tkinter.font.Font 的第一个参数叫 root，
+        # 写 master= 会被当成"一个叫 master 的字体选项"，直接抛 TclError
+        # （以前这里就是这个错，被 except 吞掉之后**永远**走下面的估算分支，
+        #  菜单因此比真实需要宽了 1.6~2 倍）。
+        font = Font(root=master, family=_DEFAULT_FONT_FAMILY, size=_DEFAULT_FONT_SIZE)
         width = int(font.measure(text))
     except Exception:
         width = 0
@@ -79,11 +83,74 @@ def toggle_theme(toggle_button, thememanager):
         thememanager.mode("light")
 
 
-def set_default_font(font, attributes):
-    if font is None:
-        from .designs.fonts import SegoeFont
+def call_command(callback, *args):
+    """按回调**实际能接受**的参数个数调用它。
 
-        attributes.font = SegoeFont()
+    组件回调的签名历来不统一：``FluButton`` 的 ``command`` 不接受参数，
+    而列表 / 导航类组件的回调天然想知道"选中了哪一项"。如果直接
+    ``callback(index, item)``，所有只写 ``lambda: ...`` 的老代码都会
+    ``TypeError``；反过来直接 ``callback()``，想拿到选中项的人又拿不到。
+
+    这里检查一次签名，取两者都能接受的最大参数个数——既不让老写法崩，
+    也不强迫新写法用 ``*args``。
+
+    :param callback: 可调用对象；为 ``None`` 时直接返回 ``None``
+    :param args: 候选参数（按位置顺序）
+    :returns: 回调的返回值
+
+    ::
+
+        call_command(lambda: print("hi"))              # -> hi（忽略多出来的参数）
+        call_command(lambda i: print(i), 3)            # -> 3
+        call_command(lambda *a: print(a), 1, 2)        # -> (1, 2)
+
+    .. note::
+       签名无法获取时（部分 C 实现的内建可调用对象）退化为"不传参数"。
+    """
+    if callback is None:
+        return None
+
+    import inspect
+
+    try:
+        parameters = list(inspect.signature(callback).parameters.values())
+    except (TypeError, ValueError):
+        return callback()
+
+    if any(p.kind is p.VAR_POSITIONAL for p in parameters):
+        return callback(*args)
+
+    positional = sum(
+        1
+        for p in parameters
+        if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
+    )
+    return callback(*args[:positional])
+
+
+def set_default_font(font, attributes, master=None):
+    """把字体写进 ``attributes.font``，调用方传了就用调用方的。
+
+    :param font: 调用方指定的字体；``None`` 表示用库默认的 Segoe UI
+    :param attributes: 组件的属性字典（通常是 ``self.attributes``）
+    :param master: 组件自己（**强烈建议传**）。字体对象是**按 Tk 解释器**
+        注册的：不传 master 时它会挂到 ``tkinter._default_root`` 上，
+        同一进程里第二个 ``FluWindow`` 所属的解释器就不认识这个字体名，
+        Tk 会静默退回系统兜底字体（实测"宋体 18"），界面直接走样。
+
+    .. note::
+       旧实现只在 ``font is None`` 时才写 ``attributes.font``，
+       于是 ``FluLabel(root, font=("Courier New", 24))`` 里的 ``font``
+       被**整个丢掉**，``attributes.font`` 保持 ``None``，最终画出来的是
+       ``TkDefaultFont``——比库默认字体还不对。
+    """
+    if font is not None:
+        attributes.font = font
+        return
+
+    from .designs.fonts import SegoeFont
+
+    attributes.font = SegoeFont(master=master)
 
 
 def red_primary_color():

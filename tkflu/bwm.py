@@ -243,7 +243,9 @@ class BWm(FluGradient):
                     SetWindowLong(hwnd, GWL_EXSTYLE, style)
                     self.after(30, lambda: self.withdraw())
                     self.after(60, lambda: self.deiconify())
-                except:
+                except Exception:
+                    # 这段是"自绘标题栏 + 任务栏归属"的实验性 Win32 调用，
+                    # 失败不该让窗口建不出来（不同 Windows 版本行为不一样）。
                     pass
 
                 self.wm_attributes("-topmost", True)

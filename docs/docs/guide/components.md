@@ -32,23 +32,149 @@ from tkflu import FluWindow, FluButton, FluFrame
 | [`FluLabel`](../api/tkflu.label.md) | 文本标签 | `text` `width` `height` `font` |
 | [`FluButton`](../api/tkflu.button.md) | 按钮 | `text` `style` `state` `command` |
 | [`FluToggleButton`](../api/tkflu.togglebutton.md) | 开关 | `text` `command`（读 `dcget("checked")`） |
+| [`FluCheckBox`](../api/tkflu.checkbox.md) | 复选框（含不确定态） | `text` `checked` `three_state` `command` |
+| [`FluRadioBox`](../api/tkflu.radiobox.md) | 单选框 | `text` `value` `variable` / `group` |
 | [`FluBadge`](../api/tkflu.badge.md) | 徽标 / 胶囊标签 | `text` `width` `style` |
 | [`FluEntry`](../api/tkflu.entry.md) | 单行输入框 | `width` `textvariable` `state` |
 | [`FluText`](../api/tkflu.text.md) | 多行文本框 | `width` `height` `state` |
 | [`FluSlider`](../api/tkflu.slider.md) | 滑块 | `value` `min` `max` `orient` `tick` `changed` |
 | [`FluScrollBar`](../api/tkflu.scrollbar.md) | 滚动条 | `command` `orient` `state` |
-| [`FluImage`](../api/tkflu.image.md) | 图片 | `image`（路径或 `PhotoImage`） |
+| [`FluListBox`](../api/tkflu.listbox.md) | 列表 | `items` `selectmode` `command` `on_select` |
+| [`FluLiteNav`](../api/tkflu.litenav.md) | 轻量导航栏 | `items` `orient` `selected` `command` |
+| [`FluImage`](../api/tkflu.image.md) | 图片 | `image`（路径 / `PhotoImage` / `PIL.Image`） |
 | [`FluMenu`](../api/tkflu.menu.md) | 下拉菜单 | `add_command` / `add_cascade` |
 | [`FluMenuBar`](../api/tkflu.menubar.md) | 菜单栏 | `add_command` / `add_cascade` |
 | [`FluPopupMenu`](../api/tkflu.popupmenu.md) | 弹出菜单 | — |
 | [`FluPopupWindow`](../api/tkflu.popupwindow.md) | 通用弹出窗口 | — |
 | [`FluToolTip`](../api/tkflu.tooltip.md) | 悬浮提示 | 通过组件的 `.tooltip()` 挂载 |
 | [`FluThemeManager`](../api/tkflu.thememanager.md) | 主题管理 | `mode` / `toggle` |
-| [`FluListBox`](../api/tkflu.listbox.md) | 列表 | ⚠️ 占位实现，见下文 |
 
-!!! warning "FluListBox 尚未完成"
-    `FluListBox` 目前只是一个"长得像按钮的圆角矩形"，**还没有真正的列表数据与选择能力**。
-    保留它是为了固定 API 形状，暂不建议用于生产。
+!!! tip "选择类控件怎么选"
+
+    | 想要的效果 | 用哪个 |
+    | --- | --- |
+    | 开关式的"开 / 关" | [`FluToggleButton`](../api/tkflu.togglebutton.md) |
+    | 复选（可多选、可不确定） | [`FluCheckBox`](../api/tkflu.checkbox.md) |
+    | 一组里只能选一个 | [`FluRadioBox`](../api/tkflu.radiobox.md) |
+    | 一组里选一个、但要滚动 / 分栏 | [`FluListBox`](../api/tkflu.listbox.md)（`selectmode="single"`） |
+    | 页面/区块之间切换 | [`FluLiteNav`](../api/tkflu.litenav.md) |
+
+## 复选框与单选框
+
+两者都是"指示器 + 标签"的组合，键盘都能用 `Tab` 聚焦、`空格` 触发。
+
+```python
+import tkinter as tk
+import tkflu
+
+root = tkflu.FluWindow()
+root.geometry("360x260")
+
+# 复选框：checked 允许 True / False / None
+box = tkflu.FluCheckBox(root, text="启用动画", checked=True)
+box.pack(anchor="w", padx=14, pady=6)
+
+three = tkflu.FluCheckBox(root, text="三态（不确定）", three_state=True, checked=None)
+three.pack(anchor="w", padx=14, pady=6)
+
+# 单选框：同一个 variable 自动互斥
+plan = tk.StringVar(master=root, value="b")
+for key, title in (("a", "方案 A"), ("b", "方案 B"), ("c", "方案 C")):
+    tkflu.FluRadioBox(root, text=title, variable=plan, value=key).pack(
+        anchor="w", padx=14, pady=4
+    )
+
+def on_change():
+    print("动画：", box.dcget("checked"), " 方案：", plan.get())
+
+box.dconfigure(command=on_change)
+root.mainloop()
+```
+
+不想自己建变量时，可以给一组单选框起同一个**组名**：
+
+```python
+tkflu.FluRadioBox(root, text="甲", group="plan", value="a")
+tkflu.FluRadioBox(root, text="乙", group="plan", value="b")
+```
+
+`group` 会在同一个窗口内共享一个变量，窗口销毁时自动回收。
+
+## 列表
+
+`FluListBox` 自己绘制条目，只画**可见的那几行**（虚拟滚动），
+所以放几千条也不会卡。选中行左侧有一条强调色指示条，
+右侧的滚动条可以拖动、也可以滚轮滚。
+
+```python
+import tkflu
+
+root = tkflu.FluWindow()
+root.geometry("360x320")
+
+box = tkflu.FluListBox(
+    root,
+    width=300,
+    height=180,
+    items=[f"第 {i} 行" for i in range(1, 101)],
+    selectmode="extended",          # single / multiple / extended
+    command=lambda index, item: print("激活", index, item),
+    on_select=lambda indices, items: print("选中", indices),
+)
+box.pack(padx=16, pady=16)
+
+box.insert("end", "新加的")
+box.select(2)
+box.see(50)
+print(box.selection(), box.get(2))
+root.mainloop()
+```
+
+| 方法 | 说明 |
+| --- | --- |
+| `insert(index, item)` / `append(item)` | 插入 / 追加条目 |
+| `delete_item(index)` / `clear()` | 删除一条 / 清空 |
+| `get(index)` / `index(item)` | 取条目 / 取下标 |
+| `select` `deselect` `select_all` `clear_selection` | 改选择 |
+| `selection()` / `curselection()` | 取当前选中的下标元组 |
+| `see(index)` / `yview(...)` | 滚动 |
+| `activate(index)` | 触发 `command` |
+
+!!! warning "条目删除叫 `delete_item`，不叫 `delete`"
+
+    控件本身是一个 `tkinter.Canvas`，`delete` 是"删除画布元素"的意思
+    （重绘时第一件事就是 `self.delete("all")`）。两者同名会递归调用自己。
+
+## 导航栏
+
+`FluLiteNav` 是一排可点条目 + 一个选中项：竖排时指示条在左，横排时在下方。
+
+```python
+import tkflu
+
+root = tkflu.FluWindow()
+root.geometry("420x160")
+
+nav = tkflu.FluLiteNav(
+    root,
+    items=[
+        ("🏠", "首页"),
+        ("🔍", "搜索"),
+        {"label": "设置", "icon": "⚙", "key": "settings"},
+    ],
+    orient="horizontal",     # 或 "vertical"
+    style="card",            # standard = 透明底
+    selected="settings",
+)
+nav.pack(padx=16, pady=16)
+
+nav.dconfigure(command=lambda index, item: print("切到", item["key"]))
+nav.add_item("关于", icon="ℹ", key="about")
+root.mainloop()
+```
+
+条目可以是 `"标签"`、`("图标", "标签")` 或字典
+（`label` / `icon` / `key` / `enabled` / `command`）。
 
 ## 最小示例
 

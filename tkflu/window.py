@@ -11,7 +11,7 @@
     tkflu.FluButton(root, text="你好").pack()
     root.mainloop()"""
 
-from tkinter import Tk, Toplevel
+from tkinter import Tk
 
 from tkdeft.object import DObject
 

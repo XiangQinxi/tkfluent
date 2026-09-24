@@ -11,7 +11,7 @@
 ```python
 import tkflu
 
-print(tkflu.__version__)          # 至少 0.3.0（这一版修掉了下面几个真缺陷）
+print(tkflu.__version__)          # 至少 0.4.0（这一版补齐了复选框/单选框/列表/导航栏）
 ```
 
 ```bash
@@ -229,42 +229,57 @@ width = measure_label_width(self, "文件")      # 真实像素宽度
 
 ## 三、组件能力边界
 
-### 7. `FluListBox` 没有列表能力
+### 7. 条目删除为什么叫 `delete_item` 而不是 `delete`？
 
-**症状**：`FluListBox` 能显示一段文字，但**不能加条目、不能选中、不能滚动**。
+**症状**：想清空列表，写 `box.delete(0)` 或 `box.delete("all")`，
+结果要么删的是**画布元素**，要么直接 `RecursionError`（0.4.0 之前的实现里）。
 
-**原因**：它目前只是一个"长得像按钮的圆角矩形"——占位实现，用来固定 API 形状，
-虚拟滚动与多选还没做。
+**原因**：`FluListBox` 自己就是一个 `tkinter.Canvas`，而 `Canvas.delete`
+是"删除画布元素"的意思——重绘的第一步就是 `self.delete("all")`。
+两者一旦同名，重绘就会递归调用自己。
 
-**怎么办**：暂时别用于生产。需要列表就先用别的组合，或者自己搭一个：
+**怎么办**：
 
 ```python
-import tkflu
-
-root = tkflu.FluWindow()
-
-# 方案一：用原生滚动文本区 + FluScrollBar（简单场景够用）
-text = tkflu.FluText(root, width=320, height=160)
-text.pack(padx=12, pady=12)
-# 注意：FluText 没有代理 insert —— 内嵌的原生 Text 在 text.text 上
-text.text.insert("1.0", "\n".join(f"第 {i} 行" for i in range(1, 21)))
-
-# 方案二：在 FluFrame 里放原生 ttk.Treeview（真正要表格/选择时）
-import tkinter.ttk as ttk
-
-frame = tkflu.FluFrame(root, width=340, height=200)
-frame.pack(padx=12, pady=12)
-tree = ttk.Treeview(frame, columns=("name",), show="headings")
-tree.heading("name", text="名称")
-for i in range(1, 11):
-    tree.insert("", "end", values=(f"条目 {i}",))
-tree.pack(fill="both", expand=True, padx=8, pady=8)
-
-root.mainloop()
+box.delete_item(0)      # 删第 0 条
+box.delete_item("all")  # 全部删掉（等价于 box.clear()）
+box.clear()             # 推荐写法
 ```
 
-!!! warning "别指望它以后行为不变"
-    `FluListBox` 的定位见 [组件总览](components.md)，补齐之后 API 可能会有调整。
+同样的道理，`FluListBox` 的 `insert()` 也和 `Canvas.insert` 同名——
+在本控件上请把它当作"插入条目"来用。
+
+### 7'. `FluListBox` 0.4.0 之后变了什么？
+
+**症状**：升级到 0.4.0 后，`FluListBox(parent, text="标题", width=120)`
+看起来还是老样子，但一旦传了 `items=` 就变成一个 160px 高的列表。
+
+**原因**：0.3.0 之前它是**占位实现**——一个"长得像按钮的圆角矩形"，
+没有条目、不能选、不能滚。0.4.0 补成了真列表。
+
+**怎么办**：
+
+* 只传 `text=`（老写法）：列表为空，`text` 作为**空状态提示**居中显示，
+  高度保持历史的 32px。老代码看起来一模一样。
+* 传 `items=`（新写法）：高度默认 160px，按 `selectmode` 支持
+  单选 / 多选 / `Ctrl`+`Shift` 扩展选择。
+* 老代码里如果依赖"点一下就触发 `command`"，注意现在的语义是：
+  **单击 = 选中，双击 / `Enter` = 激活（触发 `command`）**。
+  想监听"选中变化"请用 `on_select`。
+
+```python
+box = tkflu.FluListBox(
+    root, items=[f"第 {i} 行" for i in range(1, 21)],
+    command=lambda index, item: print("激活", index, item),
+    on_select=lambda indices, items: print("选中", indices),
+)
+```
+
+!!! tip "回调签名是"宽容"的"
+
+    `command` / `on_select` 会尽量以 `(index, item)` / `(indices, items)` 调用，
+    但你只写 `lambda: ...` 也照样能用——参数个数是按签名裁的。
+    （见 `tkflu.defs.call_command`。）
 
 ---
 
@@ -558,16 +573,16 @@ print(widget.winfo_width())      # 现在是真实宽度；未 update() 时是 1
 ### 14. 自定义标题栏（`bwm` / `customwindow`）
 
 **症状**：想用 Fluent 风格的无边框窗口，但行为怪怪的——拖动、最大化、
-关闭有时不生效；关窗后偶发回调报错。
+关闭有时不生效；用 `way=0` 开两个窗口甚至可能直接把进程干掉。
 
-**原因**：这条路径是**实验性**的，只在 Windows 上验证过，而且实现里
-`tkflu/bwm.py` 的 `BWm` 还留着两个**不会被取消**的 `after` 回调：
+**原因**：这条路径是**实验性**的，只在 Windows 上验证过：
 
-```python
-# tkflu/bwm.py（现状）
-self.after(30, lambda: self.withdraw())
-self.after(60, lambda: self.deiconify())
-```
+* `way=1`（`bwm`）会在创建时挂两个短暂的 `after(30/60)` 做
+  "隐藏再显示"的手势（为了抢任务栏归属）。它们会随窗口销毁被回收，
+  但这条路径本身没在非 Windows 上验证过。
+* `way=0`（`customwindow`）把窗口过程（WNDPROC）回调存进**进程级全局**，
+  开第二个窗口时第一个回调可能已被 GC —— 实测会以
+  `0xC0000005`（访问冲突）直接崩掉进程。
 
 **怎么办**：**不建议在正式产品里用**。要试就显式指定，并且接受它的局限：
 
@@ -575,15 +590,46 @@ self.after(60, lambda: self.deiconify())
 python -m tkflu --custom-titlebar 1        # 实验特性，仅 Windows
 ```
 
-自己实现时至少把上面那两个 `after` 记下来、在 `<Destroy>` 里取消
+自己实现时至少把临时回调记下来、在 `<Destroy>` 里取消
 （做法见本页第 9 条）；平台判断也要做好，别让非 Windows 用户走到这条路径上。
+`way=0` 在多窗口场景下请直接避开。
+
+---
+
+## 九、0.4.0 修掉的真缺陷（升级前必看）
+
+这一节列的都是在 0.4.0 里**已经修好**的东西。如果你的代码里有对应的绕行写法，
+升级之后可以删掉了。
+
+| 症状 | 原因 | 现在 |
+| --- | --- | --- |
+| 点"切换可用状态"没反应（要鼠标划过才刷新） | 画廊改完 `state` 后没有重绘（`dconfigure` 只写属性） | 改完立刻 `_draw()` |
+| `FluButton(..., style=...)` 写错一个字母，按钮从此再也切不了主题，还会带崩整趟换肤 | `theme()` 查表后无条件调用结果 | 非法取值退回默认值，不写入实例 |
+| `disabled` 的按钮**回车**或 `invoke()` 照样触发 `command` | `invoke()` 漏了 `state` 判断 | 与鼠标点击一致地拦住 |
+| `FluImage` 只显示成一个空盒子（图片被内嵌 Frame 盖住） | 嵌入的控件窗口永远画在画布元素之上 | 有图片时把内嵌窗口隐藏，图片按内边距居中 |
+| 同一个进程里开第二个 `FluWindow`，文字变成很大的宋体 | 字体对象建在了第一个解释器上 | 字体按控件自己的解释器创建 |
+| `FluLabel(..., font=...)` 传了字体却没生效 | 传入的字体被整个丢掉 | 传入即生效 |
+| `FluSlider(orient="vertical")` 构造即崩 | 非横向时轨道/把手没创建，随后 `tag_bind` 抛错 | 纵向方向已实现 |
+| `FluSlider(min=50, max=50)` 抛 `ZeroDivisionError` | 一段死代码里的除法先执行 | 区间退化为一个点时也能用 |
+| 滑块 `value` 超出 `[min, max]`，进度条画到控件外面 | 只夹了把手、没夹进度 | 取值统一夹紧 |
+| 拖动滑块时把手**没有**按下态 | 配色分支写成 `if event:`，而拖动最后那次调用不带事件 | 只看状态位 |
+| `FluScrollBar.set(0.0, 0.5)` 报 `TclError` / `TypeError` | Tk 传进来的是**字符串**；且用 `coords` 改图片元素只接受 2 个坐标 | 自己转浮点，几何在 `_draw` 里算 |
+| 横向滚动条静止时**什么都不显示** | 未展开分支只画竖直方向 | 两个方向都画 |
+| 鼠标划过**禁用**的滚动条就报 svgwrite 的 `TypeError` | 禁用配色表里没有 `track_color`，None 当了 SVG 的 fill | 回退到滑块色 |
+| 菜单弹窗挂在默认根窗口上，属主关了它还留着 | 弹出窗口没接 `master`；`FluMenu(tl)` 还被 `height` 位置参数吃掉 | 属主关系正确，父菜单一并收起 |
+| 只设了动画帧间隔（帧数为 0）时，菜单打不开 / 提示气泡报 `ZeroDivisionError` | 淡入条件写成 `or`，除法却用帧数 | 条件与除法一致 |
+| 反复开关窗口内存一直涨（50 次约 +96 MB） | 图标 `PhotoImage` 按 `id(tk)` 缓存，钉住整个解释器 | 去掉进程级缓存 |
+| `FluFrame.destroy()` 之后面板还留在屏幕上 | 画布是父容器的直接子控件，销毁没带上它 | `destroy()` 连同画布一起销毁 |
+| `FluFrame` 放进 `ttk.Frame` / `ttk.Notebook` 直接报 `unknown option "-background"` | 拿父容器的 `cget("background")`，ttk 没这个选项 | ttk 下向主题要底色 |
+| 销毁一个子窗口后，**主窗口**排的 `after` 再也不执行，接着关主窗口报 `can't delete Tcl command` | `after` 清理是"整个解释器"级的，会误伤别的窗口 | 只回收本子树真正持有的回调 |
+| Tab 聚焦到 `FluEntry`，按压没有按下态 | `<Button-1>` 绑定漏了 `add="+"`，覆盖掉了基类处理 | 加上 `add="+"` |
 
 ---
 
 ## 还找不到原因？
 
 1. 先确认版本：`python -c "import tkflu, tkdeft; print(tkflu.__version__, tkdeft.__version__)"`
-   应为 `0.3.0 0.3.0`；
+   应为 `0.4.0 0.3.0`；
 2. 跑一遍全引擎自检（见第 13 条）；
 3. 用 [运行演示](run-demo.md) 里的画廊复现看看——排除是不是自己代码里的用法问题；
 4. 还是不行，就带着**最小复现代码 + 报错栈 + `--list-engines` 输出**去提 issue。

@@ -5,7 +5,6 @@
 
 from ctypes import POINTER, Structure, c_int
 from ctypes.wintypes import HWND, RECT, UINT
-from tkinter import Tk
 
 WM_NCCALCSIZE = 0x0083
 WS_EX_APPWINDOW = 0x00040000
@@ -43,7 +42,7 @@ class NCCALCSIZE_PARAMS(Structure):
     _fields_ = [("rgrc", RECT * 3), ("lppos", POINTER(PWINDOWPOS))]
 
 
-from ctypes import WINFUNCTYPE, c_char_p, c_uint64, windll
+from ctypes import WINFUNCTYPE, c_uint64, windll
 from tkinter import Event, Frame, Tk, Widget
 
 

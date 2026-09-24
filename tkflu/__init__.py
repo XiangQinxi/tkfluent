@@ -12,6 +12,7 @@ Fluent设计的tkinter组件库（模板）
 from .badge import FluBadge
 from .button import FluButton
 from .bwm import BWm
+from .checkbox import FluCheckBox
 from .constants import *
 from .defs import *
 from .designs import *
@@ -20,11 +21,13 @@ from .frame import FluFrame
 from .icons import *
 from .image import FluImage
 from .label import FluLabel
+from .litenav import FluLiteNav
 from .listbox import FluListBox
 from .menu import FluMenu
 from .menubar import FluMenuBar
 from .popupmenu import FluPopupMenu, FluPopupMenuWindow
 from .popupwindow import FluPopupWindow
+from .radiobox import FluRadioBox
 from .scrollbar import FluScrollBar
 from .slider import FluSlider
 from .text import FluText
@@ -45,9 +48,12 @@ FluTextBox = FluText
 FluPanel = FluFrame
 FluMainWindow = FluWindow
 FluSubWindow = FluToplevel
+FluCheckbox = FluCheckBox
+FluRadioButton = FluRadioBox
+FluNavigationView = FluLiteNav
 
 #: 库版本号。需要与 pyproject.toml 里的 version 保持一致。
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 #: 本库需要的 tkdeft 最低版本（绘制引擎层从 0.2.0 起提供）。
 #: 运行时校验见 :mod:`tkflu.designs.renderer`。

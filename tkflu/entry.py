@@ -212,7 +212,11 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
         self.entry.bind("<FocusIn>", self._event_focus_in, add="+")
         self.entry.bind("<FocusOut>", self._event_focus_out, add="+")
 
-        self.bind("<Button-1>", lambda e: self.entry.focus_set())
+        # add="+" 不能省：不加的话这一句会**替换**掉基类
+        # DDrawWidget.__init__ 装的 <Button-1> 处理（也就是
+        # ``_event_on_button1``），于是画布上的 button1 状态永远是 False。
+        # FluText 那边一直是对的，只有这里漏了。
+        self.bind("<Button-1>", lambda e: self.entry.focus_set(), add="+")
 
         self.dconfigure(
             state=state,
@@ -220,7 +224,7 @@ class FluEntry(FluEntryCanvas, DDrawWidget, FluToolTipBase):
 
         from .defs import set_default_font
 
-        set_default_font(font, self.attributes)
+        set_default_font(font, self.attributes, master=self)
 
         # Entry 建好之后再画一次，把它嵌进画布
         self._draw()

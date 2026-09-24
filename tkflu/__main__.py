@@ -122,9 +122,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--geometry",
-        default="640x680",
+        default="760x900",
         metavar="WxH",
-        help="窗口尺寸，例如 720x720（默认 640x680，够放下全部组件）",
+        help="窗口尺寸，例如 900x760（默认 760x900，够放下全部组件）",
     )
     parser.add_argument(
         "--animation-steps",
@@ -285,6 +285,8 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     from tkflu.image import FluImage
     from tkflu.listbox import FluListBox
 
+    from .designs.frame import frame as frame_design
+
     emit = log if log is not None else (lambda text: print(text))
     widgets: Dict = {}
 
@@ -315,6 +317,11 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     menubar.pack(fill="x", side="top")
 
     # ---- 主体：左右两栏 ---------------------------------------------------
+    #
+    # 高度刻意保持 420：窗口只有 640x680 时，`bottom` 是**后**pack 的，
+    # 一旦这里的"请求高度"变大就会把底部面板和它里面的按钮挤掉
+    # （benchmarks/check_layout.py 会因此失败）。窗口更高时 main 会自动
+    # 撑开（expand=True），所以 420 只是下限，不是实际高度。
     main = track("frame", tkflu.FluFrame(root, width=600, height=420, mode=mode))
     main.pack(fill="both", expand=True, side="top", padx=12, pady=(10, 0))
 
@@ -356,8 +363,20 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     text.pack(fill="x", padx=6, pady=2)
 
     section(left, "列表 / 图片")
-    listbox = track("listbox", FluListBox(left, text="FluListBox", width=120, mode=mode))
-    listbox.pack(anchor="w", padx=6, pady=2)
+    listbox = track(
+        "listbox",
+        # 真正的列表：30 条数据、单选、可滚动、可拖动滚动条
+        FluListBox(
+            left,
+            width=300,
+            height=118,
+            mode=mode,
+            items=[f"第 {i} 行 · 列表条目" for i in range(1, 31)],
+            command=lambda index, item: emit(f"FluListBox → 激活 {index}: {item}"),
+            on_select=lambda indices, items: emit(f"FluListBox → 选中 {list(indices)}"),
+        ),
+    )
+    listbox.pack(fill="x", padx=6, pady=2)
 
     sample = _make_sample_image(root)
     if sample is not None:
@@ -404,6 +423,52 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     )
     button_disabled.pack(fill="x", padx=6, pady=2)
 
+    section(right, "复选框 / 单选框")
+    checkbox = track(
+        "checkbox",
+        tkflu.FluCheckBox(
+            right, text="FluCheckBox", mode=mode,
+            command=lambda: emit(f"FluCheckBox → checked={checkbox.dcget('checked')}"),
+        ),
+    )
+    checkbox.pack(anchor="w", padx=6, pady=2)
+
+    checkbox_three = track(
+        "checkbox_three",
+        tkflu.FluCheckBox(
+            right, text="三态（不确定态）", mode=mode, checked=None, three_state=True,
+            command=lambda: emit(
+                f"FluCheckBox(三态) → checked={checkbox_three.dcget('checked')}"
+            ),
+        ),
+    )
+    checkbox_three.pack(anchor="w", padx=6, pady=2)
+
+    checkbox_disabled = track(
+        "checkbox_disabled",
+        tkflu.FluCheckBox(
+            right, text="禁用", mode=mode, checked=True, state="disabled"
+        ),
+    )
+    checkbox_disabled.pack(anchor="w", padx=6, pady=2)
+
+    # 三个单选框共用同一个变量 —— 这是 tkinter 里最常规的分组写法
+    radio_group = tk.StringVar(master=root, value="b")
+    radio_row = tk.Frame(right, background=frame_design(mode, "standard")["back_color"])
+    radio_row.pack(anchor="w", padx=2, pady=2)
+
+    radios = []
+    for key, title in (("a", "甲"), ("b", "乙"), ("c", "丙")):
+        radio = track(
+            f"radio_{key}",
+            tkflu.FluRadioBox(
+                radio_row, text=title, variable=radio_group, value=key, mode=mode,
+                command=lambda k=key: emit(f"FluRadioBox → {k}（变量={radio_group.get()}）"),
+            ),
+        )
+        radio.pack(side="left", padx=4)
+        radios.append(radio)
+
     section(right, "开关 / 滑块")
     toggle = track(
         "toggle",
@@ -432,6 +497,25 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     )
     scrollbar.pack(anchor="w", padx=6, pady=6)
 
+    section(right, "导航栏")
+    nav = track(
+        "nav",
+        tkflu.FluLiteNav(
+            right,
+            items=[
+                ("🏠", "首页"),
+                ("🔍", "搜索"),
+                {"label": "设置", "icon": "⚙", "key": "settings"},
+            ],
+            orient="horizontal",
+            style="card",
+            mode=mode,
+            selected=0,
+            command=lambda index, item: emit(f"FluLiteNav → {index}: {item['label']}"),
+        ),
+    )
+    nav.pack(anchor="w", padx=6, pady=4)
+
     # ---- 底部：事件日志 + 状态栏 + 操作按钮 --------------------------------
     #
     # 布局要点：FluFrame 内部是"画布 + 内嵌 Frame"，内嵌 Frame 的高度是
@@ -458,8 +542,6 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
     # 三个按钮放在同属一个 FluFrame 的独立一行里。
     # 用普通 Frame 承载是为了避免再多套一层画布；背景色取面板自身配色，
     # 否则会露出一块与面板不一致的默认灰。
-    from .designs.frame import frame as frame_design
-
     button_row = tk.Frame(bottom, background=frame_design(mode, "standard")["back_color"])
     button_row.pack(anchor="w", padx=6, pady=(0, 12))
 
@@ -480,8 +562,23 @@ def build_gallery(root, mode: str = "light", log: Optional[Callable] = None) -> 
         target_state = (
             tkflu.DISABLED if button.dcget("state") == tkflu.NORMAL else tkflu.NORMAL
         )
-        for widget in (button, button_accent, entry, text, toggle, slider):
+        targets = (
+            button,
+            button_accent,
+            entry,
+            text,
+            toggle,
+            slider,
+            checkbox,
+            radios[0],
+            listbox,
+        )
+        for widget in targets:
             widget.dconfigure(state=target_state)
+            # dconfigure 只是写属性，**不会**重绘。早先这里漏了这一句，
+            # 于是"切换可用状态"看起来毫无反应，直到鼠标划过才刷新。
+            if hasattr(widget, "_draw"):
+                widget._draw()
         emit(f"批量切换状态 → {target_state}")
 
     state_toggle = track(
@@ -714,7 +811,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         root.geometry(args.geometry)
     except Exception:
         print(f"警告：--geometry {args.geometry!r} 无效，改用默认尺寸", file=sys.stderr)
-        root.geometry("640x680")
+        root.geometry("760x900")
 
     if args.custom_titlebar is not None:
         try:

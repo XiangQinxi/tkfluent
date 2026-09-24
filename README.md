@@ -166,7 +166,38 @@ set_renderer(0)   # 之前的 0/1 语义不变
 
 复现：`python benchmarks/run_all.py`（在 `tkdeft` 仓库里）
 
-### 这一版修掉的组件层缺陷
+### 0.4.0 修掉的组件层缺陷
+
+**补齐的组件**：`FluCheckBox`（含不确定态）、`FluRadioBox`（变量 / 组名分组）、
+`FluLiteNav`（轻量导航栏）三个是新写的；`FluListBox` 从"占位实现"补成了
+真列表（条目数据、虚拟滚动、`single`/`multiple`/`extended` 三种选择模式、
+键盘导航、滚轮、可拖动的自绘滚动条）。老写法
+`FluListBox(parent, text="标题", width=120)` 外观不变。
+
+| 问题 | 影响 |
+| --- | --- |
+| `FluButton.theme()` 查表后无条件调用结果 | `style` 写错一个字母就 `TypeError`，且错误值被存下 —— 这个按钮**再也切不了主题**，还会带崩整趟换肤 |
+| `FluImage` 的图片被内嵌 Frame 盖住 | 嵌入的控件窗口永远画在画布元素之上，图片只露出边框内侧一圈 |
+| `FluSlider(orient="vertical")` | 非横向时轨道/把手没创建，构造即 `AttributeError` |
+| `FluScrollBar.set()` 用 Tk 传来的**字符串**做算术、再用 `coords` 改图片元素 | `yscrollcommand` 一接上就报错；横向滚动条静止时**整个是空的** |
+| `FluFrame.destroy()` 只销毁了内嵌 Frame | 画布是父容器的直接子控件，销毁后面板仍留在屏幕上 |
+| `_after` 的清理是"整个解释器"级的 | 销毁子窗口会误杀**主窗口**的 `after`，随后关窗口报 `can't delete Tcl command` |
+| 图标 `PhotoImage` 按 `id(tk)` 做进程级缓存 | 钉住整个解释器（50 个窗口 +96 MB），且 `id` 复用后会拿到已死解释器的图片 |
+| 组件的过渡动画最后一帧就是最终状态 | `steps=1` 时按钮停在**旧主题**上；动画途中悬停会被迟到的旧帧覆盖 |
+| `FluToggleButton` 勾选动画的描边用的是**背景色** | 边框在打勾过程中闪成强调蓝 |
+| 第二个窗口里的文字变成很大的宋体 | 字体对象建在第一个解释器上（`SegoeFont()` 没带 master） |
+| `FluLabel(..., font=...)` 的字体被丢掉 | 传入即失效，实际用的是 `TkDefaultFont` |
+| `FluMenu(tl)` 的位置参数是 `height` | toplevel 被当成高度，弹出窗口永远挂在默认根窗口上 |
+| `FluFrame` 放进 `ttk.Frame` / `ttk.Notebook` | `TclError: unknown option "-background"` |
+| 菜单宽度估算把 `Font(master=...)` 写错（应为 `root=`） | `TclError` 被吞，永远走估算分支，菜单宽 1.6~2 倍 |
+| `FluSlider` 的 `value` 不夹紧、拖动没有按下态、没有键盘 | 进度条画到控件外；拖动永远是静止外观 |
+| 画廊里"切换可用状态"没反应 | `dconfigure()` 只写属性不重绘 |
+
+完整清单与"升级前必看"见文档的
+[常见问题 · 九](docs/docs/guide/faq.md)，逐条回归在
+[`tests/test_regressions.py`](tests/test_regressions.py)。
+
+### 0.2.0 修掉的组件层缺陷
 
 | 问题 | 影响 |
 | --- | --- |
@@ -178,6 +209,22 @@ set_renderer(0)   # 之前的 0/1 语义不变
 | `window.py` / `toplevel.py` 的 `PhotoImage` 未指定 `master` | 多 Tk 解释器场景下 `iconphoto` 报 `not a photo image` |
 | 圆角矩形几何用 `translate(0.5,0.5)` | **按钮的下边框和右边框被完全裁掉** |
 | `RenderManager` 调用不存在的 `winfo_zorder` | 开启 `optimized_rendering` 后每次渲染都抛异常 |
+
+## 测试
+
+```bash
+python -m pytest tests/          # 121 passed
+python -m ruff check tkflu tests # All checks passed!
+```
+
+| 文件 | 覆盖 |
+| --- | --- |
+| [`tests/test_new_widgets.py`](tests/test_new_widgets.py) | 四个新组件的 API 与交互 |
+| [`tests/test_regressions.py`](tests/test_regressions.py) | 每一条修复各一到两个断言 |
+| [`tests/test_engines.py`](tests/test_engines.py) | 五个渲染引擎 ×（全部组件构建 + 换肤 + 画廊自检） |
+
+> 几何类断言必须在窗口**已映射**时才有意义（`withdraw` 下 `winfo_width()` 恒为 1）；
+> 无桌面会话时这些用例会**跳过**而不是失败。
 
 ## 协议
 本项目采用`GPL-3.0`协议

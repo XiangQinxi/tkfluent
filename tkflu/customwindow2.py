@@ -2,7 +2,7 @@
 
 提供窗口与控件的拖动/双击最大化等交互。"""
 
-from tkinter import Event, Frame, Tk, Widget
+from tkinter import Event, Widget
 
 
 class WindowDragArea(object):

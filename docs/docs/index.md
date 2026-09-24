@@ -1,5 +1,5 @@
 ---
-title: TkFluent 文档主页
+title: tkfluent 文档主页
 
 ---
 
@@ -87,30 +87,35 @@ title: TkFluent 文档主页
 | --- | --- | --- |
 | [FluBadge](api/tkflu.badge.md)（FluChip） | 徽章组件 | :white_check_mark:完善 |
 | [FluButton](api/tkflu.button.md)（FluPushButton） | 按钮组件 | :white_check_mark:完善 |
-| FluCheckBox | 多选框组件 | :no_entry_sign:暂未开始制作 |
-| FluRadioBox | 单选框组件 | :no_entry_sign:暂未开始制作 |
+| [FluCheckBox](api/tkflu.checkbox.md)（FluCheckbox） | 多选框组件（含不确定态） | :white_check_mark:完善 |
+| [FluRadioBox](api/tkflu.radiobox.md)（FluRadioButton） | 单选框组件（支持分组） | :white_check_mark:完善 |
 | [FluEntry](api/tkflu.entry.md)（FluTextInput） | 输入框组件 | :white_check_mark:较为完善 |
 | [FluFrame](api/tkflu.frame.md)（FluPanel） | 容器组件 | :white_check_mark:较为完善 |
-| [FluImage](api/tkflu.image.md) | 图片组件 | :white_check_mark:基础可用 |
+| [FluImage](api/tkflu.image.md) | 图片组件 | :white_check_mark:完善 |
 | [FluLabel](api/tkflu.label.md) | 标签组件 | :white_check_mark:完善 |
-| [FluListBox](api/tkflu.listbox.md) | 列表组件 | :warning:占位实现，无列表能力 |
+| [FluLiteNav](api/tkflu.litenav.md)（FluNavigationView） | 轻量导航栏 | :white_check_mark:完善 |
+| [FluListBox](api/tkflu.listbox.md) | 列表组件（虚拟滚动 / 多选 / 键盘） | :white_check_mark:完善 |
 | [FluMenuBar](api/tkflu.menubar.md) | 菜单栏组件 | :white_check_mark:较为完善 |
 | [FluMenu](api/tkflu.menu.md) | 嵌套在菜单栏的菜单组件 | :warning:较为不足 |
 | [FluPopupMenu](api/tkflu.popupmenu.md) | 弹出菜单组件 | :white_check_mark:较为完善 |
 | [FluPopupWindow](api/tkflu.popupwindow.md) | 弹出窗口 | :white_check_mark:较为完善 |
-| [FluScrollBar](api/tkflu.scrollbar.md) | 滚动条组件 | :white_check_mark:基础可用 |
-| [FluSlider](api/tkflu.slider.md) | 滑块组件 | :white_check_mark:较为完善 |
+| [FluScrollBar](api/tkflu.scrollbar.md) | 滚动条组件 | :white_check_mark:较为完善 |
+| [FluSlider](api/tkflu.slider.md) | 滑块组件（横向 / 纵向） | :white_check_mark:完善 |
 | [FluText](api/tkflu.text.md)（FluTextBox） | 文本编辑框 | :white_check_mark:较为完善 |
 | [FluToggleButton](api/tkflu.togglebutton.md) | 切换按钮组件 | :white_check_mark:完善 |
 | [FluToolTip](api/tkflu.tooltip.md) | 工具提示组件 | :white_check_mark:较为完善 |
 | [FluToplevel](api/tkflu.toplevel.md)（FluSubWindow） | 子窗口组件 | :white_check_mark:较为完善 |
 | [FluWindow](api/tkflu.window.md)（FluMainWindow） | 主窗口组件 | :white_check_mark:较为完善 |
 
-!!! note "关于 FluListBox"
+!!! note "组件能力边界"
 
-    `FluListBox` 目前只是一个"长得像按钮的圆角矩形"，
-    **还没有列表数据与选择能力**，暂不建议用于生产。
-    保留它是为了固定 API 形状，后续会补齐虚拟滚动与多选。
+    * `FluListBox` 从 **0.4.0** 起是**真正的列表**：条目数据、单选/多选/扩展选择、
+      键盘导航、滚轮与可拖动的滚动条都由它自己绘制。
+      想沿用 0.3.0 之前那种"一个圆角矩形 + 居中文字"的老外观，
+      只传 `text=` 即可（列表为空时它就是空状态提示）。
+    * `FluMenu` 仍是这一组里最弱的一环：没有键盘导航，`accelerator` 只是收下不用。
+    * `FluCheckBox` / `FluRadioBox` 在 0.4.0 之前**根本没有实现**（前者是个 0 字节
+      文件，后者连文件都没有），文档里一直标着"暂未开始制作"，现在补齐了。
 
 ## 快速示例
 

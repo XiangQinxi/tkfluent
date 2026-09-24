@@ -69,32 +69,37 @@ class FluPopupWindow(Toplevel):
         self.withdraw()
 
     def popup(self, x, y):
+        """在 ``(x, y)`` 处显示弹出窗口（带淡入动画）。
 
+        .. note::
+           旧实现的条件写成 ``if FRAMES_COUNT != 0 or FRAME_DELAY != 0``，
+           但动画里要做 ``alpha = step / FRAMES_COUNT``。只要用户把**帧数**
+           设成 0、只留帧间隔（``set_animation_steps(0)`` +
+           ``set_animation_step_time(30)``，这是很自然的"我只想调慢一点"），
+           淡入就会 ``ZeroDivisionError``——表现为菜单打不开、提示气泡
+           一悬停就报错。这里同时修两件事：条件改成"两个都非零"，
+           并且给帧数兜底成 1。
+        """
         from .designs.animation import get_animation_step_time, get_animation_steps
 
-        FRAMES_COUNT = get_animation_steps()
-        FRAME_DELAY = get_animation_step_time()
-
-        # print(FRAMES_COUNT,FRAME_DELAY)
+        frames = max(0, int(get_animation_steps()))
+        delay = max(0, int(get_animation_step_time()))
 
         self.geometry(f"+{x}+{y}")
-        # self.focus_set()
-        if FRAMES_COUNT != 0 or FRAME_DELAY != 0:
+        if frames > 0 and delay > 0:
             self.wm_attributes("-alpha", 0.0)
             self.deiconify()
 
             def fade_in(step=0):
-                alpha = step / FRAMES_COUNT  # 按帧数变化，从0到1
-                self.wm_attributes("-alpha", alpha)
-                if step < FRAMES_COUNT:
-                    # 每执行一次，增加一次透明度，间隔由帧数决定
-                    self.after(
-                        int(round(FRAME_DELAY * FRAMES_COUNT / FRAMES_COUNT)),
-                        lambda: fade_in(step + 1),
-                    )
+                self.wm_attributes("-alpha", step / float(frames))
+                if step < frames:
+                    # 每执行一次，透明度提高一档，间隔为 FRAME_DELAY
+                    self.after(delay, lambda: fade_in(step + 1))
 
             fade_in()  # 启动动画
         else:
+            # 关掉动画时把透明度复位，否则上一次动画留下的 0.4 会让窗口半透明
+            self.wm_attributes("-alpha", 1.0)
             self.deiconify()
 
     def theme(self, mode=None):
@@ -104,3 +109,27 @@ class FluPopupWindow(Toplevel):
         for widget in self.winfo_children():
             if hasattr(widget, "theme"):
                 widget.theme(mode=self.mode.lower())
+
+    def destroy(self):
+        """销毁弹出窗口前先收回它子树里的 ``after`` 回调。
+
+        .. warning::
+           弹出窗口里可能装着会做过渡动画的组件（菜单项就是
+           :class:`~tkflu.button.FluButton`）。Toplevel 被销毁时，
+           Tkinter 会删掉这些控件自己注册的 Tcl 命令，但**不会**取消已经
+           排队的 ``after``——那些定时器随后触发时就会在控制台刷
+
+           .. code-block:: text
+
+               invalid command name "140234567890123run"
+
+           所以这里必须显式清一遍（``FluWindow`` / ``FluToplevel`` 早就这么做了，
+           弹出窗口是漏网的那个）。
+        """
+        from ._after import cancel_all_after
+
+        try:
+            cancel_all_after(self)
+        except Exception:
+            pass
+        super().destroy()

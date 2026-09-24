@@ -54,8 +54,6 @@ _DATA = {
 
 #: 图标名 -> 已落盘的临时文件路径（进程内复用）
 _FILES: "dict[str, str]" = {}
-#: (Tk 解释器, 图标名) -> PhotoImage
-_PHOTOS: "dict[tuple, object]" = {}
 
 
 def _icon_bytes(name: str) -> bytes:
@@ -105,15 +103,24 @@ def dark() -> str:
 def icon_photoimage(name: str = "light", master=None):
     """直接用内嵌 base64 建 ``PhotoImage``，**完全不落盘**。
 
-    ``master`` 应当传入目标控件：不传时 ``tkinter`` 会挂到默认根窗口上，
-    多 Tk 解释器场景下会出现"这个图片不属于该解释器"的错误。
+    :param name: ``"light"`` / ``"dark"`` / ``"icon"``
+    :param master: 目标控件；**多解释器场景必须传**，否则图片会挂到默认根窗口
+
+    .. warning::
+       这里**刻意不做进程级缓存**。
+
+       早先按 ``(id(tk), name)`` 缓存过一份 ``PhotoImage``，看起来省了一次
+       解码，代价却很大：
+
+       * ``PhotoImage`` 与它的 Tk 解释器同生共死，缓存里留一张就等于
+         **让整个解释器无法回收**——实测反复开关窗口 50 次，内存涨了
+         ~96 MB（清掉缓存后只涨 ~12 MB）；
+       * ``id()`` 会被复用。解释器销毁后 id 可能被下一个解释器占用，
+         于是拿到的是一张属于**已死解释器**的图片，报 "not a photo image"。
+
+       解码内嵌的 base64 很便宜，而调用方（``FluWindow`` / ``FluToplevel``）
+       本来就用 ``self._icon_photo`` 持着引用，不需要这里再存一份。
     """
     from tkinter import PhotoImage
 
-    tk = getattr(master, "tk", master)
-    key = (id(tk) if tk is not None else 0, name)
-    photo = _PHOTOS.get(key)
-    if photo is None:
-        photo = PhotoImage(data=_icon_bytes(name), master=master)
-        _PHOTOS[key] = photo
-    return photo
+    return PhotoImage(data=_icon_bytes(name), master=master)

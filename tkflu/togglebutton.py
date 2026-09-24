@@ -3,7 +3,6 @@
 ``FluToggleButton`` 在按钮的基础上维护 ``checked`` 状态，
 点击后触发 ``command``。常用于"切换主题""启用某项功能"等场景。"""
 
-from easydict import EasyDict
 from tkdeft.windows.canvas import DCanvas
 from tkdeft.windows.draw import DSvgDraw
 from tkdeft.windows.drawwidget import DDrawWidget
@@ -68,9 +67,10 @@ class FluToggleButtonCanvas(DCanvas):
 
 from .designs.gradient import FluGradient
 from .tooltip import FluToolTipBase
+from ._after import TracedAfter
 
 
-class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient):
+class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGradient, TracedAfter):
     def __init__(
         self,
         *args,
@@ -113,7 +113,7 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
 
         from .defs import set_default_font
 
-        set_default_font(font, self.attributes)
+        set_default_font(font, self.attributes, master=self)
 
     def _init(self, mode):
 
@@ -221,9 +221,19 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
         )
         # 同 FluButton：_draw 里再 mark_dirty 自己只会造成重复重绘，已移除。
 
-    def theme(self, mode="light"):
-        self.mode = mode
-        if mode.lower() == "dark":
+    def theme(self, mode=None, style=None):
+        """切换主题。
+
+        :param mode: ``"light"`` / ``"dark"``；省略或传空表示沿用当前值
+        :param style: 开关没有样式之分，接受但忽略——
+            :class:`~tkflu.menu.FluMenu` 会用 ``custom_widget`` 把一个自定义
+            组件当菜单项，并且统一按 ``theme(style=...)`` 调用它。旧签名
+            只收 ``mode``，于是"把 FluToggleButton 当菜单项"会直接
+            ``TypeError: theme() got an unexpected keyword argument 'style'``。
+        """
+        resolved = mode or getattr(self, "mode", None) or "light"
+        self.mode = resolved
+        if str(resolved).lower() == "dark":
             self._dark()
         else:
             self._light()
@@ -441,6 +451,9 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
             check = self.attributes.check
             uncheck = self.attributes.uncheck
             if not animation_steps == 0 or not animation_step_time == 0:
+                # 撤销上一轮还没跑完的动画帧：连点两下时，上一轮的帧会迟到，
+                # 把这一轮的状态覆盖掉。
+                self.cancel_traced()
                 steps = animation_steps
                 if uncheck.pressed.border_color2 is None:
                     uncheck.pressed.border_color2 = uncheck.pressed.border_color
@@ -490,8 +503,11 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                     back_colors = self.generate_hex2hex(
                         uncheck.pressed.back_color, check.rest.back_color, steps
                     )
+                    # 描边要从**描边色**插值，不是背景色。
+                    # 旧实现这里复制粘贴了上面一行，于是打勾的过程中边框
+                    # 会从浅灰一路闪成强调蓝（而且和填充同色，看起来像没有边框）。
                     border_colors = self.generate_hex2hex(
-                        uncheck.pressed.back_color, check.rest.back_color, steps
+                        uncheck.pressed.border_color, check.rest.border_color, steps
                     )
                     border_colors2 = self.generate_hex2hex(
                         uncheck.pressed.border_color2, check.rest.border_color2, steps
@@ -538,9 +554,10 @@ class FluToggleButton(FluToggleButtonCanvas, DDrawWidget, FluToolTipBase, FluGra
                         )
                         self._draw(None, tempcolor)
 
-                    self.after(i * animation_step_time, update)
-                self.after(
-                    steps * animation_step_time + 10, lambda: self._draw(None, None)
+                    self.after_traced(i * animation_step_time, update)
+                self.after_traced(
+                    steps * animation_step_time + 10,
+                    lambda: self._draw(None, None),
                 )
             else:
                 if self.attributes.checked:

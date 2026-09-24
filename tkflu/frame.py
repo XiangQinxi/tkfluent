@@ -155,10 +155,11 @@ from tkinter import Frame
 
 from tkdeft.object import DObject
 
+from ._after import TracedAfter
 from .designs.gradient import FluGradient
 
 
-class FluFrame(Frame, DObject, FluGradient):
+class FluFrame(Frame, DObject, FluGradient, TracedAfter):
     def __init__(
         self,
         master=None,
@@ -234,22 +235,30 @@ class FluFrame(Frame, DObject, FluGradient):
             from .designs.animation import get_animation_step_time
 
             animation_step_time = get_animation_step_time()
-        if not animation_steps == 0 or not animation_step_time == 0:
-            if hasattr(self.attributes, "back_color") and hasattr(n, "back_color"):
-                back_colors = self.generate_hex2hex(
-                    self.attributes.back_color, n["back_color"], steps=animation_steps
-                )
-                for i in range(animation_steps):
+        # 只在"确实有一个旧颜色可以过渡"时才做动画。
+        #
+        # 旧实现写的是 hasattr(self.attributes, "back_color") and
+        # hasattr(n, "back_color")——`n` 是普通的 dict，`hasattr(dict, ...)`
+        # 永远是 False，于是这段过渡动画**从来没有跑过**（静默的死代码）。
+        # 顺带一提：首次构造时 self.attributes.back_color 还是 None，
+        # 直接拿去插值会抛 AttributeError，所以这里也要挡住。
+        previous = self.attributes.back_color
+        if (
+            previous
+            and n.get("back_color")
+            and (animation_steps or animation_step_time)
+        ):
+            steps = max(1, int(animation_steps))
+            back_colors = self.generate_hex2hex(previous, n["back_color"], steps=steps)
+            for i in range(steps):
 
-                    def update(ii=i):  # 使用默认参数立即捕获i的值
-                        # print(back_colors[ii])
-                        self._draw(tempcolor=back_colors[ii])
-                        self.update()
+                def update(ii=i):  # 使用默认参数立即捕获i的值
+                    self._draw(tempcolor=back_colors[ii])
 
-                    self.after(
-                        i * animation_step_time, update
-                    )  # 直接传递函数，不需要lambda
-            self.after(animation_steps * animation_step_time + 10, lambda: self._draw())
+                self.after_traced(i * animation_step_time, update)
+            self.after_traced(
+                steps * animation_step_time + 10, lambda: self._draw()
+            )
         self.dconfigure(
             back_color=n["back_color"],
             border_color=n["border_color"],
@@ -258,8 +267,8 @@ class FluFrame(Frame, DObject, FluGradient):
             radius=n["radius"],
         )
         self._draw()
-        self.update()
-        self.canvas.update()
+        self.update_idletasks()
+        self.canvas.update_idletasks()
 
     def _light(self):
         self._theme("light", "standard")
@@ -273,6 +282,37 @@ class FluFrame(Frame, DObject, FluGradient):
     def _dark_popupmenu(self):
         self._theme("dark", "popupmenu")
 
+    # ------------------------------------------------------------------
+    # 几何管理代理
+    # ------------------------------------------------------------------
+    # FluFrame 自己挂在内部画布上，真正参与父容器布局的是那张画布。
+    # 所以下面这些方法都要转给画布——早先有几处转错了：pack_propagate
+    # 把 flag 丢了（变成了"读取"而不是"设置"）、grid_location 丢参数、
+    # grid_anchor 传了个 Ellipsis 对象、place_info 返回的是 grid_info。
+    def _parent_background(self):
+        """父容器的背景色（拿不到时给一个安全的兜底）。
+
+        ``FluFrame`` 会把画布背景同步成父容器的背景，这样圆角外面
+        不会露出突兀的一块灰。但 **ttk 控件没有 ``-background`` 选项**：
+        ``ttk.Frame`` / ``ttk.Notebook`` / ``ttk.LabelFrame`` 里放一个
+        ``FluFrame`` 时，旧写法 ``self.canvas.master.cget("background")``
+        会直接抛 ``TclError: unknown option "-background"``，控件根本建不出来。
+        """
+        parent = self.canvas.master
+        for option in ("background", "bg"):
+            try:
+                return parent.cget(option)
+            except Exception:
+                continue
+        # ttk：向当前主题要它自己的底色
+        try:
+            from tkinter import ttk
+
+            style = ttk.Style(parent)
+            return style.lookup(parent.winfo_class(), "background") or "#ffffff"
+        except Exception:
+            return "#ffffff"
+
     def pack_info(self):
         return self.canvas.pack_info()
 
@@ -282,8 +322,8 @@ class FluFrame(Frame, DObject, FluGradient):
     def pack_slaves(self):
         return self.canvas.pack_slaves()
 
-    def pack_propagate(self, flag):
-        return self.canvas.pack_propagate()
+    def pack_propagate(self, flag=None):
+        return self.canvas.pack_propagate(flag)
 
     def pack_configure(self, **kwargs):
         return self.canvas.pack_configure(**kwargs)
@@ -302,17 +342,24 @@ class FluFrame(Frame, DObject, FluGradient):
     def grid_remove(self):
         return self.canvas.grid_remove()
 
-    def grid_anchor(self, anchor=...):
+    def grid_anchor(self, anchor=None):
+        if anchor is None:
+            return self.canvas.grid_anchor()
         return self.canvas.grid_anchor(anchor)
 
-    def grid_slaves(self, row=..., column=...):
-        return self.canvas.grid_slaves(row=row, column=column)
+    def grid_slaves(self, row=None, column=None):
+        kwargs = {}
+        if row is not None:
+            kwargs["row"] = row
+        if column is not None:
+            kwargs["column"] = column
+        return self.canvas.grid_slaves(**kwargs)
 
-    def grid_propagate(self, flag):
+    def grid_propagate(self, flag=None):
         return self.canvas.grid_propagate(flag)
 
     def grid_location(self, x, y):
-        return self.canvas.grid_location()
+        return self.canvas.grid_location(x, y)
 
     def grid_bbox(self, **kwargs):
         return self.canvas.grid_bbox(**kwargs)
@@ -329,7 +376,7 @@ class FluFrame(Frame, DObject, FluGradient):
         return self.canvas.grid_columnconfigure(**kwargs)
 
     def place_info(self):
-        return self.canvas.grid_info()
+        return self.canvas.place_info()
 
     def place_forget(self):
         return self.canvas.place_forget()
@@ -342,10 +389,30 @@ class FluFrame(Frame, DObject, FluGradient):
 
     place = place_configure
 
+    def destroy(self):
+        """销毁面板，**连同它的画布**。
+
+        这是一个容易被忽略的泄漏：``FluFrame`` 自己挂在内部画布上，
+        而那张画布是**父容器的直接子控件**（``self.canvas.master`` 才是
+        真正的父容器）。Tk 只会自动销毁"子控件"，所以 ``FluFrame.destroy()``
+        过去只干掉了内嵌的 Frame，画布和画在它上面的圆角背景**留在原地**——
+        每建一次再销毁一次就多留一块面板。
+        """
+        canvas = getattr(self, "canvas", None)
+        try:
+            self.cancel_traced()
+            super().destroy()
+        finally:
+            if canvas is not None:
+                try:
+                    canvas.destroy()
+                except Exception:
+                    pass
+
     def _draw(self, event=None, tempcolor: dict = None):
 
         self.canvas.delete("all")
-        self.canvas.config(background=self.canvas.master.cget("background"))
+        self.canvas.config(background=self._parent_background())
         if not tempcolor:
             _back_color = self.attributes.back_color
         else:

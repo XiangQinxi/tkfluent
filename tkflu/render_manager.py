@@ -27,7 +27,6 @@ class RenderManager:
     _dirty_widgets: Set[tk.Widget] = set()
     _animation_queue: List[Dict] = []
     _render_delay = 16  # ~60 FPS
-    _is_rendering = False
 
     def __new__(cls):
         if cls._instance is None:
@@ -66,17 +65,41 @@ class RenderManager:
                 continue
         return None
 
+    def _pending(self) -> bool:
+        """是否已经有一个**真正还在排队**的重绘回调。
+
+        旧实现用一个布尔量 ``_is_rendering`` 表示"已排程"。只要那次
+        ``after`` 因为窗口被销毁 / 解释器消失而永远不执行，这个布尔量就
+        永久卡在 ``True`` —— 之后所有的 ``mark_dirty`` 都会直接返回，
+        集中式重绘**再也活不过来**，脏控件集合还会一直留着引用不放。
+        这里改成问 Tk "那个 after 还在吗"。
+        """
+        handle = self.__dict__.get("_render_after")
+        if handle is None:
+            return False
+        try:
+            return bool(tk._default_root) and bool(
+                tk._default_root.tk.call("after", "info", handle)
+            )
+        except Exception:
+            return False
+
     def _schedule_render(self):
         """安排渲染任务"""
-        if self._is_rendering:
+        if self._pending():
             return
+        self.__dict__["_render_after"] = None
         root = self._root_for(self._dirty_widgets)
         if root is None:
             # 还没有任何可用的 Tk 解释器：等下一次 mark_dirty 再排程，
             # 而不是在这里抛异常。
             return
-        self._is_rendering = True
-        root.after(self._render_delay, self._render_all)
+        try:
+            self.__dict__["_render_after"] = root.after(
+                self._render_delay, self._render_all
+            )
+        except Exception:
+            self.__dict__["_render_after"] = None
 
     @staticmethod
     def _paint_order(widget):
@@ -99,6 +122,7 @@ class RenderManager:
 
     def _render_all(self):
         """执行所有待处理的渲染任务"""
+        self.__dict__["_render_after"] = None
         try:
             # 处理动画
             self._process_animations()
@@ -121,10 +145,16 @@ class RenderManager:
                 # 避免 FluButton._draw 结尾的 mark_dirty 造成 60FPS 空转。
                 self._dirty_widgets.clear()
         finally:
-            self._is_rendering = False
+            pass
 
         if self._animation_queue or self._dirty_widgets:
             self._schedule_render()
+
+    def reset(self):
+        """清空全部排队状态（销毁窗口 / 测试收尾时用）。"""
+        self.__dict__["_render_after"] = None
+        self._dirty_widgets.clear()
+        self._animation_queue.clear()
 
     def _process_animations(self):
         """处理动画队列"""

@@ -12,8 +12,6 @@
 
 from typing import Union
 
-from .toplevel import FluToplevel
-from .window import FluWindow
 
 
 class FluThemeManager(object):

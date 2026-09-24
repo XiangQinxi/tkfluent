@@ -203,7 +203,29 @@ WIDGETS = (
     ("FluText", "多行文本框", {"width": 180, "height": 56}),
     ("FluSlider", "滑块", {"width": 180, "height": 28}),
     ("FluScrollBar", "滚动条", {"width": 180, "height": 6, "orient": "horizontal"}),
-    ("FluListBox", "列表（占位）", {"text": "FluListBox"}),
+    (
+        "FluListBox",
+        "列表（可滚动 / 可选）",
+        {
+            "width": 180,
+            "height": 48,
+            "item_height": 24,
+            "items": [f"第 {i} 行" for i in range(1, 21)],
+        },
+    ),
+    ("FluCheckBox", "复选框", {"text": "FluCheckBox", "checked": True}),
+    ("FluCheckBox(三态)", "不确定态", {"text": "三态", "checked": None}),
+    ("FluRadioBox", "单选框", {"text": "FluRadioBox", "value": "a"}),
+    (
+        "FluLiteNav",
+        "轻量导航栏",
+        {
+            "items": [("★", "一"), ("☆", "二")],
+            "orient": "horizontal",
+            "style": "card",
+            "selected": 0,
+        },
+    ),
     ("FluImage", "图片", {"width": 96, "height": 48}),
     ("FluFrame", "圆角面板", {"width": 180, "height": 48}),
     ("FluButton(disabled)", "禁用态", {"text": "Disabled", "state": "disabled"}),
@@ -392,6 +414,12 @@ def figure_button_states():
 
 
 # ---------------------------------------------------------------- 整窗截图
+#: 画廊截图的窗口尺寸。必须与 ``python -m tkflu`` 的默认 ``--geometry``
+#: 保持一致，否则组件会被挤在一起（0.4.0 起默认是 760x900，
+#: 因为画廊里多了复选框 / 单选框 / 真列表 / 导航栏）。
+GALLERY_GEOMETRY = "760x900"
+
+
 def figure_gallery(mode: str, out_name: str):
     """运行 ``python -m tkflu`` 的画廊并截整窗（含系统标题栏）。"""
     import tkflu
@@ -399,7 +427,7 @@ def figure_gallery(mode: str, out_name: str):
 
     root = tkflu.FluWindow(mode=mode)
     root.title(f"tkfluent 组件画廊 · {mode}")
-    root.geometry("640x680+80+40")
+    root.geometry(f"{GALLERY_GEOMETRY}+80+40")
     build_gallery(root, mode=mode)
     _pump(root, 30)
     time.sleep(0.4)

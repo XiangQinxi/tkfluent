@@ -15,6 +15,7 @@
 
 from tkdeft.windows.drawwidget import DDrawWidget
 
+from ._after import TracedAfter
 from .designs.gradient import FluGradient
 from .tooltip import FluToolTipBase
 
@@ -35,7 +36,7 @@ def _resolve_master(args, kwargs):
     return tkinter._default_root
 
 
-class FluLabel(DDrawWidget, FluToolTipBase, FluGradient):
+class FluLabel(DDrawWidget, FluToolTipBase, FluGradient, TracedAfter):
     def __init__(
         self, *args, text="", width=None, height=32, font=None, mode="light", **kwargs
     ):
@@ -53,7 +54,7 @@ class FluLabel(DDrawWidget, FluToolTipBase, FluGradient):
 
         from .defs import set_default_font
 
-        set_default_font(font, self.attributes)
+        set_default_font(font, self.attributes, master=self)
 
     # ------------------------------------------------------------------
     def _initial_width(self, args, kwargs, text, width):
@@ -154,6 +155,8 @@ class FluLabel(DDrawWidget, FluToolTipBase, FluGradient):
         if not animation_steps == 0 or not animation_step_time == 0:
             if hasattr(self, "tk"):
                 if self.attributes.text_color != m["text_color"]:
+                    # 撤销上一轮没跑完的帧，避免迟到的旧颜色盖掉这次的结果
+                    self.cancel_traced()
                     text_colors = self.generate_hex2hex(
                         self.attributes.text_color,
                         m["text_color"],
@@ -164,9 +167,12 @@ class FluLabel(DDrawWidget, FluToolTipBase, FluGradient):
                         def update(ii=i):  # 使用默认参数立即捕获i的值
                             self._draw(tempcolor=text_colors[ii])
 
-                        self.after(
-                            i * animation_step_time, update
-                        )  # 直接传递函数，不需要lambda
+                        self.after_traced(i * animation_step_time, update)
+                    # 最后一帧是中间色，补一次权威重绘回到目标颜色
+                    self.after_traced(
+                        animation_steps * animation_step_time + 10,
+                        lambda: self._draw(),
+                    )
         self.dconfigure(text_color=m["text_color"])
         if hasattr(self, "tk"):
             self._draw()

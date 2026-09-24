@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tkfluent"
-version = "0.3.0"
+version = "0.4.0"
 description = "Fluent(SunValley) Design for Tkinter. Modern GUI"
 authors = ["XiangQinxi <xiangqinxi@outlook.com>"]
 readme = "README.md"
@@ -50,6 +50,11 @@ numpy = "*"
 skia-python = { version = "^138.0", optional = true }
 pycairo = { version = "^1.29", optional = true }
 
+[tool.poetry.group.dev.dependencies]
+# 测试：pytest tests/（窗口映射不出来的机器上会自动跳过几何类断言）
+pytest = ">=7.0"
+ruff = ">=0.6"
+
 [tool.poetry.scripts]
 # 安装后可用的命令：
 #   tkfluent-demo                 启动组件画廊
@@ -65,3 +70,68 @@ raster = ["skia-python", "pycairo"]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+# ---------------------------------------------------------------------------
+# 测试
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# 测试会真起 Tk 窗口（几何断言必须在控件已映射时才有意义），
+# 因此不要开 -p no:cacheprovider 之类会影响 default root 的插件。
+addopts = "-q"
+filterwarnings = [
+    # 第三方插件（pytest-asyncio）的弃用提示与本库无关
+    "ignore::DeprecationWarning",
+]
+
+# ---------------------------------------------------------------------------
+# 静态检查
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+exclude = [
+    "docs/site",
+    "dist",
+    ".cache",
+    ".ruff_cache",
+    # 仓库里 `tests/1.py` … `tests/6.py` / `test.py` 是早期的零散试验脚本
+    # （不是 pytest 用例，默认也不会被收集），从第一版起就带着星号导入和
+    # 未定义名字。真正的测试是 test_*.py / conftest.py。
+    "tests/1.py",
+    "tests/2.py",
+    "tests/3.py",
+    "tests/5.py",
+    "tests/6.py",
+    "tests/test.py",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+# 包根 / designs 包根 / 图标模块：都是再导出，F401 / F403 / F405 属刻意为之。
+# 想彻底消掉它们就得写 `X as X` 或加 __all__，而后者会改变 `import *` 的行为。
+"tkflu/__init__.py" = ["F401", "F403", "F405"]
+"tkflu/designs/__init__.py" = ["F401", "F403", "F405"]
+"tkflu/designs/fonts/__init__.py" = ["F401", "F403", "F405"]
+"tkflu/icons.py" = ["F403", "F405"]
+"tkflu/demos/*" = ["F401", "F403", "F405", "F811", "E402"]
+# 这些模块刻意"先写画布/绘制后端、再 import 交互基类"，
+# 让文件从上往下读就是"图元 → 画布 → 组件"的顺序。
+"tkflu/button.py" = ["E402"]
+"tkflu/badge.py" = ["E402"]
+"tkflu/checkbox.py" = ["E402"]
+"tkflu/radiobox.py" = ["E402"]
+"tkflu/litenav.py" = ["E402"]
+"tkflu/listbox.py" = ["E402"]
+"tkflu/togglebutton.py" = ["E402"]
+"tkflu/entry.py" = ["E402"]
+"tkflu/customwindow.py" = ["E402"]
+"tests/*" = ["E402"]
+# 下面这几个文件里留了作者当年手写的"参考实现"，整段包在注释 / 裸字符串里
+# （不是可执行代码）。超长行来自那段，不是新写的代码。
+"tkflu/frame.py" = ["E402", "E501"]
+"tkflu/scrollbar.py" = ["E402", "E501"]
+"tkflu/text.py" = ["E402", "E501"]
+"tkflu/popupwindow.py" = ["E501"]
